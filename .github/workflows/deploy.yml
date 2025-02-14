@@ -32,14 +32,16 @@ jobs:
           VITE_EMAILJS_PUBLIC_KEY: ${{ secrets.VITE_EMAILJS_PUBLIC_KEY }}
           VITE_EMAILJS_SERVICE_ID: ${{ secrets.VITE_EMAILJS_SERVICE_ID }}
           VITE_EMAILJS_TEMPLATE_ID: ${{ secrets.VITE_EMAILJS_TEMPLATE_ID }}
+          NODE_ENV: production
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
-      - name: Add .nojekyll file
+      - name: Prepare deployment
         run: |
           touch ./dist/.nojekyll
           echo "yananer.dev" > ./dist/CNAME
+          cp ./dist/index.html ./dist/404.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
