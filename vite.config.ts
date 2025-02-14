@@ -6,7 +6,7 @@ import { resolve } from 'path'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: './',
+  base: '/',
   build: {
     outDir: 'dist',
     assetsDir: '.',
@@ -28,11 +28,15 @@ export default defineConfig({
           if (ext === 'pdf') {
             return 'assets/pdf/[name][extname]';
           }
+          if (ext === 'md') {
+            return 'blog/[name][extname]';
+          }
           return 'assets/[ext]/[name]-[hash][extname]';
         }
       },
     },
   },
+  publicDir: 'public',
   server: {
     port: 3000,
     strictPort: true,

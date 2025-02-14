@@ -15,10 +15,11 @@ const Blog = () => {
         console.log('Loading blog posts...')
         const posts = await getAllPosts()
         console.log('Loaded posts:', posts)
-        setBlogPosts(posts)
+        setBlogPosts(posts || [])
       } catch (error) {
         console.error('Error loading blog posts:', error)
         setError(error instanceof Error ? error.message : 'Failed to load blog posts')
+        setBlogPosts([])
       } finally {
         setLoading(false)
       }
@@ -54,7 +55,7 @@ const Blog = () => {
       <Header />
       <div className="w-full max-w-[1400px] px-2 sm:px-4 lg:px-8 pt-32 flex-grow">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
-          {blogPosts.length === 0 ? (
+          {!blogPosts || blogPosts.length === 0 ? (
             <div className="col-span-full text-white text-center">No blog posts found</div>
           ) : (
             <>
@@ -83,7 +84,7 @@ const Blog = () => {
 
                     {/* Tags */}
                     <div className="flex flex-wrap gap-1 sm:gap-1.5 md:gap-2 mt-auto">
-                      {post.frontMatter.tags.map((tag, tagIndex) => (
+                      {post.frontMatter.tags?.map((tag, tagIndex) => (
                         <span 
                           key={tagIndex}
                           className="px-1 sm:px-1.5 md:px-2 py-0.5 bg-indigo-500/10 text-indigo-400 text-[8px] sm:text-[10px] md:text-xs rounded-full border border-indigo-500/20 hover:bg-indigo-500/20 transition-colors"
@@ -97,7 +98,7 @@ const Blog = () => {
               ))}
 
               {/* Placeholder cards */}
-              {[...Array(Math.max(0, 9 - blogPosts.length))].map((_, index) => (
+              {[...Array(Math.max(0, 9 - (blogPosts?.length || 0)))].map((_, index) => (
                 <div 
                   key={`placeholder-${index}`}
                   className="bg-[#141414] rounded-lg sm:rounded-xl overflow-hidden shadow-[0_0_15px_rgba(0,0,0,0.6)] opacity-50"
