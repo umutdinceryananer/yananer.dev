@@ -24,8 +24,9 @@ const BlogCTA = () => {
       </a>
 
       {/* Blog Button */}
-      <button 
-        onClick={() => navigate('/blog')}
+      <a 
+        onClick={(e) => { e.preventDefault(); navigate('/blog'); }}
+        href="/blog"
         className="group relative flex-1 h-full rounded-lg p-4 bg-[#1a1a1a] hover:bg-[#1f1f1f] transition-all hover:scale-[1.02] border border-gray-800 hover:border-indigo-500/50 overflow-hidden"
       >
         <div className="relative flex flex-col items-start justify-center h-full">
@@ -36,7 +37,7 @@ const BlogCTA = () => {
           </div>
           <h3 className="text-lg font-semibold text-white font-manrope">Visit Blog</h3>
         </div>
-      </button>
+      </a>
     </div>
   )
 }
