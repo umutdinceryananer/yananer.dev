@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import resumePDF from '../../assets/portfolio_resume_february_2025.pdf'
 
 const BlogCTA = () => {
   const navigate = useNavigate()
@@ -7,7 +8,8 @@ const BlogCTA = () => {
     <div className="h-full flex items-center gap-4">
       {/* CV Button */}
       <a 
-        href="/src/assets/portfolio_resume_february_2025.pdf"
+        href={resumePDF}
+        download="Umut_Dincer_Yananer_CV.pdf"
         target="_blank"
         rel="noopener noreferrer"
         className="group relative flex-1 h-full rounded-lg p-4 bg-[#1a1a1a] hover:bg-[#1f1f1f] transition-all hover:scale-[1.02] border border-gray-800 hover:border-indigo-500/50 overflow-hidden"

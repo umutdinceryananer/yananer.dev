@@ -19,7 +19,17 @@ export default defineConfig({
       output: {
         entryFileNames: '[name].[hash].js',
         chunkFileNames: '[name].[hash].js',
-        assetFileNames: '[name].[hash][extname]'
+        assetFileNames: (assetInfo) => {
+          const name = assetInfo.name || '';
+          const ext = name.split('.').pop() || 'asset';
+          if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(ext)) {
+            return 'assets/img/[name]-[hash][extname]';
+          }
+          if (ext === 'pdf') {
+            return 'assets/pdf/[name][extname]';
+          }
+          return 'assets/[ext]/[name]-[hash][extname]';
+        }
       },
     },
   },
