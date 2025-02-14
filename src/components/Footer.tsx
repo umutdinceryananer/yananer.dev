@@ -4,7 +4,7 @@ const Footer = () => {
       <div className="w-full max-w-[1400px] mx-auto px-2 sm:px-4 lg:px-8">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-gray-400 text-sm">
           <p className="text-center sm:text-left">
-            © 2024 Umut Dinçer Yananer. All rights reserved.
+            2025 Umut Dinçer Yananer.
           </p>
           <div className="flex items-center gap-2">
             <span>Source code available on</span>
