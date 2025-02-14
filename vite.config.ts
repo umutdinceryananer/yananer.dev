@@ -5,7 +5,7 @@ import tailwindcss from '@tailwindcss/vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: '',
+  base: '/',
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
@@ -16,11 +16,11 @@ export default defineConfig({
         manualChunks: undefined,
         assetFileNames: (assetInfo) => {
           const name = assetInfo.name || '';
-          const extType = name.split('.').at(1) || 'asset';
-          if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType)) {
+          const ext = name.split('.').pop() || 'asset';
+          if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(ext)) {
             return `assets/img/[name]-[hash][extname]`;
           }
-          return `assets/${extType}/[name]-[hash][extname]`;
+          return `assets/[ext]/[name]-[hash][extname]`;
         },
         chunkFileNames: 'assets/js/[name]-[hash].js',
         entryFileNames: 'assets/js/[name]-[hash].js',
@@ -36,5 +36,10 @@ export default defineConfig({
     port: 3000,
     strictPort: true,
     host: true,
+  },
+  resolve: {
+    alias: {
+      '@': '/src',
+    },
   },
 })
