@@ -9,7 +9,6 @@ const BlogCTA = () => {
       {/* CV Button */}
       <a 
         href={resumePDF}
-        download="Umut_Dincer_Yananer_CV.pdf"
         target="_blank"
         rel="noopener noreferrer"
         className="group relative flex-1 h-full rounded-lg p-4 bg-[#1a1a1a] hover:bg-[#1f1f1f] transition-all hover:scale-[1.02] border border-gray-800 hover:border-indigo-500/50 overflow-hidden"
@@ -20,7 +19,7 @@ const BlogCTA = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-white font-manrope">Download CV</h3>
+          <h3 className="text-lg font-semibold text-white font-manrope">View CV</h3>
         </div>
       </a>
 
