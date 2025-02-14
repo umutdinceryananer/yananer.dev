@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import EmailPopup from '../EmailPopup'
+import profilePhoto from '../../assets/umut-foto.jpg'
 
 const AboutMe = () => {
   const [isEmailPopupOpen, setIsEmailPopupOpen] = useState(false)
@@ -9,7 +10,7 @@ const AboutMe = () => {
       <div className="flex items-start gap-6">
         <div className="w-32 h-40 rounded-xl overflow-hidden flex-shrink-0">
           <img
-            src="/src/assets/umut-foto.jpg"
+            src={profilePhoto}
             alt="Umut Dinçer Yananer"
             className="w-full h-full object-cover"
           />
