@@ -27,7 +27,9 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: npm run build
+        run: |
+          npm run build
+          cp dist/index.html dist/404.html
         env:
           VITE_EMAILJS_PUBLIC_KEY: ${{ secrets.VITE_EMAILJS_PUBLIC_KEY }}
           VITE_EMAILJS_SERVICE_ID: ${{ secrets.VITE_EMAILJS_SERVICE_ID }}
@@ -39,14 +41,14 @@ jobs:
 
       - name: Prepare deployment
         run: |
-          touch ./dist/.nojekyll
-          echo "yananer.dev" > ./dist/CNAME
-          cp ./dist/index.html ./dist/404.html
+          cd dist
+          touch .nojekyll
+          echo "yananer.dev" > CNAME
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist'
+          path: dist
 
   deploy:
     needs: build
