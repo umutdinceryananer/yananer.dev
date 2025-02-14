@@ -33,7 +33,7 @@ const WorkExperience = () => {
         <div className="absolute inset-0 overflow-y-auto no-scrollbar scroll-smooth" onScroll={handleScroll}>
           <div className="space-y-8 relative pl-6 pr-2 pb-3">
             {/* Vertical Progress Line */}
-            <div className="absolute left-[15px] top-6 bottom-30 w-[2px] bg-gradient-to-b from-transparent via-gray-800 to-transparent">
+            <div className="absolute left-[15px] top-[28px] h-[calc(100%-56px)] w-[2px] bg-gradient-to-b from-transparent via-gray-800 to-transparent">
               <div className="absolute left-0 top-0 w-full h-full bg-gradient-to-b from-indigo-500/80 via-indigo-500/50 to-indigo-500/80" />
             </div>
 
