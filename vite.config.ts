@@ -6,7 +6,7 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   assetsInclude: ['**/*.md'],
-  base: '/yananer.dev/',
+  base: './',
   define: {
     'process.env': {},
     Buffer: ['buffer', 'Buffer'],
