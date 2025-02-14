@@ -15,9 +15,10 @@ export default defineConfig({
       output: {
         manualChunks: undefined,
         assetFileNames: (assetInfo) => {
-          let extType = assetInfo.name.split('.').at(1);
+          const name = assetInfo.name || '';
+          const extType = name.split('.').at(1) || 'asset';
           if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType)) {
-            extType = 'img';
+            return `assets/img/[name]-[hash][extname]`;
           }
           return `assets/${extType}/[name]-[hash][extname]`;
         },
