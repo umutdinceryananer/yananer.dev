@@ -2,6 +2,7 @@ import { useState, FormEvent } from 'react';
 import emailjs from '@emailjs/browser';
 
 // Initialize EmailJS with your public key
+console.log('EmailJS Public Key:', import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
 emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
 
 interface EmailPopupProps {
