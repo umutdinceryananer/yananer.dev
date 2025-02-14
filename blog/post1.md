@@ -1,9 +1,7 @@
 ---
-title: "Building My Portfolio with React & Tailwind"
-date: "2024-01-15"
+title: "Building My Portfolio"
+date: "2024-02-14"
 description: "In this post, I share my experience building this portfolio website using React and Tailwind CSS. Learn about the design decisions, component structure, and challenges faced during development."
-tags: ["React", "Tailwind", "Portfolio"]
-coverGradient: "from-blue-500 to-indigo-500"
 ---
 
 # Building My Portfolio with React & Tailwind
