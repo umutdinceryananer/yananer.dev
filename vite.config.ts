@@ -29,7 +29,7 @@ export default defineConfig({
             return 'assets/pdf/[name][extname]';
           }
           if (ext === 'md') {
-            return 'blog/[name][extname]';
+            return 'blog/[name]-[hash][extname]';
           }
           return 'assets/[ext]/[name]-[hash][extname]';
         }
