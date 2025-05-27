@@ -2,23 +2,20 @@
 title: "Basic Introduction to Agents 🤗"
 date: "2025-02-17"
 description: "An AI Agent Blog where I write what I really understand very superficially and at first glance."
+tags: ["agents", "HF", "Bootcamp"]
 ---
 
-Hello, this is my first article and I think I will write here what I know about the software topics that interest me and I like. Let me convey my respect to Çağıl teacher, who stated that it is a better idea to show people what I know by writing a blog than my previous idea.
-`
+In this post, I'm excited to share my journey into the fascinating world of AI Agents. As someone who's been exploring the HuggingFace Agents course and spending time in the Cursor IDE, I want to share my understanding of this complex topic in a beginner-friendly way. Whether you're just starting your AI journey or looking to refresh your knowledge, I hope this article provides valuable insights.
 
-Recently I've been diving into the HuggingFace Agents course and have been spending a lot of time in the Cursor IDE. Although I'm still a beginner, I recently came across the concept of ‘agents’ working behind the scenes and this piqued my interest. In this context, I will try to go into the details of the definition at a simple level. As I said, I am a beginner and this article is written to reinforce what I know rather than to educate.
+# Understanding AI Agents: A Beginner's Perspective
 
-
+Recently I've been diving into the HuggingFace Agents course and have been spending a lot of time in the Cursor IDE. Although I'm still a beginner, I recently came across the concept of 'agents' working behind the scenes and this piqued my interest. In this context, I will try to go into the details of the definition at a simple level. As I said, I am a beginner and this article is written to reinforce what I know rather than to educate.
 
 > **Agent**: **AI model capable of reasoning, planning, and interacting with its environment**.
-
-
 
 The agents we use are very good at understanding human language and can not only understand language but also take action. Before this action phase, they start the action by reasoning and planning.
 
 The reason why they are called agents is that they can actually communicate with the environment with the tools they have access to.
-
 
 Basically an agent consists of 2 parts;
 

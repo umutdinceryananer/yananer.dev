@@ -1,6 +1,6 @@
 ---
 title: "Communication between Containers: A Comprehensive Guide"
-date: "2024-03-19"
+date: "2025-05-27"
 description: "An in-depth exploration of inter-container communication methods, from direct communication to message brokers, with practical examples and real-world applications."
 tags: ["containers", "docker", "kubernetes", "message-brokers", "microservices"]
 ---
