@@ -9,7 +9,7 @@ globalThis.Buffer = Buffer;
 export async function getAllPosts(): Promise<BlogPost[]> {
   try {
     console.log('Starting getAllPosts function...');
-    const modules = import.meta.glob('/public/blog/*.md', { as: 'raw', eager: true });
+    const modules = import.meta.glob('/public/blog/*.md', { query: '?raw', import: 'default', eager: true });
     console.log('Loaded modules:', modules);
     
     if (!modules || Object.keys(modules).length === 0) {

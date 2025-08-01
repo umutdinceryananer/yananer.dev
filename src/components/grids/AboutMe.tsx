@@ -23,7 +23,7 @@ const AboutMe = () => {
             </div>
           </div>
           <h2 className="text-2xl font-bold text-white font-manrope">Umut Dinçer Yananer</h2>
-          <p className="text-indigo-400 text-lg">Senior Student @ Bilkent University</p>
+          <p className="text-indigo-400 text-lg">CTIS Graduate from Bilkent University</p>
         </div>
       </div>
 
