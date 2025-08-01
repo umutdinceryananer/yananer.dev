@@ -284,10 +284,6 @@ npm run deploy       # Deploy to GitHub Pages (manual)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## 🙏 Acknowledgments
 
 - Design inspiration from modern portfolio websites
@@ -304,6 +300,6 @@ If you have any questions or need help customizing this template:
 
 ---
 
-**Made with ❤️ by [Your Name](https://your-website.com)**
+**Made with ❤️ by [Umut Dinçer Yananer](https://yananer.dev)**
 
 > This template is open source and free to use. If you create something awesome with it, I'd love to see it!
