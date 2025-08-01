@@ -38,8 +38,8 @@ const Education = () => {
             </div>
             <span className="text-gray-600">•</span>
             <div className="flex items-center gap-1">
-              <span className="text-gray-400">Graduation:</span>
-              <span className="text-indigo-400 font-medium">25 June 2025</span>
+              <span className="text-gray-400">Graduated:</span>
+              <span className="text-indigo-400 font-medium">June 2025</span>
             </div>
           </div>
         </div>

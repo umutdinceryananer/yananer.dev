@@ -1,8 +1,9 @@
 const TechStack = () => {
   const technologies = [
     { name: "Python", description: "Core Language", hasHeart: true },
-    { name: "Machine Learning", description: "AI Development", hasHeart: true },
-    { name: "Data Analysis", description: "Data Processing", hasHeart: true },
+    { name: "Machine Learning", description: "AI", hasHeart: true },
+    { name: "Data Science", description: "Data", hasHeart: true },
+    { name: "Data Visualization", description: "Data", hasHeart: true },
     { name: "Java", description: "OOP"},
     { name: "Javascript", description: "Web Dev" },
     { name: "AWS", description: "Cloud Services", hasHeart: true },

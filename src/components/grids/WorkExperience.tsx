@@ -41,6 +41,29 @@ const WorkExperience = () => {
             <div className="relative p-4 rounded-lg transition-colors group">
               {/* Progress Dot */}
               <div className="absolute -left-[18px] top-5 w-5 h-5 rounded-full bg-[#141414] ring-2 ring-indigo-500 ring-offset-2 ring-offset-[#0F0F0F] group-hover:ring-offset-[#141414] transition-all flex items-center justify-center">
+                <span className="text-xs text-gray-400 font-medium">6</span>
+              </div>
+              
+              <div className="flex items-center gap-2 mb-2">
+                <h4 className="text-indigo-400 font-medium">Customer Advisory Intern</h4>
+              </div>
+              
+              <div className="flex flex-wrap gap-2 mb-3">
+                <span className="px-2 py-1 bg-[#1a1a1a] rounded-md text-gray-400 text-xs border border-gray-800">
+                  SAS Institute
+                </span>
+                <span className="px-2 py-1 bg-[#1a1a1a] rounded-md text-gray-400 text-xs border border-gray-800">
+                  Apr 2025 - Present
+                </span>
+              </div>
+
+              <p className="text-gray-400 text-sm">
+                Developing analytics solutions using SAS and SAS Viya through case studies, while strengthening open-source skills by creating Python-based projects in data and analytics.
+              </p>
+            </div>
+            <div className="relative p-4 rounded-lg transition-colors group">
+              {/* Progress Dot */}
+              <div className="absolute -left-[18px] top-5 w-5 h-5 rounded-full bg-[#141414] ring-2 ring-indigo-500 ring-offset-2 ring-offset-[#0F0F0F] group-hover:ring-offset-[#141414] transition-all flex items-center justify-center">
                 <span className="text-xs text-gray-400 font-medium">5</span>
               </div>
               
@@ -60,7 +83,7 @@ const WorkExperience = () => {
               <p className="text-gray-400 text-sm">
                 Managed an IT asset auditing project, implementing an 
                 SAP-based tracking system for 1,600 assets, 
-                improving allocation accuracy and achieving a 95% tracking precision.
+                improving allocation accuracy and achieving a 92% tracking precision.
               </p>
             </div>
 
