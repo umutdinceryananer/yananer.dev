@@ -8,6 +8,30 @@ const GitHubContributions = () => {
 
   return (
     <div className="h-full flex flex-col relative overflow-visible" ref={containerRef}>
+      {/* Page peel link to GitHub */}
+      <a
+        href="https://github.com/Automaticare"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="absolute top-0 right-0 w-8 h-8 z-10 group"
+      >
+        <svg viewBox="0 0 40 40" className="w-full h-full">
+          <defs>
+            <linearGradient id="peelGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#312e81" />
+              <stop offset="100%" stopColor="#6366f1" />
+            </linearGradient>
+            <linearGradient id="peelShadow" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#0F0F0F" stopOpacity="0.4" />
+              <stop offset="100%" stopColor="#0F0F0F" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+          {/* Peel fold */}
+          <path d="M40 0 L40 14 Q38 8 30 6 Q22 4 16 0 Z" fill="url(#peelGrad)" className="group-hover:brightness-125 transition-all" />
+          {/* Shadow under fold */}
+          <path d="M40 14 Q38 8 30 6 Q22 4 16 0 L12 0 Q20 5 28 8 Q36 11 40 18 Z" fill="url(#peelShadow)" />
+        </svg>
+      </a>
       <h3 className="text-xl font-semibold text-white mb-3 text-center font-manrope">GitHub Contributions</h3>
       <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-gray-800 to-transparent mb-4" />
       <div className="flex-1 flex items-center justify-center overflow-hidden min-w-0">
