@@ -20,7 +20,7 @@ const AboutMe = () => {
           <div className="flex items-center gap-2 mb-2">
             <div className="flex items-center gap-2 px-2 py-1 bg-red-500/5 rounded-full border border-red-500/15">
               <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-              <span className="text-gray-400 text-sm font-manrope">Building </span>
+              <span className="text-gray-400 text-sm font-manrope">Building&nbsp;</span>
             </div>
           </div>
           <h2 className="text-2xl font-bold text-white font-manrope">Umut Dinçer Yananer</h2>
