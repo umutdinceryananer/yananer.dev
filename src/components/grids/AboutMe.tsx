@@ -36,7 +36,7 @@ const AboutMe = () => {
           </p>
         </div>
         <div className="bg-[#141414] rounded-xl p-4 border border-gray-800">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <div className="grid grid-cols-3 gap-2">
             <button 
               onClick={() => setIsEmailPopupOpen(true)}
               className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white rounded-lg transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-indigo-500/25 border border-indigo-400/50"
@@ -68,16 +68,6 @@ const AboutMe = () => {
               </svg>
             </a>
 
-            <a 
-              href="https://stackoverflow.com/users/14721871/umut"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 px-4 py-2 bg-[#1a1a1a] hover:bg-[#1f1f1f] text-white rounded-lg transition-colors border border-indigo-500/30 hover:border-indigo-500/50"
-            >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M18.986 21.865v-6.404h2.134V24H1.844v-8.539h2.13v6.404h15.012zM6.111 19.731H16.85v-2.137H6.111v2.137zm.259-4.852l10.48 2.189.451-2.07-10.478-2.187-.453 2.068zm1.359-5.056l9.705 4.53.903-1.95-9.706-4.53-.902 1.95zm2.715-4.785l8.217 6.855 1.359-1.62-8.216-6.853-1.36 1.618zM15.751 0l-1.746 1.294 6.405 8.604 1.746-1.294L15.749 0z"/>
-              </svg>
-            </a>
           </div>
         </div>
       </div>

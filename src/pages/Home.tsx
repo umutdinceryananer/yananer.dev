@@ -9,15 +9,23 @@ const Home = () => {
     <div className="min-h-screen w-full bg-[#0F0F0F] flex flex-col items-center overflow-x-hidden">
       <div className="w-full max-w-[1400px] px-2 sm:px-4 lg:px-8 pt-8 pb-6 sm:pb-8">
         <div className="grid grid-cols-1 min-[745px]:grid-cols-2 min-[1240px]:grid-cols-[1.2fr_1.4fr_1.2fr] gap-3 sm:gap-4 lg:gap-6">
-          {/* Left Column - AboutMe and Education */}
+          {/* Left Column - AboutMe */}
           <div className="min-[745px]:row-span-2 bg-[#141414] rounded-lg sm:rounded-xl p-[2px] shadow-[0_0_15px_rgba(0,0,0,0.6)] hover:shadow-[0_0_20px_rgba(0,0,0,0.7)] transition-shadow">
             <div className="h-full w-full bg-[#141414] rounded-[10px] p-4 sm:p-6 lg:p-7">
               <AboutMe />
             </div>
           </div>
+
+          {/* Education - right of AboutMe */}
           <div className="bg-[#141414] rounded-lg sm:rounded-xl p-[2px] shadow-[0_0_15px_rgba(0,0,0,0.6)] hover:shadow-[0_0_20px_rgba(0,0,0,0.7)] transition-shadow">
             <div className="h-full w-full bg-[#141414] rounded-[10px] p-4 sm:p-6 lg:p-7">
               <Education />
+            </div>
+          </div>
+
+          {/* Placeholder - will be replaced with GitHub commit widget */}
+          <div className="min-[1240px]:col-start-3 min-[1240px]:row-start-1 min-[745px]:order-3 min-[1240px]:order-none bg-[#141414] rounded-lg sm:rounded-xl p-[2px] shadow-[0_0_15px_rgba(0,0,0,0.6)] hover:shadow-[0_0_20px_rgba(0,0,0,0.7)] transition-shadow">
+            <div className="h-full w-full bg-[#141414] rounded-[10px] p-4 sm:p-6 lg:p-7">
             </div>
           </div>
 
