@@ -13,23 +13,25 @@ const GitHubContributions = () => {
         href="https://github.com/Automaticare"
         target="_blank"
         rel="noopener noreferrer"
-        className="absolute top-0 right-0 w-8 h-8 z-10 group"
+        className="absolute -top-4 -right-4 sm:-top-6 sm:-right-6 lg:-top-7 lg:-right-7 w-12 h-12 z-10 group"
       >
-        <svg viewBox="0 0 40 40" className="w-full h-full">
+        <svg viewBox="0 0 40 40" className="w-full h-full drop-shadow-lg">
           <defs>
-            <linearGradient id="peelGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#312e81" />
-              <stop offset="100%" stopColor="#6366f1" />
+            <linearGradient id="peelGrad" x1="1" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#818cf8" />
+              <stop offset="100%" stopColor="#4338ca" />
             </linearGradient>
-            <linearGradient id="peelShadow" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#0F0F0F" stopOpacity="0.4" />
-              <stop offset="100%" stopColor="#0F0F0F" stopOpacity="0" />
+            <linearGradient id="peelBack" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#1e1b4b" />
+              <stop offset="100%" stopColor="#312e81" />
             </linearGradient>
           </defs>
-          {/* Peel fold */}
-          <path d="M40 0 L40 14 Q38 8 30 6 Q22 4 16 0 Z" fill="url(#peelGrad)" className="group-hover:brightness-125 transition-all" />
-          {/* Shadow under fold */}
-          <path d="M40 14 Q38 8 30 6 Q22 4 16 0 L12 0 Q20 5 28 8 Q36 11 40 18 Z" fill="url(#peelShadow)" />
+          {/* Page underneath */}
+          <path d="M20 0 L40 0 L40 20 Z" fill="url(#peelBack)" />
+          {/* Curled part */}
+          <path d="M20 0 Q24 10 40 20 L40 0 Z" fill="url(#peelGrad)" className="group-hover:brightness-125 transition-all" />
+          {/* Fold line */}
+          <path d="M20 0 Q24 10 40 20" fill="none" stroke="#6366f1" strokeWidth="0.5" strokeOpacity="0.6" />
         </svg>
       </a>
       <h3 className="text-xl font-semibold text-white mb-3 text-center font-manrope">GitHub Contributions</h3>
