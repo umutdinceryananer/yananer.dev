@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(gh run:*)",
-      "Bash(curl -sI https://yananer.dev)"
+      "Bash(curl -sI https://yananer.dev)",
+      "Bash(npm uninstall:*)"
     ]
   }
 }
