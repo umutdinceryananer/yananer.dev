@@ -21,6 +21,15 @@ html, body {
   overflow: hidden;
   height: 100%;
   background-color: #0F0F0F;
+  cursor: default;
+}
+
+* {
+  cursor: inherit;
+}
+
+a, button, [role="button"], input[type="submit"] {
+  cursor: pointer;
 }
 
 #root {

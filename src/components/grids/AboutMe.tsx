@@ -5,6 +5,7 @@ import profilePhoto from '../../assets/umut-foto.jpg'
 const AboutMe = () => {
   const [isEmailPopupOpen, setIsEmailPopupOpen] = useState(false)
 
+
   return (
     <div className="h-full flex flex-col gap-6">
       <div className="flex items-start gap-6">
@@ -15,11 +16,11 @@ const AboutMe = () => {
             className="w-full h-full object-cover"
           />
         </div>
-        <div className="flex-1">
+        <div className="flex-1 relative">
           <div className="flex items-center gap-2 mb-2">
-            <div className="flex items-center gap-2 px-2 py-1 bg-indigo-500/10 rounded-full border border-indigo-500/20">
-              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              <span className="text-indigo-400 text-sm font-manrope">Always Around</span>
+            <div className="flex items-center gap-2 px-2 py-1 bg-red-500/5 rounded-full border border-red-500/15">
+              <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+              <span className="text-gray-400 text-sm font-manrope">Building Something</span>
             </div>
           </div>
           <h2 className="text-2xl font-bold text-white font-manrope">Umut Dinçer Yananer</h2>
