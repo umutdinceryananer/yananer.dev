@@ -58,7 +58,7 @@ const AboutMe = () => {
             </a>
 
             <a 
-              href="https://github.com/umutdinceryananer"
+              href="https://github.com/Automaticare"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 px-4 py-2 bg-[#1a1a1a] hover:bg-[#1f1f1f] text-white rounded-lg transition-colors border border-indigo-500/30 hover:border-indigo-500/50"

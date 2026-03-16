@@ -2,6 +2,7 @@ import AboutMe from '../components/grids/AboutMe'
 import Education from '../components/grids/Education'
 import TechStack from '../components/grids/TechStack'
 import WorkExperience from '../components/grids/WorkExperience'
+import GitHubContributions from '../components/grids/GitHubContributions'
 import Footer from '../components/Footer'
 
 const Home = () => {
@@ -23,9 +24,10 @@ const Home = () => {
             </div>
           </div>
 
-          {/* Placeholder - will be replaced with GitHub commit widget */}
+          {/* GitHub Contributions */}
           <div className="min-[1240px]:col-start-3 min-[1240px]:row-start-1 min-[745px]:order-3 min-[1240px]:order-none bg-[#141414] rounded-lg sm:rounded-xl p-[2px] shadow-[0_0_15px_rgba(0,0,0,0.6)] hover:shadow-[0_0_20px_rgba(0,0,0,0.7)] transition-shadow">
             <div className="h-full w-full bg-[#141414] rounded-[10px] p-4 sm:p-6 lg:p-7">
+              <GitHubContributions />
             </div>
           </div>
 
