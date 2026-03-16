@@ -9,17 +9,16 @@ const GitHubContributions = () => {
         <GitHubCalendar
           username="Automaticare"
           colorScheme="dark"
-          blockSize={10}
+          blockSize={12}
           blockMargin={3}
           fontSize={12}
           showMonthLabels={false}
           showColorLegend={false}
           labels={{ totalCount: ' ' }}
           transformData={(data) => {
-            const halfYear = new Date()
-            halfYear.setMonth(halfYear.getMonth() - 5)
-            halfYear.setDate(halfYear.getDate() - 15)
-            return data.filter((day) => new Date(day.date) >= halfYear)
+            const cutoff = new Date()
+            cutoff.setDate(cutoff.getDate() - 21 * 7)
+            return data.filter((day) => new Date(day.date) >= cutoff)
           }}
         />
       </div>
