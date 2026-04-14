@@ -1,10 +1,66 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import EmailPopup from '../EmailPopup'
 import profilePhoto from '../../assets/umut-foto.jpg'
 
+const SPINNER_VERBS = [
+  'Accomplishing', 'Actioning', 'Actualizing', 'Architecting', 'Baking',
+  'Beaming', "Beboppin'", 'Befuddling', 'Billowing', 'Blanching',
+  'Bloviating', 'Boogieing', 'Boondoggling', 'Booping', 'Bootstrapping',
+  'Brewing', 'Bunning', 'Burrowing', 'Calculating', 'Canoodling',
+  'Caramelizing', 'Cascading', 'Catapulting', 'Cerebrating', 'Channeling',
+  'Channelling', 'Choreographing', 'Churning', 'Clauding', 'Coalescing',
+  'Cogitating', 'Combobulating', 'Composing', 'Computing', 'Concocting',
+  'Considering', 'Contemplating', 'Cooking', 'Crafting', 'Creating',
+  'Crunching', 'Crystallizing', 'Cultivating', 'Deciphering', 'Deliberating',
+  'Determining', 'Dilly-dallying', 'Discombobulating', 'Doing', 'Doodling',
+  'Drizzling', 'Ebbing', 'Effecting', 'Elucidating', 'Embellishing',
+  'Enchanting', 'Envisioning', 'Evaporating', 'Fermenting', 'Fiddle-faddling',
+  'Finagling', 'Flambéing', 'Flibbertigibbeting', 'Flowing', 'Flummoxing',
+  'Fluttering', 'Forging', 'Forming', 'Frolicking', 'Frosting',
+  'Gallivanting', 'Galloping', 'Garnishing', 'Generating', 'Gesticulating',
+  'Germinating', 'Gitifying', 'Grooving', 'Gusting', 'Harmonizing',
+  'Hashing', 'Hatching', 'Herding', 'Honking', 'Hullaballooing',
+  'Hyperspacing', 'Ideating', 'Imagining', 'Improvising', 'Incubating',
+  'Inferring', 'Infusing', 'Ionizing', 'Jitterbugging', 'Julienning',
+  'Kneading', 'Leavening', 'Levitating', 'Lollygagging', 'Manifesting',
+  'Marinating', 'Meandering', 'Metamorphosing', 'Misting', 'Moonwalking',
+  'Moseying', 'Mulling', 'Mustering', 'Musing', 'Nebulizing',
+  'Nesting', 'Newspapering', 'Noodling', 'Nucleating', 'Orbiting',
+  'Orchestrating', 'Osmosing', 'Perambulating', 'Percolating', 'Perusing',
+  'Philosophising', 'Photosynthesizing', 'Pollinating', 'Pondering', 'Pontificating',
+  'Pouncing', 'Precipitating', 'Prestidigitating', 'Processing', 'Proofing',
+  'Propagating', 'Puttering', 'Puzzling', 'Quantumizing', 'Razzle-dazzling',
+  'Razzmatazzing', 'Recombobulating', 'Reticulating', 'Roosting', 'Ruminating',
+  'Sautéing', 'Scampering', 'Schlepping', 'Scurrying', 'Seasoning',
+  'Shenaniganing', 'Shimmying', 'Simmering', 'Skedaddling', 'Sketching',
+  'Slithering', 'Smooshing', 'Sock-hopping', 'Spelunking', 'Spinning',
+  'Sprouting', 'Stewing', 'Sublimating', 'Swirling', 'Swooping',
+  'Symbioting', 'Synthesizing', 'Tempering', 'Thinking', 'Thundering',
+  'Tinkering', 'Tomfoolering', 'Topsy-turvying', 'Transfiguring', 'Transmuting',
+  'Twisting', 'Undulating', 'Unfurling', 'Unravelling', 'Vibing',
+  'Waddling', 'Wandering', 'Warping', 'Whatchamacalliting', 'Whirlpooling',
+  'Whirring', 'Whisking', 'Wibbling', 'Working', 'Wrangling',
+  'Zesting', 'Zigzagging',
+]
+
 const AboutMe = () => {
   const [isEmailPopupOpen, setIsEmailPopupOpen] = useState(false)
+  const [verbIndex, setVerbIndex] = useState(0)
+  const [fade, setFade] = useState(true)
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
+  useEffect(() => {
+    intervalRef.current = setInterval(() => {
+      setFade(false)
+      setTimeout(() => {
+        setVerbIndex((prev) => (prev + 1) % SPINNER_VERBS.length)
+        setFade(true)
+      }, 300)
+    }, 2000)
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current)
+    }
+  }, [])
 
   return (
     <div className="h-full flex flex-col gap-6">
@@ -20,7 +76,10 @@ const AboutMe = () => {
           <div className="flex items-center gap-2 mb-2">
             <div className="flex items-center gap-2 px-2 py-1 bg-red-500/5 rounded-full border border-red-500/15">
               <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-              <span className="text-gray-400 text-sm font-manrope">Building&nbsp;</span>
+              <span
+                className="text-gray-400 text-sm font-manrope inline-block min-w-[90px] transition-opacity duration-300"
+                style={{ opacity: fade ? 1 : 0 }}
+              >{SPINNER_VERBS[verbIndex]}&nbsp;</span>
             </div>
           </div>
           <h2 className="text-2xl font-bold text-white font-manrope">Umut Dinçer Yananer</h2>

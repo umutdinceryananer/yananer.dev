@@ -45,7 +45,7 @@ const WorkExperience = () => {
               </div>
               
               <div className="flex items-center gap-2 mb-2">
-                <h4 className="text-indigo-400 font-medium">Customer Advisory Intern</h4>
+                <h4 className="text-indigo-400 font-medium">Associate System Engineer</h4>
               </div>
               
               <div className="flex flex-wrap gap-2 mb-3">
