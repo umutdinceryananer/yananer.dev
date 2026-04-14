@@ -47,7 +47,15 @@ const AboutMe = () => {
   const [isEmailPopupOpen, setIsEmailPopupOpen] = useState(false)
   const [verbIndex, setVerbIndex] = useState(0)
   const [fade, setFade] = useState(true)
+  const [spanWidth, setSpanWidth] = useState<number>(0)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const measureRef = useRef<HTMLSpanElement>(null)
+
+  useEffect(() => {
+    if (measureRef.current) {
+      setSpanWidth(measureRef.current.offsetWidth)
+    }
+  }, [verbIndex])
 
   useEffect(() => {
     intervalRef.current = setInterval(() => {
@@ -77,8 +85,13 @@ const AboutMe = () => {
             <div className="flex items-center gap-2 px-2 py-1 bg-red-500/5 rounded-full border border-red-500/15">
               <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
               <span
-                className="text-gray-400 text-sm font-manrope inline-block min-w-[90px] transition-opacity duration-300"
-                style={{ opacity: fade ? 1 : 0 }}
+                ref={measureRef}
+                className="text-sm font-manrope absolute invisible whitespace-nowrap"
+                aria-hidden="true"
+              >{SPINNER_VERBS[verbIndex]}&nbsp;</span>
+              <span
+                className="text-gray-400 text-sm font-manrope inline-block overflow-hidden whitespace-nowrap transition-all duration-300"
+                style={{ opacity: fade ? 1 : 0, width: spanWidth ? `${spanWidth}px` : 'auto' }}
               >{SPINNER_VERBS[verbIndex]}&nbsp;</span>
             </div>
           </div>
