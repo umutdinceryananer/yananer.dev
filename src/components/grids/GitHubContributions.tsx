@@ -10,7 +10,7 @@ const GitHubContributions = () => {
     <div className="h-full flex flex-col relative overflow-visible" ref={containerRef}>
       {/* Page peel link to GitHub */}
       <a
-        href="https://github.com/Automaticare"
+        href="https://github.com/umutdinceryananer"
         target="_blank"
         rel="noopener noreferrer"
         className="absolute -top-[18px] -right-[18px] sm:-top-[26px] sm:-right-[26px] lg:-top-[30px] lg:-right-[30px] w-12 h-12 hover:w-16 hover:h-16 z-10 group overflow-hidden rounded-tr-lg sm:rounded-tr-xl transition-all duration-300 ease-out"
@@ -49,7 +49,7 @@ const GitHubContributions = () => {
       <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-gray-800 to-transparent mb-4" />
       <div className="flex-1 flex items-center justify-center min-w-0" style={{ overflow: 'clip' }}>
         <GitHubCalendar
-          username="Automaticare"
+          username="umutdinceryananer"
           colorScheme="dark"
           blockSize={12}
           blockMargin={3}

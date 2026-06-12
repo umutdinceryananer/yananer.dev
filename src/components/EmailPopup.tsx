@@ -2,11 +2,6 @@ import { useState, FormEvent } from 'react';
 import emailjs from '@emailjs/browser';
 
 // Initialize EmailJS with your public key
-console.log('Initializing EmailJS...');
-console.log('Service ID:', import.meta.env.VITE_EMAILJS_SERVICE_ID);
-console.log('Template ID:', import.meta.env.VITE_EMAILJS_TEMPLATE_ID);
-console.log('Public Key:', import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
-
 emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
 
 interface EmailPopupProps {
@@ -142,7 +137,7 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
                 <div className="relative group">
                   <input 
                     type="text"
-                    value={showCopied ? "Copied!" : "umutdincer@gmail.com"}
+                    value={showCopied ? "Copied!" : "umutdncr@gmail.com"}
                     readOnly
                     onClick={handleCopyEmail}
                     className={`w-full bg-[#1a1a1a] text-gray-400 rounded-lg px-4 py-3 cursor-pointer hover:bg-[#242424] transition-all duration-300 font-manrope relative ${!showCopied && 'group-hover:text-transparent'}`}
