@@ -96,7 +96,7 @@ const AboutMe = () => {
             </div>
           </div>
           <h2 className="text-2xl font-bold text-white font-manrope">Umut Dinçer Yananer</h2>
-          <p className="text-indigo-400 text-lg">Junior Solution Manager @ SAS</p>
+          <p className="text-indigo-400 text-lg">Junior Solution Engineer @ SAS</p>
         </div>
       </div>
 
