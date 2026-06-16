@@ -1,5 +1,6 @@
 import { useState, FormEvent } from 'react';   
 import emailjs from '@emailjs/browser';
+import { profile } from '../data/profile';
 
 // Initialize EmailJS with your public key
 emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
@@ -21,7 +22,7 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
   if (!isOpen) return null;
 
   const handleCopyEmail = () => {
-    navigator.clipboard.writeText('umutdncr@gmail.com');
+    navigator.clipboard.writeText(profile.email);
     setShowCopied(true);
     setTimeout(() => {
       const input = document.querySelector('input[value="Copied!"]') as HTMLElement;
@@ -73,7 +74,7 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
             from_name: fromEmail,
             from_email: fromEmail,
             to_name: 'Umut',
-            to_email: 'umutdncr@gmail.com',
+            to_email: profile.email,
             subject: subject,
             message: message,
             reply_to: fromEmail
@@ -137,7 +138,7 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
                 <div className="relative group">
                   <input 
                     type="text"
-                    value={showCopied ? "Copied!" : "umutdncr@gmail.com"}
+                    value={showCopied ? "Copied!" : profile.email}
                     readOnly
                     onClick={handleCopyEmail}
                     className={`w-full bg-[#1a1a1a] text-gray-400 rounded-lg px-4 py-3 cursor-pointer hover:bg-[#242424] transition-all duration-300 font-manrope relative ${!showCopied && 'group-hover:text-transparent'}`}

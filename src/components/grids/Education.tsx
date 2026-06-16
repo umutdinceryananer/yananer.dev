@@ -1,4 +1,7 @@
+import { profile } from '../../data/profile'
+
 const Education = () => {
+  const edu = profile.education[0]
 
   return (
     <div className="h-full flex flex-col">
@@ -19,27 +22,27 @@ const Education = () => {
         <div className="relative space-y-1">
           {/* University Name with Badge */}
           <div className="flex items-center gap-2 mb-0">
-            <h4 className="text-base font-medium text-indigo-400">Ihsan Dogramaci Bilkent University</h4>
+            <h4 className="text-base font-medium text-indigo-400">{edu.institution}</h4>
             <span className="px-1.5 py-0.5 bg-indigo-500/10 text-indigo-300 text-[10px] rounded-full border border-indigo-500/20">
-              BSc
+              {edu.degree}
             </span>
           </div>
 
           {/* Department */}
           <p className="text-gray-300 text-sm">
-            Information Systems and Technologies
+            {edu.field}
           </p>
 
           {/* Timeline */}
           <div className="flex items-center gap-2 text-xs">
             <div className="flex items-center gap-1">
               <span className="text-gray-400">Started:</span>
-              <span className="text-indigo-400 font-medium">2020</span>
+              <span className="text-indigo-400 font-medium">{edu.startYear}</span>
             </div>
             <span className="text-gray-600">•</span>
             <div className="flex items-center gap-1">
               <span className="text-gray-400">Graduated:</span>
-              <span className="text-indigo-400 font-medium">2025</span>
+              <span className="text-indigo-400 font-medium">{edu.endYear}</span>
             </div>
           </div>
         </div>

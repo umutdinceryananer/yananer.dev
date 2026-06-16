@@ -60,3 +60,6 @@ debug.log*
 
 # Optional eslint cache
 .eslintcache
+
+# Internal planning docs (keep out of the public repo)
+/agent-hooks-brief.md

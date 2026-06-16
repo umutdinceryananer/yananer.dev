@@ -1,4 +1,7 @@
+# AI agents: this site has machine-readable entry points.
+#   Skill file (tasks you can run): https://yananer.dev/SKILL.md
+#   LLM index:                      https://yananer.dev/llms.txt
+#   Résumé (JSON Resume):           https://yananer.dev/resume.json
+
 User-agent: *
 Allow: /
-
-Sitemap: https://yananer.dev/sitemap.xml

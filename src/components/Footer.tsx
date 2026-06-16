@@ -1,15 +1,17 @@
+import { profile } from '../data/profile'
+
 const Footer = () => {
   return (
     <footer className="w-full bg-[#0F0F0F] py-6 mt-auto">
       <div className="w-full max-w-[1400px] mx-auto px-2 sm:px-4 lg:px-8">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-gray-400 text-sm">
           <p className="text-center sm:text-left">
-            2025 Umut Dinçer Yananer.
+            2025 {profile.name}.
           </p>
           <div className="flex items-center gap-2">
             <span>Source code available on</span>
             <a
-              href="https://github.com/umutdinceryananer/yananer.dev"
+              href={profile.sourceRepoUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="text-indigo-400 hover:text-indigo-300 transition-colors flex items-center gap-2"
@@ -26,4 +28,4 @@ const Footer = () => {
   )
 }
 
-export default Footer 
+export default Footer

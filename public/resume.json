@@ -1,0 +1,260 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json",
+  "meta": {
+    "note": "Generated from src/data — do not edit by hand.",
+    "canonical": "https://yananer.dev/resume.json"
+  },
+  "basics": {
+    "name": "Umut Dinçer Yananer",
+    "label": "Junior Solution Engineer @ SAS",
+    "email": "umutdncr@gmail.com",
+    "url": "https://yananer.dev",
+    "summary": "Software engineer who builds end-to-end across backend, data/ML, and game theory.",
+    "profiles": [
+      {
+        "network": "LinkedIn",
+        "url": "https://www.linkedin.com/in/umut-yananer/"
+      },
+      {
+        "network": "GitHub",
+        "url": "https://github.com/umutdinceryananer"
+      }
+    ]
+  },
+  "work": [
+    {
+      "name": "SAS Institute",
+      "position": "Junior Solution Engineer",
+      "startDate": "2025-04",
+      "summary": "Developing analytics solutions using SAS and SAS Viya through case studies, while strengthening open-source skills by creating Python-based projects in data and analytics."
+    },
+    {
+      "name": "Meteksan Defence",
+      "position": "Business Analyst Intern",
+      "startDate": "2024-08",
+      "endDate": "2024-09",
+      "summary": "Managed an IT asset auditing project, implementing an SAP-based tracking system for 1,600 assets, improving allocation accuracy and achieving a 92% tracking precision."
+    },
+    {
+      "name": "Orion Innovation",
+      "position": "Software Designer Intern",
+      "startDate": "2023-09",
+      "endDate": "2024-01",
+      "summary": "Developed a WebRTC module frontend with React and TypeScript, ensured code reliability through problem-solving, and used Figma for design and prototyping to align with the technical manager."
+    },
+    {
+      "name": "TUV Austria",
+      "position": "Software Development Intern",
+      "startDate": "2023-08",
+      "endDate": "2023-10",
+      "summary": "Improved PwnDoc Pentest Report Generator by developing frontend and backend features, enhancing reliability and performance through QA testing with Selenium."
+    },
+    {
+      "name": "Jotform",
+      "position": "UI Developer Intern",
+      "startDate": "2022-06",
+      "endDate": "2022-08",
+      "summary": "Led the design implementation of the URL Redirection Tool with a 12-member team, preventing URL mismatches, enhancing UX, and ensuring future development through detailed documentation."
+    },
+    {
+      "name": "Petbilir",
+      "position": "Founding Developer",
+      "startDate": "2021-02",
+      "endDate": "2023-08",
+      "summary": "Led a 6-person team in strategic decision-making, collaboration, and execution, adopting React, Node.js, Express, and TailwindCSS, while securing two awards and exclusive investment opportunities."
+    }
+  ],
+  "education": [
+    {
+      "institution": "Ihsan Dogramaci Bilkent University",
+      "studyType": "BSc",
+      "area": "Information Systems and Technologies",
+      "startDate": "2020",
+      "endDate": "2025"
+    }
+  ],
+  "skills": [
+    {
+      "name": "Python",
+      "keywords": [
+        "Core Language"
+      ]
+    },
+    {
+      "name": "Machine Learning",
+      "keywords": [
+        "AI"
+      ]
+    },
+    {
+      "name": "Data Science",
+      "keywords": [
+        "Data"
+      ]
+    },
+    {
+      "name": "Data Visualization",
+      "keywords": [
+        "Data"
+      ]
+    },
+    {
+      "name": "Java",
+      "keywords": [
+        "OOP"
+      ]
+    },
+    {
+      "name": "Javascript",
+      "keywords": [
+        "Web Dev"
+      ]
+    },
+    {
+      "name": "AWS",
+      "keywords": [
+        "Cloud Services"
+      ]
+    },
+    {
+      "name": "React",
+      "keywords": [
+        "UI Framework"
+      ]
+    },
+    {
+      "name": "Typescript",
+      "keywords": [
+        "Type Safety"
+      ]
+    },
+    {
+      "name": "Node.js",
+      "keywords": [
+        "Runtime Environment"
+      ]
+    },
+    {
+      "name": "Express",
+      "keywords": [
+        "Web Framework"
+      ]
+    },
+    {
+      "name": "Selenium",
+      "keywords": [
+        "Test Automation"
+      ]
+    },
+    {
+      "name": "Docker",
+      "keywords": [
+        "Containerization"
+      ]
+    },
+    {
+      "name": "Arduino",
+      "keywords": [
+        "Embedded Systems"
+      ]
+    },
+    {
+      "name": "MongoDB",
+      "keywords": [
+        "NoSQL Database"
+      ]
+    },
+    {
+      "name": "MySQL",
+      "keywords": [
+        "SQL Database"
+      ]
+    },
+    {
+      "name": "PostgreSQL",
+      "keywords": [
+        "Relational DB"
+      ]
+    },
+    {
+      "name": "Spring",
+      "keywords": [
+        "Java Framework"
+      ]
+    },
+    {
+      "name": "Vite",
+      "keywords": [
+        "Build Tool"
+      ]
+    },
+    {
+      "name": "Tailwind",
+      "keywords": [
+        "CSS Framework"
+      ]
+    },
+    {
+      "name": "Git",
+      "keywords": [
+        "Version Control"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "FX-Risk-Engine",
+      "description": "A real-data FX risk service that aggregates multi-currency positions into a base currency and computes portfolio value, daily P&L, currency exposure, and ±10% what-if scenarios.",
+      "url": "https://github.com/umutdinceryananer/FX-Risk-Engine",
+      "keywords": [
+        "Python",
+        "Flask",
+        "Flask-Smorest",
+        "SQLAlchemy",
+        "Alembic",
+        "APScheduler",
+        "Docker",
+        "pytest"
+      ]
+    },
+    {
+      "name": "My-Game-Theory-Lab",
+      "description": "An Iterated Prisoner's Dilemma lab: configure payoff matrices and error rates, run tournaments between strategies, evolve genetic strategies, and inspect results with tables and heatmaps.",
+      "url": "https://github.com/umutdinceryananer/My-Game-Theory-Lab",
+      "keywords": [
+        "TypeScript",
+        "React",
+        "Vite",
+        "Tailwind",
+        "Vitest"
+      ]
+    },
+    {
+      "name": "Mobile-Game-Analytics-Pipeline",
+      "description": "A mobile-game user-acquisition analytics pipeline: SQL-driven KPIs, funnel + ROAS by channel, D1/D7 retention cohorts, and a churn model (Logistic Regression + XGBoost) on DuckDB, with a Tableau story. (All data is SYNTHETIC (generated from data/config/synthetic.yaml). The metrics are illustrative, not real user data — always say so when discussing numbers.)",
+      "url": "https://github.com/umutdinceryananer/Mobile-Game-Analytics-Pipeline",
+      "keywords": [
+        "Python",
+        "DuckDB",
+        "SQL",
+        "scikit-learn (LogReg)",
+        "XGBoost",
+        "Tableau"
+      ]
+    },
+    {
+      "name": "elastic/kibana — PR #268326",
+      "description": "Merged PR in elastic/kibana: show a \"Go to dashboard\" button in the save-success toast.",
+      "url": "https://github.com/elastic/kibana/pull/268326"
+    },
+    {
+      "name": "langfuse/langfuse-docs — PR #2821",
+      "description": "PR in langfuse/langfuse-docs: add a Streamlit integration cookbook. (Open pull request — under review, NOT yet merged. Describe it as a pending contribution, not a landed one.)",
+      "url": "https://github.com/langfuse/langfuse-docs/pull/2821"
+    },
+    {
+      "name": "HISAR",
+      "description": "A SEC-filings analysis system (private, in development): evaluation methodology (LLM-as-judge, gold-set construction, abnormal-return measurement) plus GraphRAG / ontology work. (PRIVATE and in development. No public code; not a live/production system with real operational data. This describes a stated approach only — it is NOT independently verifiable. Keep it clearly separate from the verifiable public repos above; never present it as live or production.)"
+    }
+  ]
+}

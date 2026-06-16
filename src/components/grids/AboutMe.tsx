@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import EmailPopup from '../EmailPopup'
 import profilePhoto from '../../assets/umut-foto.jpg'
+import { profile } from '../../data/profile'
 
 const SPINNER_VERBS = [
   'Accomplishing', 'Actioning', 'Actualizing', 'Architecting', 'Baking',
@@ -50,6 +51,16 @@ const AboutMe = () => {
   const [spanWidth, setSpanWidth] = useState<number>(0)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const measureRef = useRef<HTMLSpanElement>(null)
+  const linkedinUrl = profile.socials.find((s) => s.label === 'LinkedIn')?.url
+  const githubUrl = profile.socials.find((s) => s.label === 'GitHub')?.url
+  const [skillCopied, setSkillCopied] = useState(false)
+  const skillUrl = `${profile.siteUrl}/SKILL.md`
+
+  const handleCopySkill = () => {
+    navigator.clipboard.writeText(skillUrl)
+    setSkillCopied(true)
+    setTimeout(() => setSkillCopied(false), 1500)
+  }
 
   useEffect(() => {
     if (measureRef.current) {
@@ -76,7 +87,7 @@ const AboutMe = () => {
         <div className="w-32 h-40 rounded-xl overflow-hidden flex-shrink-0">
           <img
             src={profilePhoto}
-            alt="Umut Dinçer Yananer"
+            alt={profile.name}
             className="w-full h-full object-cover"
           />
         </div>
@@ -95,8 +106,8 @@ const AboutMe = () => {
               >{SPINNER_VERBS[verbIndex]}&nbsp;</span>
             </div>
           </div>
-          <h2 className="text-2xl font-bold text-white font-manrope">Umut Dinçer Yananer</h2>
-          <p className="text-indigo-400 text-lg">Junior Solution Engineer @ SAS</p>
+          <h2 className="text-2xl font-bold text-white font-manrope">{profile.name}</h2>
+          <p className="text-indigo-400 text-lg">{profile.role}</p>
         </div>
       </div>
 
@@ -104,8 +115,7 @@ const AboutMe = () => {
         <div className="bg-[#141414] rounded-xl p-4 border border-gray-800 mb-4">
           <h3 className="text-xl font-semibold text-white mb-3 font-manrope">About Me</h3>
           <p className="text-gray-300 text-sm leading-relaxed">
-            Solution-oriented professional with AWS Cloud Practitioner certification,
-            passionate about learning, problem-solving, and delivering impactful solutions.
+            {profile.bio}
           </p>
         </div>
         <div className="bg-[#141414] rounded-xl p-4 border border-gray-800">
@@ -120,7 +130,7 @@ const AboutMe = () => {
             </button>
 
             <a 
-              href="https://www.linkedin.com/in/umut-yananer/"
+              href={linkedinUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 px-4 py-2 bg-[#1a1a1a] hover:bg-[#1f1f1f] text-white rounded-lg transition-colors border border-indigo-500/30 hover:border-indigo-500/50"
@@ -131,7 +141,7 @@ const AboutMe = () => {
             </a>
 
             <a 
-              href="https://github.com/umutdinceryananer"
+              href={githubUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 px-4 py-2 bg-[#1a1a1a] hover:bg-[#1f1f1f] text-white rounded-lg transition-colors border border-indigo-500/30 hover:border-indigo-500/50"
@@ -142,6 +152,32 @@ const AboutMe = () => {
             </a>
 
           </div>
+
+          <button
+            onClick={handleCopySkill}
+            title={`Copy ${skillUrl}`}
+            aria-label={skillCopied ? 'Skill file URL copied' : 'Copy AI agent skill file URL'}
+            className="group mt-3 w-full flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg border border-indigo-500/25 bg-gradient-to-r from-indigo-500/10 to-transparent hover:from-indigo-500/20 hover:border-indigo-500/50 hover:shadow-[0_0_15px_rgba(99,102,241,0.12)] transition-all duration-300"
+          >
+            <span className="flex items-center gap-2 min-w-0">
+              <span className="text-base leading-none flex-shrink-0" aria-hidden="true">🦞</span>
+              <span className="text-gray-300 text-sm truncate">
+                Point your AI agent at{' '}
+                <span className="text-indigo-300 font-medium">/SKILL.md</span>
+              </span>
+            </span>
+            <span className="flex-shrink-0 text-gray-500 group-hover:text-indigo-300 transition-colors">
+              {skillCopied ? (
+                <svg className="w-4 h-4 text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                </svg>
+              ) : (
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184" />
+                </svg>
+              )}
+            </span>
+          </button>
         </div>
       </div>
 

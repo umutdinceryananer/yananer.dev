@@ -1,27 +1,7 @@
+import { profile } from '../../data/profile'
+
 const TechStack = () => {
-  const technologies = [
-    { name: "Python", description: "Core Language", hasHeart: true },
-    { name: "Machine Learning", description: "AI", hasHeart: true },
-    { name: "Data Science", description: "Data", hasHeart: true },
-    { name: "Data Visualization", description: "Data", hasHeart: true },
-    { name: "Java", description: "OOP"},
-    { name: "Javascript", description: "Web Dev" },
-    { name: "AWS", description: "Cloud Services", hasHeart: true },
-    { name: "React", description: "UI Framework", hasTooltip: true },
-    { name: "Typescript", description: "Type Safety", hasTooltip: true },
-    { name: "Node.js", description: "Runtime Environment" },
-    { name: "Express", description: "Web Framework" },
-    { name: "Selenium", description: "Test Automation" },
-    { name: "Docker", description: "Containerization" },
-    { name: "Arduino", description: "Embedded Systems", hasHeart: true },
-    { name: "MongoDB", description: "NoSQL Database" },
-    { name: "MySQL", description: "SQL Database" },
-    { name: "PostgreSQL", description: "Relational DB", hasHeart: true },
-    { name: "Spring", description: "Java Framework" },
-    { name: "Vite", description: "Build Tool", hasTooltip: true },
-    { name: "Tailwind", description: "CSS Framework", hasTooltip: true },
-    { name: "Git", description: "Version Control", hasTooltip: true },
-  ];
+  const technologies = profile.tech
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const element = e.currentTarget;

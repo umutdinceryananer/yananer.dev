@@ -1,0 +1,22 @@
+<!-- GENERATED from src/data — do not edit by hand; run `npm run gen`. -->
+# Umut Dinçer Yananer
+
+> Software engineer building across backend, data/ML and game theory — currently Junior Solution Engineer at SAS.
+
+- Site: https://yananer.dev
+- Agent skill file: https://yananer.dev/SKILL.md
+- Résumé (JSON Resume): https://yananer.dev/resume.json
+- GitHub: https://github.com/umutdinceryananer
+- LinkedIn: https://www.linkedin.com/in/umut-yananer/
+
+## Public projects
+- [FX-Risk-Engine](https://github.com/umutdinceryananer/FX-Risk-Engine): A real-data FX risk service that aggregates multi-currency positions into a base currency and computes portfolio value, daily P&L, currency exposure, and ±10% what-if scenarios.
+- [My-Game-Theory-Lab](https://github.com/umutdinceryananer/My-Game-Theory-Lab): An Iterated Prisoner's Dilemma lab: configure payoff matrices and error rates, run tournaments between strategies, evolve genetic strategies, and inspect results with tables and heatmaps. — demo: https://umutdinceryananer.github.io/My-Game-Theory-Lab/
+- [Mobile-Game-Analytics-Pipeline](https://github.com/umutdinceryananer/Mobile-Game-Analytics-Pipeline): A mobile-game user-acquisition analytics pipeline: SQL-driven KPIs, funnel + ROAS by channel, D1/D7 retention cohorts, and a churn model (Logistic Regression + XGBoost) on DuckDB, with a Tableau story. — demo: https://public.tableau.com/views/MobileGameUAStory/TableauStory (synthetic data)
+
+## Open-source contributions
+- [elastic/kibana — PR #268326](https://github.com/elastic/kibana/pull/268326): Merged PR in elastic/kibana: show a "Go to dashboard" button in the save-success toast. (merged)
+- [langfuse/langfuse-docs — PR #2821](https://github.com/langfuse/langfuse-docs/pull/2821): PR in langfuse/langfuse-docs: add a Streamlit integration cookbook. (open)
+
+## Private / in development
+- HISAR: A SEC-filings analysis system (private, in development): evaluation methodology (LLM-as-judge, gold-set construction, abnormal-return measurement) plus GraphRAG / ontology work. (not independently verifiable)

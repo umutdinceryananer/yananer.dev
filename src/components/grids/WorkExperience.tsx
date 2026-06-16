@@ -1,3 +1,5 @@
+import { profile } from '../../data/profile'
+
 const WorkExperience = () => {
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
@@ -5,7 +7,7 @@ const WorkExperience = () => {
     const scrollPercentage = (element.scrollTop + element.clientHeight) / element.scrollHeight;
     const bottomBlur = document.getElementById('work-exp-blur-bottom');
     const topBlur = document.getElementById('work-exp-blur-top');
-    
+
     if (bottomBlur) {
       if (scrollPercentage >= 0.95) {
         bottomBlur.style.opacity = '0';
@@ -38,158 +40,29 @@ const WorkExperience = () => {
             </div>
 
             {/* Experience Items */}
-            <div className="relative p-4 rounded-lg transition-colors group">
-              {/* Progress Dot */}
-              <div className="absolute -left-[18px] top-5 w-5 h-5 rounded-full bg-[#141414] ring-2 ring-indigo-500 ring-offset-2 ring-offset-[#0F0F0F] group-hover:ring-offset-[#141414] transition-all flex items-center justify-center">
-                <span className="text-xs text-gray-400 font-medium">6</span>
-              </div>
-              
-              <div className="flex items-center gap-2 mb-2">
-                <h4 className="text-indigo-400 font-medium">Junior Solution Engineer</h4>
-              </div>
-              
-              <div className="flex flex-wrap gap-2 mb-3">
-                <span className="px-2 py-1 bg-[#1a1a1a] rounded-md text-gray-400 text-xs border border-gray-800">
-                  SAS Institute
-                </span>
-                <span className="px-2 py-1 bg-[#1a1a1a] rounded-md text-gray-400 text-xs border border-gray-800">
-                  Apr 2025 - Present
-                </span>
-              </div>
+            {profile.work.map((entry) => (
+              <div key={entry.order} className="relative p-4 rounded-lg transition-colors group">
+                {/* Progress Dot */}
+                <div className="absolute -left-[18px] top-5 w-5 h-5 rounded-full bg-[#141414] ring-2 ring-indigo-500 ring-offset-2 ring-offset-[#0F0F0F] group-hover:ring-offset-[#141414] transition-all flex items-center justify-center">
+                  <span className="text-xs text-gray-400 font-medium">{entry.order}</span>
+                </div>
 
-              <p className="text-gray-400 text-sm">
-                Developing analytics solutions using SAS and SAS Viya through case studies, while strengthening open-source skills by creating Python-based projects in data and analytics.
-              </p>
-            </div>
-            <div className="relative p-4 rounded-lg transition-colors group">
-              {/* Progress Dot */}
-              <div className="absolute -left-[18px] top-5 w-5 h-5 rounded-full bg-[#141414] ring-2 ring-indigo-500 ring-offset-2 ring-offset-[#0F0F0F] group-hover:ring-offset-[#141414] transition-all flex items-center justify-center">
-                <span className="text-xs text-gray-400 font-medium">5</span>
-              </div>
-              
-              <div className="flex items-center gap-2 mb-2">
-                <h4 className="text-indigo-400 font-medium">Business Analyst Intern</h4>
-              </div>
-              
-              <div className="flex flex-wrap gap-2 mb-3">
-                <span className="px-2 py-1 bg-[#1a1a1a] rounded-md text-gray-400 text-xs border border-gray-800">
-                  Meteksan Defence
-                </span>
-                <span className="px-2 py-1 bg-[#1a1a1a] rounded-md text-gray-400 text-xs border border-gray-800">
-                  Aug 2024 - Sep 2024
-                </span>
-              </div>
+                <div className="flex items-center gap-2 mb-2">
+                  <h4 className="text-indigo-400 font-medium">{entry.title}</h4>
+                </div>
 
-              <p className="text-gray-400 text-sm">
-                Managed an IT asset auditing project, implementing an 
-                SAP-based tracking system for 1,600 assets, 
-                improving allocation accuracy and achieving a 92% tracking precision.
-              </p>
-            </div>
+                <div className="flex flex-wrap gap-2 mb-3">
+                  <span className="px-2 py-1 bg-[#1a1a1a] rounded-md text-gray-400 text-xs border border-gray-800">
+                    {entry.company}
+                  </span>
+                  <span className="px-2 py-1 bg-[#1a1a1a] rounded-md text-gray-400 text-xs border border-gray-800">
+                    {entry.period}
+                  </span>
+                </div>
 
-            <div className="relative p-4 rounded-lg transition-colors group">
-              {/* Progress Dot */}
-              <div className="absolute -left-[18px] top-5 w-5 h-5 rounded-full bg-[#141414] ring-2 ring-indigo-500 ring-offset-2 ring-offset-[#0F0F0F] group-hover:ring-offset-[#141414] transition-all flex items-center justify-center">
-                <span className="text-xs text-gray-400 font-medium">4</span>
+                <p className="text-gray-400 text-sm">{entry.description}</p>
               </div>
-              
-              <div className="flex items-center gap-2 mb-2">
-                <h4 className="text-indigo-400 font-medium">Software Designer Intern</h4>
-              </div>
-              
-              <div className="flex flex-wrap gap-2 mb-3">
-                <span className="px-2 py-1 bg-[#1a1a1a] rounded-md text-gray-400 text-xs border border-gray-800">
-                  Orion Innovation
-                </span>
-                <span className="px-2 py-1 bg-[#1a1a1a] rounded-md text-gray-400 text-xs border border-gray-800">
-                  Sep 2023 - Jan 2024
-                </span>
-              </div>
-
-              <p className="text-gray-400 text-sm">
-                Developed a WebRTC module frontend with React and TypeScript, 
-                ensured code reliability through problem-solving, and used Figma 
-                for design and prototyping to align with the technical manager.
-              </p>
-            </div>
-
-            <div className="relative p-4 rounded-lg transition-colors group">
-              {/* Progress Dot */}
-              <div className="absolute -left-[18px] top-5 w-5 h-5 rounded-full bg-[#141414] ring-2 ring-indigo-500 ring-offset-2 ring-offset-[#0F0F0F] group-hover:ring-offset-[#141414] transition-all flex items-center justify-center">
-                <span className="text-xs text-gray-400 font-medium">3</span>
-              </div>
-              
-              <div className="flex items-center gap-2 mb-2">
-                <h4 className="text-indigo-400 font-medium">Software Development Intern</h4>
-              </div>
-              
-              <div className="flex flex-wrap gap-2 mb-3">
-                <span className="px-2 py-1 bg-[#1a1a1a] rounded-md text-gray-400 text-xs border border-gray-800">
-                  TUV Austria
-                </span>
-                <span className="px-2 py-1 bg-[#1a1a1a] rounded-md text-gray-400 text-xs border border-gray-800">
-                  Aug 2023 - Oct 2023
-                </span>
-              </div>
-
-              <p className="text-gray-400 text-sm">
-                Improved PwnDoc Pentest Report Generator by developing frontend 
-                and backend features, enhancing reliability and performance through 
-                QA testing with Selenium.
-              </p>
-            </div>
-
-            <div className="relative p-4 rounded-lg transition-colors group">
-              {/* Progress Dot */}
-              <div className="absolute -left-[18px] top-5 w-5 h-5 rounded-full bg-[#141414] ring-2 ring-indigo-500 ring-offset-2 ring-offset-[#0F0F0F] group-hover:ring-offset-[#141414] transition-all flex items-center justify-center">
-                <span className="text-xs text-gray-400 font-medium">2</span>
-              </div>
-              
-              <div className="flex items-center gap-2 mb-2">
-                <h4 className="text-indigo-400 font-medium">UI Developer Intern</h4>
-              </div>
-              
-              <div className="flex flex-wrap gap-2 mb-3">
-                <span className="px-2 py-1 bg-[#1a1a1a] rounded-md text-gray-400 text-xs border border-gray-800">
-                  Jotform
-                </span>
-                <span className="px-2 py-1 bg-[#1a1a1a] rounded-md text-gray-400 text-xs border border-gray-800">
-                  Jun 2022 - Aug 2022
-                </span>
-              </div>
-
-              <p className="text-gray-400 text-sm">
-                Led the design implementation of the URL Redirection Tool with a 12-member team, 
-                preventing URL mismatches, enhancing UX, and ensuring future development through 
-                detailed documentation.
-              </p>
-            </div>
-
-            <div className="relative p-4 rounded-lg transition-colors group">
-              {/* Progress Dot */}
-              <div className="absolute -left-[18px] top-5 w-5 h-5 rounded-full bg-[#141414] ring-2 ring-indigo-500 ring-offset-2 ring-offset-[#0F0F0F] group-hover:ring-offset-[#141414] transition-all flex items-center justify-center">
-                <span className="text-xs text-gray-400 font-medium">1</span>
-              </div>
-              
-              <div className="flex items-center gap-2 mb-2">
-                <h4 className="text-indigo-400 font-medium">Founding Developer</h4>
-              </div>
-              
-              <div className="flex flex-wrap gap-2 mb-3">
-                <span className="px-2 py-1 bg-[#1a1a1a] rounded-md text-gray-400 text-xs border border-gray-800">
-                  Petbilir
-                </span>
-                <span className="px-2 py-1 bg-[#1a1a1a] rounded-md text-gray-400 text-xs border border-gray-800">
-                  Feb 2021 - Aug 2023
-                </span>
-              </div>
-
-              <p className="text-gray-400 text-sm">
-                Led a 6-person team in strategic decision-making, collaboration, 
-                and execution, adopting React, Node.js, Express, and TailwindCSS, 
-                while securing two awards and exclusive investment opportunities.
-              </p>
-            </div>
+            ))}
           </div>
         </div>
         <div id="work-exp-blur-top" className="absolute top-0 left-0 right-2 h-12 bg-gradient-to-b from-[#141414] to-transparent pointer-events-none transition-opacity duration-500 opacity-0" />
