@@ -195,7 +195,7 @@ const resume = {
     studyType: e.degree,
     area: e.field,
     startDate: e.startYear,
-    endDate: e.endYear,
+    ...(e.incoming ? {} : { endDate: e.endYear }),
   })),
   skills: profile.tech.map((t) => ({ name: t.name, keywords: [t.description] })),
   projects: projects.map((p) => ({

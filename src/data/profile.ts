@@ -16,6 +16,8 @@ export interface EducationEntry {
   field: string
   startYear: string
   endYear: string
+  /** When true, the degree hasn't started/finished yet — UI shows "Incoming" instead of a graduation year. */
+  incoming?: boolean
 }
 
 export interface WorkEntry {
@@ -67,7 +69,7 @@ export const profile: Profile = {
   tagline:
     'Software engineer who builds across backend and data/ML.',
   bio:
-    'Software engineer who builds LLM agents and data/ML systems end-to-end, and tinkers with whatever else catches my interest.',
+    'Software engineer and founder — I turn customer problems into deployed AI systems: agentic LLM apps in Python and React, with production SaaS shipped to paying customers. I tinker with whatever else catches my interest.',
   location: 'Ankara, Türkiye',
   email: 'umutdncr@gmail.com',
   siteUrl: 'https://yananer.dev',
@@ -88,12 +90,20 @@ export const profile: Profile = {
   ],
   work: [
     {
-      order: 6,
+      order: 7,
       title: 'Junior Solution Engineer',
       company: 'SAS Institute',
       period: 'Apr 2025 - Present',
       description:
-        'Developing analytics solutions using SAS and SAS Viya through case studies, while strengthening open-source skills by creating Python-based projects in data and analytics.',
+        "Deliver live technical demos and end-to-end PoCs to public-sector clients — data pipelines, ML, synthetic data, and RAG — scoping AI/GenAI use cases directly with clients' technical and business teams and presenting to senior decision-makers. Won a competitive PoC evaluation against an external subcontractor.",
+    },
+    {
+      order: 6,
+      title: 'Founding AI Engineer & Co-Founder',
+      company: 'Hisar',
+      period: 'Nov 2025 - Present',
+      description:
+        'Co-founded Hisar (in development): a system that analyzes SEC filings to surface financial risk signals. Built an evaluation harness (labeled gold-set + return-based benchmarks), multi-step LLM workflows in Python/LangChain with multi-provider fallback, a GraphRAG + ontology retrieval layer, and a FastAPI backend (LLM scoring + FRED macro data) with a React frontend.',
     },
     {
       order: 5,
@@ -109,7 +119,7 @@ export const profile: Profile = {
       company: 'Orion Innovation',
       period: 'Sep 2023 - Jan 2024',
       description:
-        'Developed a WebRTC module frontend with React and TypeScript, ensured code reliability through problem-solving, and used Figma for design and prototyping to align with the technical manager.',
+        'Rebuilt a legacy WebRTC module from scratch in TypeScript/React across the client-side stack; scoped requirements with stakeholders and prototyped designs in Figma.',
     },
     {
       order: 3,
@@ -129,11 +139,11 @@ export const profile: Profile = {
     },
     {
       order: 1,
-      title: 'Founding Developer',
-      company: 'Petbilir',
+      title: 'Founding Product Engineer & Co-Founder',
+      company: 'Petbilir / Petlyst',
       period: 'Feb 2021 - Aug 2023',
       description:
-        'Led a 6-person team in strategic decision-making, collaboration, and execution, adopting React, Node.js, Express, and TailwindCSS, while securing two awards and exclusive investment opportunities.',
+        'Co-founded a veterinary SaaS startup while at university; led a 6-person team and grew it to 9 paying clinic customers. Shipped an automated vaccination-reminder system on AWS (EventBridge, Lambda, PostgreSQL) — the most-adopted feature — driving the product from concept through customer development.',
     },
   ],
   tech: [

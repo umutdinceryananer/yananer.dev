@@ -9,7 +9,7 @@
     "label": "Junior Solution Engineer @ SAS",
     "email": "umutdncr@gmail.com",
     "url": "https://yananer.dev",
-    "summary": "Software engineer who builds LLM agents and data/ML systems end-to-end, and tinkers with whatever else catches my interest.",
+    "summary": "Software engineer and founder — I turn customer problems into deployed AI systems: agentic LLM apps in Python and React, with production SaaS shipped to paying customers. I tinker with whatever else catches my interest.",
     "location": {
       "city": "Ankara, Türkiye"
     },
@@ -29,7 +29,13 @@
       "name": "SAS Institute",
       "position": "Junior Solution Engineer",
       "startDate": "2025-04",
-      "summary": "Developing analytics solutions using SAS and SAS Viya through case studies, while strengthening open-source skills by creating Python-based projects in data and analytics."
+      "summary": "Deliver live technical demos and end-to-end PoCs to public-sector clients — data pipelines, ML, synthetic data, and RAG — scoping AI/GenAI use cases directly with clients' technical and business teams and presenting to senior decision-makers. Won a competitive PoC evaluation against an external subcontractor."
+    },
+    {
+      "name": "Hisar",
+      "position": "Founding AI Engineer & Co-Founder",
+      "startDate": "2025-11",
+      "summary": "Co-founded Hisar (in development): a system that analyzes SEC filings to surface financial risk signals. Built an evaluation harness (labeled gold-set + return-based benchmarks), multi-step LLM workflows in Python/LangChain with multi-provider fallback, a GraphRAG + ontology retrieval layer, and a FastAPI backend (LLM scoring + FRED macro data) with a React frontend."
     },
     {
       "name": "Meteksan Defence",
@@ -43,7 +49,7 @@
       "position": "Software Designer Intern",
       "startDate": "2023-09",
       "endDate": "2024-01",
-      "summary": "Developed a WebRTC module frontend with React and TypeScript, ensured code reliability through problem-solving, and used Figma for design and prototyping to align with the technical manager."
+      "summary": "Rebuilt a legacy WebRTC module from scratch in TypeScript/React across the client-side stack; scoped requirements with stakeholders and prototyped designs in Figma."
     },
     {
       "name": "TUV Austria",
@@ -60,11 +66,11 @@
       "summary": "Led the design implementation of the URL Redirection Tool with a 12-member team, preventing URL mismatches, enhancing UX, and ensuring future development through detailed documentation."
     },
     {
-      "name": "Petbilir",
-      "position": "Founding Developer",
+      "name": "Petbilir / Petlyst",
+      "position": "Founding Product Engineer & Co-Founder",
       "startDate": "2021-02",
       "endDate": "2023-08",
-      "summary": "Led a 6-person team in strategic decision-making, collaboration, and execution, adopting React, Node.js, Express, and TailwindCSS, while securing two awards and exclusive investment opportunities."
+      "summary": "Co-founded a veterinary SaaS startup while at university; led a 6-person team and grew it to 9 paying clinic customers. Shipped an automated vaccination-reminder system on AWS (EventBridge, Lambda, PostgreSQL) — the most-adopted feature — driving the product from concept through customer development."
     }
   ],
   "education": [
@@ -282,8 +288,8 @@
       "url": "https://github.com/langfuse/langfuse-docs/pull/2821"
     },
     {
-      "name": "HISAR",
-      "description": "A SEC-filings analysis system (private, in development): evaluation methodology (LLM-as-judge, gold-set construction, abnormal-return measurement) plus GraphRAG / ontology work. (PRIVATE and in development. No public code; not a live/production system with real operational data. This describes a stated approach only — it is NOT independently verifiable. Keep it clearly separate from the verifiable public repos above; never present it as live or production.)"
+      "name": "Hisar",
+      "description": "A co-founded, in-development startup analyzing SEC filings to surface financial risk signals: multi-step LLM workflows in Python/LangChain with multi-provider fallback, a GraphRAG + ontology retrieval layer, a FastAPI backend with LLM-based scoring and FRED macro-data integration, a React frontend, and an evaluation harness (labeled gold-set + return-based benchmarks). (PRIVATE and in development. No public code; not a live/production system with real operational data. This describes a stated approach only — it is NOT independently verifiable. Keep it clearly separate from the verifiable public repos above; never present it as live or production.)"
     }
   ]
 }

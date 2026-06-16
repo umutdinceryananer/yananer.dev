@@ -170,11 +170,11 @@ export const projects: Project[] = [
     note: 'Open pull request — under review, NOT yet merged. Describe it as a pending contribution, not a landed one.',
   },
   {
-    name: 'HISAR',
+    name: 'Hisar',
     kind: 'repo',
     oneLiner:
-      'A SEC-filings analysis system (private, in development): evaluation methodology (LLM-as-judge, gold-set construction, abnormal-return measurement) plus GraphRAG / ontology work.',
-    signal: 'applied LLM systems / evaluation / GraphRAG',
+      'A co-founded, in-development startup analyzing SEC filings to surface financial risk signals: multi-step LLM workflows in Python/LangChain with multi-provider fallback, a GraphRAG + ontology retrieval layer, a FastAPI backend with LLM-based scoring and FRED macro-data integration, a React frontend, and an evaluation harness (labeled gold-set + return-based benchmarks).',
+    signal: 'AI startup / applied LLM / GraphRAG / evaluation',
     isPrivate: true,
     isVerifiable: false,
     note: 'PRIVATE and in development. No public code; not a live/production system with real operational data. This describes a stated approach only — it is NOT independently verifiable. Keep it clearly separate from the verifiable public repos above; never present it as live or production.',
