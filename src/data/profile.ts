@@ -45,6 +45,8 @@ export interface Profile {
   /** Bare job title for JSON-LD / resume.json, e.g. "Junior Solution Engineer". */
   roleTitle: string
   employer: string
+  /** Self-positioning headline for the page <title> / OG title, e.g. "Software Engineer & Founder". */
+  headline: string
   /** Short one-liner for llms.txt / JSON-LD description. */
   tagline: string
   bio: string
@@ -66,6 +68,7 @@ export const profile: Profile = {
   role: 'Junior Solution Engineer @ SAS',
   roleTitle: 'Junior Solution Engineer',
   employer: 'SAS',
+  headline: 'Software Engineer & Founder',
   tagline:
     'Software engineer who builds across backend and data/ML.',
   bio:
