@@ -55,7 +55,7 @@ const AboutMe = () => {
   const githubUrl = profile.socials.find((s) => s.label === 'GitHub')?.url
   const [skillCopied, setSkillCopied] = useState(false)
   const skillUrl = `${profile.siteUrl}/SKILL.md`
-  const skillPrompt = `Read ${skillUrl} and help me evaluate ${profile.name.split(' ')[0]}'s engineering.`
+  const skillPrompt = `Read ${skillUrl} and help me summarize ${profile.name.split(' ')[0]}'s projects and code.`
 
   const handleCopySkill = () => {
     navigator.clipboard.writeText(skillPrompt)
