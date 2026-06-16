@@ -10,9 +10,11 @@
 - LinkedIn: https://www.linkedin.com/in/umut-yananer/
 
 ## Public projects
+- [Government-Citizen-Services-Voice-Agent](https://github.com/umutdinceryananer/Government-Citizen-Services-Voice-Agent): A multilingual (TR/EN) AI voice agent for government services: a LangGraph agent over a bilingual RAG knowledge base, with ElevenLabs speech, a FastAPI + Twilio phone layer, and a Streamlit analytics dashboard.
 - [FX-Risk-Engine](https://github.com/umutdinceryananer/FX-Risk-Engine): A real-data FX risk service that aggregates multi-currency positions into a base currency and computes portfolio value, daily P&L, currency exposure, and ±10% what-if scenarios.
 - [My-Game-Theory-Lab](https://github.com/umutdinceryananer/My-Game-Theory-Lab): An Iterated Prisoner's Dilemma lab: configure payoff matrices and error rates, run tournaments between strategies, evolve genetic strategies, and inspect results with tables and heatmaps. — demo: https://umutdinceryananer.github.io/My-Game-Theory-Lab/
 - [Mobile-Game-Analytics-Pipeline](https://github.com/umutdinceryananer/Mobile-Game-Analytics-Pipeline): A mobile-game user-acquisition analytics pipeline: SQL-driven KPIs, funnel + ROAS by channel, D1/D7 retention cohorts, and a churn model (Logistic Regression + XGBoost) on DuckDB, with a Tableau story. — demo: https://public.tableau.com/views/MobileGameUAStory/TableauStory (synthetic data)
+- [Petlyst-Web](https://github.com/PetlystHQ/Petlyst-Web): A team-built veterinary healthcare platform (CTIS senior project) connecting pet owners, vets, and clinics: a Node/Express + PostgreSQL backend with a TypeScript frontend, AWS S3 storage, token auth, and CI.
 
 ## Open-source contributions
 - [elastic/kibana — PR #268326](https://github.com/elastic/kibana/pull/268326): Merged PR in elastic/kibana: show a "Go to dashboard" button in the save-success toast. (merged)

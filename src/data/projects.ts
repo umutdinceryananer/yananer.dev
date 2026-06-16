@@ -38,6 +38,28 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    name: 'Government-Citizen-Services-Voice-Agent',
+    kind: 'repo',
+    repoUrl: 'https://github.com/umutdinceryananer/Government-Citizen-Services-Voice-Agent',
+    oneLiner:
+      'A multilingual (TR/EN) AI voice agent for government services: a LangGraph agent over a bilingual RAG knowledge base, with ElevenLabs speech, a FastAPI + Twilio phone layer, and a Streamlit analytics dashboard.',
+    signal: 'applied LLM / agent engineering',
+    tech: ['Python', 'LangGraph', 'FastAPI', 'RAG', 'ElevenLabs', 'Twilio', 'Streamlit'],
+    keyEntryPoints: [
+      'agent/graph.py — LangGraph orchestration (multi-node agent)',
+      'agent/nodes/ — intent classify + service routers (appointments, documents, complaints, escalation)',
+      'agent/server.py — streaming LLM endpoint (FastAPI + SSE)',
+      'agent/prompts/v1.0/ — versioned bilingual system prompts (TR/EN)',
+      'agent/tools/tc_kimlik.py — Turkish national-ID handling (PII-aware)',
+      'api/twilio_webhook.py — phone / voice integration',
+      'data/knowledge_base/ — bilingual RAG corpus (civil registry, driver license, appointments)',
+      'dashboard/app.py — Streamlit analytics panel',
+    ],
+    isPrivate: false,
+    isVerifiable: true,
+    note: 'A portfolio/demo system: the government back-office API is mocked, so it is not connected to real government services or live citizen data. The agent orchestration, RAG, and phone/voice plumbing are real; treat the end-to-end flow as a demonstration, not production.',
+  },
+  {
     name: 'FX-Risk-Engine',
     kind: 'repo',
     repoUrl: 'https://github.com/umutdinceryananer/FX-Risk-Engine',
@@ -104,6 +126,25 @@ export const projects: Project[] = [
     isVerifiable: true,
     syntheticData: true,
     note: 'All data is SYNTHETIC (generated from data/config/synthetic.yaml). The metrics are illustrative, not real user data — always say so when discussing numbers.',
+  },
+  {
+    name: 'Petlyst-Web',
+    kind: 'repo',
+    repoUrl: 'https://github.com/PetlystHQ/Petlyst-Web',
+    oneLiner:
+      'A team-built veterinary healthcare platform (CTIS senior project) connecting pet owners, vets, and clinics: a Node/Express + PostgreSQL backend with a TypeScript frontend, AWS S3 storage, token auth, and CI.',
+    signal: 'full-stack / team project',
+    tech: ['TypeScript', 'Node.js', 'Express', 'PostgreSQL', 'AWS S3'],
+    keyEntryPoints: [
+      'backend/petlyst-webapp-backend/ — Express REST API (clinics, pets, appointments, medical records, inventory)',
+      'backend/petlyst-webapp-backend/aws/s3Service.js — AWS S3 file storage',
+      'backend/petlyst-webapp-backend/middleware/authenticateToken.js — JWT auth + verification middleware',
+      'backend/petlyst-webapp-backend/scripts/encrypt_existing_tc_numbers.js — national-ID (PII) encryption',
+      '.github/workflows/ci.yml — CI pipeline',
+    ],
+    isPrivate: false,
+    isVerifiable: true,
+    note: 'Built with a team under the PetlystHQ org — the best public signal of collaborative work (vs. the mostly-solo repos above).',
   },
   {
     name: 'elastic/kibana — PR #268326',

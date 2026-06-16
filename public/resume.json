@@ -10,6 +10,9 @@
     "email": "umutdncr@gmail.com",
     "url": "https://yananer.dev",
     "summary": "Software engineer who builds LLM agents and data/ML systems end-to-end, and tinkers with whatever else catches my interest.",
+    "location": {
+      "city": "Ankara, Türkiye"
+    },
     "profiles": [
       {
         "network": "LinkedIn",
@@ -203,6 +206,20 @@
   ],
   "projects": [
     {
+      "name": "Government-Citizen-Services-Voice-Agent",
+      "description": "A multilingual (TR/EN) AI voice agent for government services: a LangGraph agent over a bilingual RAG knowledge base, with ElevenLabs speech, a FastAPI + Twilio phone layer, and a Streamlit analytics dashboard. (A portfolio/demo system: the government back-office API is mocked, so it is not connected to real government services or live citizen data. The agent orchestration, RAG, and phone/voice plumbing are real; treat the end-to-end flow as a demonstration, not production.)",
+      "url": "https://github.com/umutdinceryananer/Government-Citizen-Services-Voice-Agent",
+      "keywords": [
+        "Python",
+        "LangGraph",
+        "FastAPI",
+        "RAG",
+        "ElevenLabs",
+        "Twilio",
+        "Streamlit"
+      ]
+    },
+    {
       "name": "FX-Risk-Engine",
       "description": "A real-data FX risk service that aggregates multi-currency positions into a base currency and computes portfolio value, daily P&L, currency exposure, and ±10% what-if scenarios.",
       "url": "https://github.com/umutdinceryananer/FX-Risk-Engine",
@@ -240,6 +257,18 @@
         "scikit-learn (LogReg)",
         "XGBoost",
         "Tableau"
+      ]
+    },
+    {
+      "name": "Petlyst-Web",
+      "description": "A team-built veterinary healthcare platform (CTIS senior project) connecting pet owners, vets, and clinics: a Node/Express + PostgreSQL backend with a TypeScript frontend, AWS S3 storage, token auth, and CI. (Built with a team under the PetlystHQ org — the best public signal of collaborative work (vs. the mostly-solo repos above).)",
+      "url": "https://github.com/PetlystHQ/Petlyst-Web",
+      "keywords": [
+        "TypeScript",
+        "Node.js",
+        "Express",
+        "PostgreSQL",
+        "AWS S3"
       ]
     },
     {
