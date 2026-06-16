@@ -66,9 +66,9 @@ export const profile: Profile = {
   employer: 'SAS',
   // `location` (below) is optional and not currently set; it only feeds JSON-LD / resume.json.
   tagline:
-    'Software engineer building across backend, data/ML and game theory — currently Junior Solution Engineer at SAS.',
+    'Software engineer who builds across backend and data/ML.',
   bio:
-    'Software engineer who builds end-to-end across backend, data/ML, and game theory.',
+    'Software engineer who builds LLM agents and data/ML systems end-to-end, and tinkers with whatever else catches my interest.',
   // location: 'Ankara, Türkiye', // TODO(umut): set if you want it surfaced
   email: 'umutdncr@gmail.com',
   siteUrl: 'https://yananer.dev',

@@ -1,7 +1,7 @@
 <!-- GENERATED from src/data — do not edit by hand; run `npm run gen`. -->
 # Umut Dinçer Yananer
 
-> Software engineer building across backend, data/ML and game theory — currently Junior Solution Engineer at SAS.
+> Software engineer who builds across backend and data/ML.
 
 - Site: https://yananer.dev
 - Agent skill file: https://yananer.dev/SKILL.md
