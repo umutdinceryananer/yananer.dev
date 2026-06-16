@@ -9,7 +9,7 @@
     "label": "Junior Solution Engineer @ SAS",
     "email": "umutdncr@gmail.com",
     "url": "https://yananer.dev",
-    "summary": "Software engineer and founder — I turn customer problems into deployed AI systems: agentic LLM apps in Python and React, with production SaaS shipped to paying customers. I tinker with whatever else catches my interest.",
+    "summary": "Software Engineer & Founder, turning business needs into GenAI and agentic solutions. AWS Cloud Practitioner.",
     "location": {
       "city": "Ankara, Türkiye"
     },
@@ -29,13 +29,13 @@
       "name": "SAS Institute",
       "position": "Junior Solution Engineer",
       "startDate": "2025-04",
-      "summary": "Deliver live technical demos and end-to-end PoCs to public-sector clients — data pipelines, ML, synthetic data, and RAG — scoping AI/GenAI use cases directly with clients' technical and business teams and presenting to senior decision-makers. Won a competitive PoC evaluation against an external subcontractor."
+      "summary": "Deliver live technical demos and end-to-end PoCs (data pipelines, ML, RAG) to public-sector clients, scoping AI/GenAI use cases with their teams and presenting to senior decision-makers."
     },
     {
       "name": "Hisar",
       "position": "Founding AI Engineer & Co-Founder",
       "startDate": "2025-11",
-      "summary": "Co-founded Hisar (in development): a system that analyzes SEC filings to surface financial risk signals. Built an evaluation harness (labeled gold-set + return-based benchmarks), multi-step LLM workflows in Python/LangChain with multi-provider fallback, a GraphRAG + ontology retrieval layer, and a FastAPI backend (LLM scoring + FRED macro data) with a React frontend."
+      "summary": "Co-founded Hisar (in development): built the async Python/FastAPI backend for a SEC-filing analysis system (EDGAR ingestion, a rule-based gatekeeper, and multi-provider LLM scoring over PostgreSQL), plus a price-alignment/volatility research prototype."
     },
     {
       "name": "Meteksan Defence",
@@ -70,7 +70,7 @@
       "position": "Founding Product Engineer & Co-Founder",
       "startDate": "2021-02",
       "endDate": "2023-08",
-      "summary": "Co-founded a veterinary SaaS startup while at university; led a 6-person team and grew it to 9 paying clinic customers. Shipped an automated vaccination-reminder system on AWS (EventBridge, Lambda, PostgreSQL) — the most-adopted feature — driving the product from concept through customer development."
+      "summary": "Co-founded a veterinary SaaS startup at university; led a 6-person team to 9 paying clinic customers and shipped an automated vaccination-reminder system on AWS (Lambda, EventBridge, PostgreSQL)."
     }
   ],
   "education": [
@@ -254,7 +254,7 @@
     },
     {
       "name": "Mobile-Game-Analytics-Pipeline",
-      "description": "A mobile-game user-acquisition analytics pipeline: SQL-driven KPIs, funnel + ROAS by channel, D1/D7 retention cohorts, and a churn model (Logistic Regression + XGBoost) on DuckDB, with a Tableau story. (All data is SYNTHETIC (generated from data/config/synthetic.yaml). The metrics are illustrative, not real user data — always say so when discussing numbers.)",
+      "description": "A mobile-game user-acquisition analytics pipeline: SQL-driven KPIs, funnel + ROAS by channel, D1/D7 retention cohorts, and a churn model (Logistic Regression + XGBoost) on DuckDB, with a Tableau story. (Data provenance: the base telemetry is the real Cookie Cats (Kaggle) dataset; the user-acquisition and monetization fields (acquisition_channel, CAC/ad spend, revenue) are SYNTHETIC enrichment. So retention metrics rest on real data while ROI/ROAS rest on synthetic fields — always say so when discussing numbers.)",
       "url": "https://github.com/umutdinceryananer/Mobile-Game-Analytics-Pipeline",
       "keywords": [
         "Python",
@@ -289,7 +289,7 @@
     },
     {
       "name": "Hisar",
-      "description": "A co-founded, in-development startup analyzing SEC filings to surface financial risk signals: multi-step LLM workflows in Python/LangChain with multi-provider fallback, a GraphRAG + ontology retrieval layer, a FastAPI backend with LLM-based scoring and FRED macro-data integration, a React frontend, and an evaluation harness (labeled gold-set + return-based benchmarks). (PRIVATE and in development. No public code; not a live/production system with real operational data. This describes a stated approach only — it is NOT independently verifiable. Keep it clearly separate from the verifiable public repos above; never present it as live or production.)"
+      "description": "A co-founded, in-development project that analyzes SEC filings to surface financial-risk signals. The working backend is an async pipeline — EDGAR ingestion → a rule-based gatekeeper (routine vs. material) → LLM scoring with multi-provider fallback (Anthropic primary, OpenAI/Google) → PostgreSQL → cross-filing pattern detection → \"silence-first\" notifications — and a separate research prototype adds no-look-ahead price alignment and a volatility-lift correlation method. Stack: Python, FastAPI, SQLModel/asyncpg, RabbitMQ, Redis, Docker, plus a FRED macro-rate pipeline. (PRIVATE, in development, and NOT independently verifiable (no public code). Honest maturity: the ingestion/scoring backend runs end-to-end, BUT notifications are dry-run only (logged, not delivered) and the evaluation method is built yet never validated on real LLM outputs. GraphRAG / ontology retrieval, a gold-set / LLM-as-judge eval gate, formal return-based event studies, 10-K/10-Q support, and the iOS app are DESIGNED but NOT BUILT — do not present them as existing capabilities. Keep this clearly separate from the verifiable public repos; never present it as live or production.)"
     }
   ]
 }

@@ -93,7 +93,7 @@ A mobile-game user-acquisition analytics pipeline: SQL-driven KPIs, funnel + ROA
   - notebooks/3.0-Churn-Model.ipynb — churn modeling
   - references/sql/ — KPI SQL queries
   - reports/executive_summary.md — written summary
-- NOTE: All data is SYNTHETIC (generated from data/config/synthetic.yaml). The metrics are illustrative, not real user data — always say so when discussing numbers.
+- NOTE: Data provenance: the base telemetry is the real Cookie Cats (Kaggle) dataset; the user-acquisition and monetization fields (acquisition_channel, CAC/ad spend, revenue) are SYNTHETIC enrichment. So retention metrics rest on real data while ROI/ROAS rest on synthetic fields — always say so when discussing numbers.
 
 ### Petlyst-Web
 A team-built veterinary healthcare platform (CTIS senior project) connecting pet owners, vets, and clinics: a Node/Express + PostgreSQL backend with a TypeScript frontend, AWS S3 storage, token auth, and CI.
@@ -120,9 +120,9 @@ A team-built veterinary healthcare platform (CTIS senior project) connecting pet
 ## Private / in development
 
 ### Hisar
-A co-founded, in-development startup analyzing SEC filings to surface financial risk signals: multi-step LLM workflows in Python/LangChain with multi-provider fallback, a GraphRAG + ontology retrieval layer, a FastAPI backend with LLM-based scoring and FRED macro-data integration, a React frontend, and an evaluation harness (labeled gold-set + return-based benchmarks).
+A co-founded, in-development project that analyzes SEC filings to surface financial-risk signals. The working backend is an async pipeline — EDGAR ingestion → a rule-based gatekeeper (routine vs. material) → LLM scoring with multi-provider fallback (Anthropic primary, OpenAI/Google) → PostgreSQL → cross-filing pattern detection → "silence-first" notifications — and a separate research prototype adds no-look-ahead price alignment and a volatility-lift correlation method. Stack: Python, FastAPI, SQLModel/asyncpg, RabbitMQ, Redis, Docker, plus a FRED macro-rate pipeline.
 
-PRIVATE and in development. No public code; not a live/production system with real operational data. This describes a stated approach only — it is NOT independently verifiable. Keep it clearly separate from the verifiable public repos above; never present it as live or production.
+PRIVATE, in development, and NOT independently verifiable (no public code). Honest maturity: the ingestion/scoring backend runs end-to-end, BUT notifications are dry-run only (logged, not delivered) and the evaluation method is built yet never validated on real LLM outputs. GraphRAG / ontology retrieval, a gold-set / LLM-as-judge eval gate, formal return-based event studies, 10-K/10-Q support, and the iOS app are DESIGNED but NOT BUILT — do not present them as existing capabilities. Keep this clearly separate from the verifiable public repos; never present it as live or production.
 
 ## Ground rules
 - Prefer reading code over trusting this file.

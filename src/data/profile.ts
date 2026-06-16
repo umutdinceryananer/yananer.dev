@@ -69,7 +69,7 @@ export const profile: Profile = {
   tagline:
     'Software engineer who builds across backend and data/ML.',
   bio:
-    'Software engineer and founder — I turn customer problems into deployed AI systems: agentic LLM apps in Python and React, with production SaaS shipped to paying customers. I tinker with whatever else catches my interest.',
+    'Software Engineer & Founder, turning business needs into GenAI and agentic solutions. AWS Cloud Practitioner.',
   location: 'Ankara, Türkiye',
   email: 'umutdncr@gmail.com',
   siteUrl: 'https://yananer.dev',
@@ -95,7 +95,7 @@ export const profile: Profile = {
       company: 'SAS Institute',
       period: 'Apr 2025 - Present',
       description:
-        "Deliver live technical demos and end-to-end PoCs to public-sector clients — data pipelines, ML, synthetic data, and RAG — scoping AI/GenAI use cases directly with clients' technical and business teams and presenting to senior decision-makers. Won a competitive PoC evaluation against an external subcontractor.",
+        'Deliver live technical demos and end-to-end PoCs (data pipelines, ML, RAG) to public-sector clients, scoping AI/GenAI use cases with their teams and presenting to senior decision-makers.',
     },
     {
       order: 6,
@@ -103,7 +103,7 @@ export const profile: Profile = {
       company: 'Hisar',
       period: 'Nov 2025 - Present',
       description:
-        'Co-founded Hisar (in development): a system that analyzes SEC filings to surface financial risk signals. Built an evaluation harness (labeled gold-set + return-based benchmarks), multi-step LLM workflows in Python/LangChain with multi-provider fallback, a GraphRAG + ontology retrieval layer, and a FastAPI backend (LLM scoring + FRED macro data) with a React frontend.',
+        'Co-founded Hisar (in development): built the async Python/FastAPI backend for a SEC-filing analysis system (EDGAR ingestion, a rule-based gatekeeper, and multi-provider LLM scoring over PostgreSQL), plus a price-alignment/volatility research prototype.',
     },
     {
       order: 5,
@@ -143,7 +143,7 @@ export const profile: Profile = {
       company: 'Petbilir / Petlyst',
       period: 'Feb 2021 - Aug 2023',
       description:
-        'Co-founded a veterinary SaaS startup while at university; led a 6-person team and grew it to 9 paying clinic customers. Shipped an automated vaccination-reminder system on AWS (EventBridge, Lambda, PostgreSQL) — the most-adopted feature — driving the product from concept through customer development.',
+        'Co-founded a veterinary SaaS startup at university; led a 6-person team to 9 paying clinic customers and shipped an automated vaccination-reminder system on AWS (Lambda, EventBridge, PostgreSQL).',
     },
   ],
   tech: [
