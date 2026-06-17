@@ -58,6 +58,11 @@ const WorkExperience = () => {
                   <span className="px-2 py-1 bg-[#1a1a1a] rounded-md text-gray-400 text-xs border border-gray-800">
                     {entry.period}
                   </span>
+                  {entry.status && (
+                    <span className="px-2 py-1 bg-[#1a1a1a] rounded-md text-gray-400 text-xs border border-gray-800">
+                      {entry.status}
+                    </span>
+                  )}
                 </div>
 
                 <p className="text-gray-400 text-sm">{entry.description}</p>

@@ -26,6 +26,8 @@ export interface WorkEntry {
   title: string
   company: string
   period: string
+  /** Optional status pill shown next to company/period, e.g. "In Development". */
+  status?: string
   description: string
 }
 
@@ -105,8 +107,9 @@ export const profile: Profile = {
       title: 'Founding AI Engineer & Co-Founder',
       company: 'Hisar',
       period: 'Nov 2025 - Present',
+      status: 'In Development',
       description:
-        'Co-founded Hisar (in development): built the async Python/FastAPI backend for a SEC-filing analysis system (EDGAR ingestion, a rule-based gatekeeper, and multi-provider LLM scoring over PostgreSQL), plus a price-alignment/volatility research prototype.',
+        'Co-founded Hisar: an LLM system that analyzes financial data to surface financial-risk signals.',
     },
     {
       order: 5,
@@ -145,8 +148,9 @@ export const profile: Profile = {
       title: 'Founding Product Engineer & Co-Founder',
       company: 'Petbilir / Petlyst',
       period: 'Feb 2021 - Aug 2023',
+      status: 'Exit',
       description:
-        'Co-founded a veterinary SaaS startup at university; led a 6-person team to 9 paying clinic customers and shipped an automated vaccination-reminder system on AWS (Lambda, EventBridge, PostgreSQL).',
+        'Co-founded a veterinary SaaS startup at university; led a small team across product and engineering, from idea to paying customers.',
     },
   ],
   tech: [

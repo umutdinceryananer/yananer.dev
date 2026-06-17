@@ -35,7 +35,7 @@
       "name": "Hisar",
       "position": "Founding AI Engineer & Co-Founder",
       "startDate": "2025-11",
-      "summary": "Co-founded Hisar (in development): built the async Python/FastAPI backend for a SEC-filing analysis system (EDGAR ingestion, a rule-based gatekeeper, and multi-provider LLM scoring over PostgreSQL), plus a price-alignment/volatility research prototype."
+      "summary": "Co-founded Hisar: an LLM system that analyzes financial data to surface financial-risk signals."
     },
     {
       "name": "Meteksan Defence",
@@ -70,7 +70,7 @@
       "position": "Founding Product Engineer & Co-Founder",
       "startDate": "2021-02",
       "endDate": "2023-08",
-      "summary": "Co-founded a veterinary SaaS startup at university; led a 6-person team to 9 paying clinic customers and shipped an automated vaccination-reminder system on AWS (Lambda, EventBridge, PostgreSQL)."
+      "summary": "Co-founded a veterinary SaaS startup at university; led a small team across product and engineering, from idea to paying customers."
     }
   ],
   "education": [
