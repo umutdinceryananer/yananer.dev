@@ -25,6 +25,8 @@ export interface Project {
   /** Verified file/dir paths an agent should read first, "path — why". */
   keyEntryPoints?: string[]
   liveDemoUrl?: string
+  /** True when liveDemoUrl can be embedded in an in-page demo modal (iframe-able). */
+  embedDemo?: boolean
   isPrivate: boolean
   /** False when there is no public code/PR to independently check (HISAR). */
   isVerifiable: boolean
@@ -100,6 +102,7 @@ export const projects: Project[] = [
       'src/__tests__/ — Vitest suite (reproducible by design)',
     ],
     liveDemoUrl: 'https://umutdinceryananer.github.io/My-Game-Theory-Lab/',
+    embedDemo: true,
     isPrivate: false,
     isVerifiable: true,
   },

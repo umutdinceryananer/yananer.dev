@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { projects, type Project } from '../data/projects'
 import { profile } from '../data/profile'
 
@@ -31,7 +32,54 @@ const ExternalIcon = () => (
   </svg>
 )
 
-const ProjectCard = ({ p }: { p: Project }) => (
+const PlayIcon = () => (
+  <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M8 5v14l11-7z" />
+  </svg>
+)
+
+// Full-screen demo overlay. The iframe is only mounted while open, so the
+// embedded app is loaded lazily (on click), never on page load.
+const DemoModal = ({ demo, onClose }: { demo: { url: string; title: string } | null; onClose: () => void }) => {
+  useEffect(() => {
+    if (!demo) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    document.addEventListener('keydown', onKey)
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = ''
+    }
+  }, [demo, onClose])
+
+  if (!demo) return null
+  return (
+    <div
+      className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6"
+      onClick={onClose}
+    >
+      <div
+        className="relative w-full max-w-6xl h-[85vh] bg-[#141414] rounded-xl border border-gray-800 overflow-hidden flex flex-col"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between gap-3 px-4 py-2.5 border-b border-gray-800 shrink-0">
+          <span className="text-white text-sm font-medium font-manrope truncate">{demo.title}</span>
+          <div className="flex items-center gap-4 shrink-0">
+            <a href={demo.url} target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:text-indigo-300 text-xs">
+              Open in new tab ↗
+            </a>
+            <button onClick={onClose} aria-label="Close demo" className="text-gray-400 hover:text-white transition-colors text-lg leading-none">
+              ✕
+            </button>
+          </div>
+        </div>
+        <iframe src={demo.url} title={demo.title} className="flex-1 w-full bg-[#0F0F0F]" />
+      </div>
+    </div>
+  )
+}
+
+const ProjectCard = ({ p, onPlay }: { p: Project; onPlay?: (p: Project) => void }) => (
   <div className="h-full flex flex-col bg-[#1a1a1a] rounded-lg p-4 relative overflow-hidden group hover:ring-2 hover:ring-indigo-500/20 transition-all">
     {/* Decorative Elements (match Education) */}
     <div className="absolute inset-0 pointer-events-none">
@@ -68,7 +116,16 @@ const ProjectCard = ({ p }: { p: Project }) => (
               <GitHubIcon /> Repo
             </a>
           )}
-          {p.liveDemoUrl && (
+          {p.embedDemo && p.liveDemoUrl ? (
+            <button
+              onClick={() => onPlay?.(p)}
+              className="play-gradient group inline-flex rounded-lg p-[1px]"
+            >
+              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-[7px] bg-[#141414] text-gray-200 group-hover:bg-[#1f1f1f] group-hover:text-white text-xs font-medium transition-colors">
+                <PlayIcon /> Enter Lab
+              </span>
+            </button>
+          ) : p.liveDemoUrl ? (
             <a
               href={p.liveDemoUrl}
               target="_blank"
@@ -77,7 +134,7 @@ const ProjectCard = ({ p }: { p: Project }) => (
             >
               <ExternalIcon /> Live
             </a>
-          )}
+          ) : null}
         </div>
       )}
     </div>
@@ -86,6 +143,7 @@ const ProjectCard = ({ p }: { p: Project }) => (
 
 const Projects = () => {
   const repos = projects.filter((p) => p.kind === 'repo')
+  const [demo, setDemo] = useState<{ url: string; title: string } | null>(null)
 
   return (
     <div className="pt-2">
@@ -130,8 +188,16 @@ const Projects = () => {
         <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-gray-800 to-transparent" />
       </div>
       <div className="grid grid-cols-1 min-[745px]:grid-cols-2 min-[1240px]:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
-        {repos.map((p) => <ProjectCard key={p.name} p={p} />)}
+        {repos.map((p) => (
+          <ProjectCard
+            key={p.name}
+            p={p}
+            onPlay={(proj) => proj.liveDemoUrl && setDemo({ url: proj.liveDemoUrl, title: proj.name })}
+          />
+        ))}
       </div>
+
+      <DemoModal demo={demo} onClose={() => setDemo(null)} />
     </div>
   )
 }
