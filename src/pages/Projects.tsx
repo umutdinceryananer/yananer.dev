@@ -47,6 +47,12 @@ const PlayIcon = () => (
   </svg>
 )
 
+const DecisionsIcon = () => (
+  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+  </svg>
+)
+
 // Full-screen demo overlay. The iframe is only mounted while open, so the
 // embedded app is loaded lazily (on click), never on page load.
 const DemoModal = ({ demo, onClose }: { demo: { url: string; title: string } | null; onClose: () => void }) => {
@@ -88,7 +94,17 @@ const DemoModal = ({ demo, onClose }: { demo: { url: string; title: string } | n
   )
 }
 
-const ProjectCard = ({ p, onPlay }: { p: Project; onPlay?: (p: Project) => void }) => (
+const ProjectCard = ({
+  p,
+  onPlay,
+  onDecisions,
+  hasDecisions,
+}: {
+  p: Project
+  onPlay?: (p: Project) => void
+  onDecisions?: (p: Project) => void
+  hasDecisions?: boolean
+}) => (
   <div className="h-full flex flex-col bg-[#1a1a1a] rounded-lg p-4 relative overflow-hidden group hover:ring-2 hover:ring-indigo-500/20 transition-all">
     {/* Decorative Elements (match Education) */}
     <div className="absolute inset-0 pointer-events-none">
@@ -113,7 +129,7 @@ const ProjectCard = ({ p, onPlay }: { p: Project; onPlay?: (p: Project) => void 
         </div>
       )}
 
-      {(p.repoUrl || p.liveDemoUrl) && (
+      {(p.repoUrl || p.liveDemoUrl || hasDecisions) && (
         <div className="mt-auto flex flex-wrap gap-2 pt-2">
           {p.repoUrl && (
             <a
@@ -144,6 +160,14 @@ const ProjectCard = ({ p, onPlay }: { p: Project; onPlay?: (p: Project) => void 
               <ExternalIcon /> Live
             </a>
           ) : null}
+          {hasDecisions && (
+            <button
+              onClick={() => onDecisions?.(p)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-[#141414] text-gray-300 hover:text-white border border-indigo-500/30 hover:border-indigo-500/50 hover:bg-[#1f1f1f] transition-colors"
+            >
+              <DecisionsIcon /> Decisions
+            </button>
+          )}
         </div>
       )}
     </div>
@@ -203,11 +227,78 @@ const DecisionRow = ({ d }: { d: Decision }) => {
   )
 }
 
+// Modal listing a project's design decisions as collapsible ADR rows. Opened by
+// the "Decisions" button on a card, so the list stays hidden until asked for.
+const DecisionsModal = ({
+  data,
+  onClose,
+}: {
+  data: { title: string; items: Decision[] } | null
+  onClose: () => void
+}) => {
+  useEffect(() => {
+    if (!data) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    document.addEventListener('keydown', onKey)
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = ''
+    }
+  }, [data, onClose])
+
+  if (!data) return null
+  const featured = data.items.filter((d) => d.featured)
+  const others = data.items.filter((d) => !d.featured)
+  return (
+    <div
+      className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6"
+      onClick={onClose}
+    >
+      <div
+        className="relative w-full max-w-2xl max-h-[85vh] bg-[#141414] rounded-xl border border-gray-800 overflow-hidden flex flex-col"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between gap-3 px-4 py-2.5 border-b border-gray-800 shrink-0">
+          <span className="text-white text-sm font-medium font-manrope truncate">
+            {data.title} — Design Decisions
+          </span>
+          <button
+            onClick={onClose}
+            aria-label="Close decisions"
+            className="text-gray-400 hover:text-white transition-colors text-lg leading-none shrink-0"
+          >
+            ✕
+          </button>
+        </div>
+        <div className="overflow-y-auto px-4 sm:px-5 py-4">
+          <p className="text-gray-500 text-xs sm:text-sm leading-relaxed mb-4">
+            How I think — architecture decisions from {data.title}, a private in-development project.
+            Self-reported, with no public code to check. These also drive the{' '}
+            <span className="text-indigo-300">explain_decision</span> tool in my MCP server.
+          </p>
+          <div className="divide-y divide-gray-800/60">
+            <div className="flex items-center gap-2 pb-3 flex-wrap">
+              <Badge className="bg-red-500/10 text-red-300 border-red-500/20">Private</Badge>
+              <Badge className="bg-gray-500/10 text-gray-400 border-gray-500/25">Not independently verifiable</Badge>
+            </div>
+            {featured.map((d) => <DecisionRow key={d.id} d={d} />)}
+            {others.length > 0 && (
+              <p className="text-gray-500 text-[11px] uppercase tracking-wide pt-3 pb-1">Also designed</p>
+            )}
+            {others.map((d) => <DecisionRow key={d.id} d={d} />)}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 const Projects = () => {
   const repos = projects.filter((p) => p.kind === 'repo')
-  const featuredDecisions = hisarDecisions.filter((d) => d.featured)
-  const otherDecisions = hisarDecisions.filter((d) => !d.featured)
+  const decisionsFor = (name: string) => hisarDecisions.filter((d) => d.repo === name.toLowerCase())
   const [demo, setDemo] = useState<{ url: string; title: string } | null>(null)
+  const [decisionsModal, setDecisionsModal] = useState<{ title: string; items: Decision[] } | null>(null)
 
   return (
     <div className="pt-2">
@@ -257,44 +348,14 @@ const Projects = () => {
             key={p.name}
             p={p}
             onPlay={(proj) => proj.liveDemoUrl && setDemo({ url: proj.liveDemoUrl, title: proj.name })}
+            hasDecisions={decisionsFor(p.name).length > 0}
+            onDecisions={(proj) => setDecisionsModal({ title: proj.name, items: decisionsFor(proj.name) })}
           />
         ))}
       </div>
 
-      {featuredDecisions.length > 0 && (
-        <div className="mt-10">
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold text-white mb-3 text-center font-manrope">Design Decisions</h2>
-            <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-gray-800 to-transparent" />
-          </div>
-          <p className="text-center text-gray-500 text-xs sm:text-sm max-w-2xl mx-auto mb-5 leading-relaxed">
-            How I think — architecture decisions from <span className="text-gray-400">Hisar</span>, my private
-            in-development project. Self-reported, with no public code to check, so they live in their own
-            bucket and also drive the <span className="text-indigo-300">explain_decision</span> tool in my MCP
-            server.
-          </p>
-
-          <div className="max-w-3xl mx-auto rounded-xl border border-gray-800 bg-[#141414]/40 px-4 sm:px-5">
-            <div className="divide-y divide-gray-800/60">
-              <div className="flex items-center gap-2 py-3 flex-wrap">
-                <Badge className="bg-red-500/10 text-red-300 border-red-500/20">Private</Badge>
-                <Badge className="bg-gray-500/10 text-gray-400 border-gray-500/25">Not independently verifiable</Badge>
-              </div>
-              {featuredDecisions.map((d) => (
-                <DecisionRow key={d.id} d={d} />
-              ))}
-              {otherDecisions.length > 0 && (
-                <p className="text-gray-500 text-[11px] uppercase tracking-wide pt-3 pb-1">Also designed</p>
-              )}
-              {otherDecisions.map((d) => (
-                <DecisionRow key={d.id} d={d} />
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
       <DemoModal demo={demo} onClose={() => setDemo(null)} />
+      <DecisionsModal data={decisionsModal} onClose={() => setDecisionsModal(null)} />
     </div>
   )
 }
