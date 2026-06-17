@@ -4,33 +4,18 @@
 // Two provenance kinds:
 //   - 'public-repo'    : code-grounded analysis of a PUBLIC repo. The `evidence`
 //                        paths let an agent verify the WHAT against real files.
+//                        Defined locally below.
 //   - 'sterilized-adr' : author's own (sterilized) ADR for a PRIVATE project
-//                        (e.g. Hisar). Self-reported, NOT independently verifiable.
+//                        (Hisar). Self-reported, NOT independently verifiable.
+//                        Imported from the repo's single source of truth
+//                        (../../../src/data/decisions) — the same data the site
+//                        renders — so the two never drift.
 
-export interface Decision {
-  id: string
-  title: string
-  /** Extra search keys for fuzzy topic matching (besides the title). */
-  topics: string[]
-  /** Project name (matches Project.name) or 'portfolio' / 'hisar'. */
-  repo: string
-  /** The decision made. */
-  decision: string
-  /** WHY — the forces behind it. */
-  rationale: string
-  /** What it costs / known downsides. */
-  tradeoffs: string[]
-  /** Options considered and why they were rejected. */
-  alternatives?: string[]
-  /**
-   * For 'public-repo': real file paths backing the WHAT (verify these).
-   * For 'sterilized-adr': high-level component names only (no public code to check).
-   */
-  evidence: string[]
-  source: 'public-repo' | 'sterilized-adr'
-}
+import { hisarDecisions, type Decision } from '../../../src/data/decisions'
 
-export const decisions: Decision[] = [
+export type { Decision }
+
+const publicRepoDecisions: Decision[] = [
   {
     id: 'fx-provider-fallback',
     title: 'FX-Risk-Engine: multi-provider rate fetching with fallback',
@@ -134,158 +119,16 @@ export const decisions: Decision[] = [
     topics: ['single source of truth', 'codegen', 'skill.md', 'llms.txt', 'agent files', 'projects.ts'],
     repo: 'portfolio',
     decision:
-      'Project/profile data lives once in src/data/*.ts; a build-time codegen emits SKILL.md / llms.txt / resume.json, and this MCP server imports the same modules at runtime.',
+      'Project/profile/decision data lives once in src/data/*.ts; a build-time codegen emits SKILL.md / llms.txt / resume.json, and this MCP server imports the same modules at runtime.',
     rationale:
       'Avoids drift between the human site, the agent-readable files, and the MCP tools — edit the data once and every surface stays consistent.',
     tradeoffs: ['The data modules must stay pure (no React) so Node/tsx and the MCP can import them.'],
-    evidence: ['src/data/projects.ts', 'src/data/profile.ts', 'scripts/generate-agent-files.ts', 'mcp/src/lib/projectsView.ts'],
+    evidence: ['src/data/projects.ts', 'src/data/profile.ts', 'src/data/decisions.ts', 'scripts/generate-agent-files.ts', 'mcp/src/lib/projectsView.ts'],
     source: 'public-repo',
   },
-  // Hisar (private) — sterilized ADRs. Self-reported, NOT independently verifiable
-  // (no public code); each carries that caveat in the tool output. Evidence entries
-  // are high-level component names only, never internal paths or business-critical data.
-  {
-    id: 'hisar-gatekeeper',
-    title: 'Hisar: deterministic rule-based gatekeeper before any LLM scoring',
-    topics: [
-      'gatekeeper', 'rule-based', 'classifier', 'routing', 'compound ai',
-      'llm cost', 'pre-filter', 'triage', 'routine vs material', 'noise filtering',
-    ],
-    repo: 'hisar',
-    decision:
-      'A deterministic rule-based classifier inspects every incoming filing first and routes it as routine, material, or unknown. Routine filings receive a fixed low score with no LLM call at all; only material and unknown filings are sent to the LLM.',
-    rationale:
-      'The large majority of regulatory filings are routine noise, and paying an LLM to read each one is slow and wasteful. A cheap deterministic pass removes the bulk of traffic, makes the common case fast and predictable, and concentrates expensive reasoning where it can actually change an outcome. The gatekeeper also becomes the primary cost lever: tightening rules routes more events to the no-LLM path.',
-    tradeoffs: [
-      'Rules must be maintained by hand and can drift as filing patterns change.',
-      'A misclassified material event sent to the routine path is silently under-scored.',
-      'The deterministic layer encodes domain assumptions that need periodic review.',
-    ],
-    alternatives: [
-      'Send every filing to the LLM — rejected: cost and latency scale with noise, not signal.',
-      'Insert a cheaper LLM tier as the shortcut for low-stakes filings — rejected: the rule-based gatekeeper already captures that case at zero LLM cost, with no added routing complexity.',
-    ],
-    evidence: ['gatekeeper classifier', 'scoring pipeline', 'per-source classifier modules'],
-    source: 'sterilized-adr',
-  },
-  {
-    id: 'hisar-cross-provider-fallback',
-    title: 'Hisar: LLM resilience via cross-provider fallback, not same-provider downgrade',
-    topics: [
-      'llm fallback', 'failover', 'resilience', 'provider outage', 'retry',
-      'rate limit', 'multi-provider', 'redundancy', 'high availability',
-    ],
-    repo: 'hisar',
-    decision:
-      'Scoring calls a primary commercial LLM provider with a bounded number of retries; on persistent failure it fails over to a different provider using the same prompt template, with response-shape differences absorbed by a per-provider parser.',
-    rationale:
-      'The fallback exists for outage resilience, and resilience must cross a provider boundary to be real. A cheaper model from the same vendor shares the same API surface, auth, and infrastructure, so it does not survive the provider-wide failures that matter. Bounded retries handle transient blips; a genuinely different provider handles sustained outages.',
-    tradeoffs: [
-      'The prompt template and output contract must be kept in parity across two providers.',
-      'The fallback provider has different latency and parsing behavior, so failover degrades consistency even when it preserves availability.',
-      'Two integrated providers is more surface area to test and monitor than one.',
-    ],
-    alternatives: [
-      'Fall back to a cheaper model on the same provider — rejected: does not survive a provider-wide outage, which is the failure the fallback is for.',
-      'Per-call cheapest-available provider router — rejected: adds per-call selection and multi-schema handling with no current cost pressure to justify it.',
-    ],
-    evidence: ['scoring worker', 'provider abstraction layer', 'message queue with dead-letter routing'],
-    source: 'sterilized-adr',
-  },
-  {
-    id: 'hisar-defer-ontology',
-    title: 'Hisar: interim flat relational model, ontology/graph deferred behind triggers',
-    topics: [
-      'ontology', 'graphrag', 'knowledge graph', 'entity model', 'relational',
-      'yagni', 'data modeling', 'graph database', 'deferral', 'premature abstraction',
-    ],
-    repo: 'hisar',
-    decision:
-      'Entities and their context are modeled as flat relational tables for now. A full entity-and-relationship ontology (and any graph or GraphRAG layer) is explicitly deferred, kept open behind concrete re-activation triggers rather than either built early or rejected forever.',
-    rationale:
-      'The context the system actually injects today is satisfied by flat tables, and a graph layer would add modeling, storage, and reasoning complexity that current needs do not justify. Writing down explicit triggers for revisiting the decision avoids both premature abstraction and a permanent foreclosure of structural reasoning.',
-    tradeoffs: [
-      'Multi-hop and structural relationship reasoning is limited until the ontology is activated.',
-      'If the triggers are met later, there is a migration cost from flat tables to a richer model.',
-      'Capabilities that assume a graph cannot be claimed as present — this is a deliberately unbuilt path.',
-    ],
-    alternatives: [
-      'Build the full ontology/graph layer now — rejected: complexity unjustified by current requirements.',
-      'Reject ontology permanently — rejected: would foreclose a plausible future need; the decision is deferral, not denial.',
-    ],
-    evidence: ['entity/context relational tables', 'prompt-context assembly'],
-    source: 'sterilized-adr',
-  },
-  {
-    id: 'hisar-no-lookahead-alignment',
-    title: 'Hisar: no-look-ahead alignment and prompt leakage isolation in evaluation',
-    topics: [
-      'look-ahead bias', 'leakage', 'evaluation', 'backtest', 'price alignment',
-      'data leakage', 'no peeking', 'eval methodology', 'temporal integrity', 'next candle',
-    ],
-    repo: 'hisar',
-    decision:
-      'In the research/evaluation pipeline, each filing is aligned to the next market interval after it becomes public (after-hours filings map to the next session open), and no price or outcome data is allowed into the scoring prompt — a separate check scans prompts for forbidden fields.',
-    rationale:
-      'To honestly relate a model score to subsequent price movement, the score must be formed only from information available at filing time. Aligning to the next interval prevents the model from being implicitly credited with same-interval movement, and stripping price/outcome fields from the prompt prevents the model from grading its own future. The explicit leakage check turns "no peeking" from an assumption into something testable.',
-    tradeoffs: [
-      'Aligning to a whole next interval discards finer intraday precision.',
-      'Correctness depends on the market-calendar handling for holidays and partial sessions.',
-      'This is research-stage methodology validated on a small sample, not a production-proven result.',
-    ],
-    alternatives: [
-      'Align to the contemporaneous interval — rejected: introduces look-ahead bias.',
-      'Include price/volatility context in the prompt for richer reasoning — rejected: leaks the outcome the evaluation is trying to predict.',
-    ],
-    evidence: ['price-alignment module', 'market-hours helper', 'prompt leakage-check module'],
-    source: 'sterilized-adr',
-  },
-  {
-    id: 'hisar-silence-first-dry-run',
-    title: 'Hisar: silence-first notifications, delivery deferred to a dry-run log',
-    topics: [
-      'silence-first', 'notifications', 'dry run', 'anti-engagement', 'alert fatigue',
-      'false positive cost', 'suppression', 'signal-to-noise', 'notification log',
-    ],
-    repo: 'hisar',
-    decision:
-      'The product optimizes for suppressing low-signal alerts rather than maximizing engagement, and notification decisions are currently computed and written to a log instead of being delivered to real recipients.',
-    rationale:
-      'The promise is that a user can ignore the app and trust that anything sent was worth the interruption, so a needless alert costs far more trust than a missed marginal one. Recording decisions to a log first lets the decision logic and thresholds be exercised and reviewed before any real delivery channel exists, so quality is proven before anyone can be annoyed.',
-    tradeoffs: [
-      'No live delivery yet — the end-to-end notification experience is unproven with real recipients.',
-      'Whether a user genuinely valued an alert cannot be measured without real delivery and feedback.',
-      'Judging suppression quality requires a dedicated evaluation; an empty inbox is not self-evidently correct.',
-    ],
-    alternatives: [
-      'Ship live notifications immediately — rejected: unvalidated alert quality erodes trust fastest in an anti-engagement product.',
-      'Offer a scrollable feed to browse — rejected: contradicts the silence-first promise of not requiring time in the app.',
-    ],
-    evidence: ['notification worker', 'notification log table', 'per-user threshold settings'],
-    source: 'sterilized-adr',
-  },
-  {
-    id: 'hisar-cross-model-judge',
-    title: 'Hisar: independent cross-model judge for rare-event and unsupervised patterns',
-    topics: [
-      'llm-as-judge', 'evaluation', 'self-validation', 'circularity', 'rare events',
-      'label agreement', 'cross-model', 'judge', 'unsupervised', 'validation methodology',
-    ],
-    repo: 'hisar',
-    decision:
-      'Patterns that fire too rarely for statistical accuracy gates, or that have no objective ground truth, are validated by a separate more-capable model acting as an independent judge that agrees or disagrees with the production model, rather than by a single accuracy metric.',
-    rationale:
-      'The model that produces a signal cannot credibly grade itself — using the same model on both ends measures self-consistency, not correctness. Some patterns also fire too infrequently for precision/recall to be meaningful, and some are inherently subjective. An independent judge from a different model family reduces correlated errors and gives a defensible, honestly-framed validation signal for these cases.',
-    tradeoffs: [
-      'The judge is a proxy for ground truth, not ground truth itself; agreement is not the same as predictive accuracy.',
-      'Running multiple validation templates instead of one metric increases evaluation-pipeline complexity.',
-      'It adds dependence on a second, more expensive model and on monitoring its usage.',
-    ],
-    alternatives: [
-      'Apply one accuracy-gate framework to all patterns — rejected: rare-event patterns cannot support it, forcing either fake confidence or indefinite deferral.',
-      'Have the production model judge itself with a different prompt — rejected: still self-validation, since the priors are shared.',
-    ],
-    evidence: ['evaluation/judge harness', 'pattern detection modules', 'gold-set labeling process'],
-    source: 'sterilized-adr',
-  },
 ]
+
+// Public-repo (verifiable) decisions first, then the sterilized private Hisar ADRs.
+// The Hisar entries carry maturity + a "not independently verifiable" caveat in the
+// tool output, keeping them clearly separate from the verifiable public work.
+export const decisions: Decision[] = [...publicRepoDecisions, ...hisarDecisions]

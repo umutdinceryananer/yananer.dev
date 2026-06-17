@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { projects, type Project } from '../data/projects'
+import { hisarDecisions, type Decision } from '../data/decisions'
 import { profile } from '../data/profile'
 
 const Tag = ({ children }: { children: React.ReactNode }) => (
@@ -18,6 +19,14 @@ const nowBadgeClass: Record<string, string> = {
   'In Development': 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20',
   'Pre-launch': 'bg-green-500/10 text-green-300 border-green-500/20',
   Learning: 'bg-gray-500/10 text-gray-400 border-gray-500/25',
+}
+
+// Honest build-state of a private (Hisar) decision. Indigo = built, amber = in
+// development, gray = designed-but-unbuilt. Never green — this work is unverifiable.
+const maturityBadge: Record<NonNullable<Decision['maturity']>, { label: string; cls: string }> = {
+  implemented: { label: 'Built', cls: 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20' },
+  partial: { label: 'In progress', cls: 'bg-amber-500/10 text-amber-300 border-amber-500/20' },
+  design: { label: 'Designed', cls: 'bg-gray-500/10 text-gray-400 border-gray-500/25' },
 }
 
 const GitHubIcon = () => (
@@ -141,8 +150,28 @@ const ProjectCard = ({ p, onPlay }: { p: Project; onPlay?: (p: Project) => void 
   </div>
 )
 
+const DecisionCard = ({ d }: { d: Decision }) => (
+  <div className="h-full flex flex-col bg-[#1a1a1a] rounded-lg p-4 relative overflow-hidden group hover:ring-2 hover:ring-indigo-500/20 transition-all">
+    <div className="absolute inset-0 pointer-events-none">
+      <div className="absolute top-0 left-0 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl transform -translate-x-1/2 -translate-y-1/2" />
+      <div className="absolute bottom-0 right-0 w-64 h-64 bg-indigo-500/3 rounded-full blur-2xl transform translate-x-1/2 translate-y-1/2" />
+    </div>
+    <div className="relative flex flex-col gap-1.5 h-full">
+      <div className="flex items-center gap-2 flex-wrap">
+        <h4 className="text-base font-medium text-indigo-400 leading-tight">{d.title}</h4>
+        {d.maturity && (
+          <Badge className={maturityBadge[d.maturity].cls}>{maturityBadge[d.maturity].label}</Badge>
+        )}
+      </div>
+      <p className="text-gray-300 text-sm">{d.summary}</p>
+    </div>
+  </div>
+)
+
 const Projects = () => {
   const repos = projects.filter((p) => p.kind === 'repo')
+  const featuredDecisions = hisarDecisions.filter((d) => d.featured)
+  const otherDecisions = hisarDecisions.filter((d) => !d.featured)
   const [demo, setDemo] = useState<{ url: string; title: string } | null>(null)
 
   return (
@@ -196,6 +225,53 @@ const Projects = () => {
           />
         ))}
       </div>
+
+      {featuredDecisions.length > 0 && (
+        <div className="mt-10">
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold text-white mb-3 text-center font-manrope">Design Decisions</h2>
+            <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-gray-800 to-transparent" />
+          </div>
+          <p className="text-center text-gray-500 text-xs sm:text-sm max-w-2xl mx-auto mb-5 leading-relaxed">
+            How I think, from <span className="text-gray-400">Hisar</span> — private, in-development work.
+            Self-reported and <span className="text-gray-400">not independently verifiable</span> (no public
+            code), so it sits in its own bucket, apart from the public repos above. These also drive the{' '}
+            <span className="text-indigo-300">explain_decision</span> tool in my MCP server.
+          </p>
+
+          <div className="relative rounded-xl border border-gray-800 bg-[#141414]/40 p-4 sm:p-5">
+            <div className="flex items-center gap-2 mb-4 flex-wrap">
+              <Badge className="bg-red-500/10 text-red-300 border-red-500/20">Private</Badge>
+              <Badge className="bg-gray-500/10 text-gray-400 border-gray-500/25">Not independently verifiable</Badge>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              {featuredDecisions.map((d) => (
+                <DecisionCard key={d.id} d={d} />
+              ))}
+            </div>
+
+            {otherDecisions.length > 0 && (
+              <div className="mt-4 pt-4 border-t border-gray-800/70">
+                <p className="text-gray-500 text-xs mb-2.5">Also designed</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {otherDecisions.map((d) => (
+                    <div key={d.id} className="flex flex-col gap-0.5">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-gray-300 text-sm">{d.title}</span>
+                        {d.maturity && (
+                          <Badge className={maturityBadge[d.maturity].cls}>{maturityBadge[d.maturity].label}</Badge>
+                        )}
+                      </div>
+                      <span className="text-gray-500 text-xs leading-relaxed">{d.summary}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       <DemoModal demo={demo} onClose={() => setDemo(null)} />
     </div>
