@@ -50,7 +50,7 @@ export const hisarDecisions: Decision[] = [
     id: 'hisar-gatekeeper',
     title: 'Deterministic gatekeeper before any LLM scoring',
     summary:
-      'A rule-based gatekeeper filters routine filings before any LLM call — so cost scales with signal, not noise.',
+      'A rule-based gatekeeper filters routine filings before any LLM call, so cost scales with signal, not noise.',
     topics: [
       'gatekeeper', 'rule-based', 'classifier', 'routing', 'compound ai',
       'llm cost', 'pre-filter', 'triage', 'routine vs material', 'noise filtering',
@@ -66,8 +66,8 @@ export const hisarDecisions: Decision[] = [
       'The deterministic layer encodes domain assumptions that need periodic review.',
     ],
     alternatives: [
-      'Send every filing to the LLM — rejected: cost and latency scale with noise, not signal.',
-      'Insert a cheaper LLM tier as the shortcut for low-stakes filings — rejected: the rule-based gatekeeper already captures that case at zero LLM cost, with no added routing complexity.',
+      'Send every filing to the LLM. Rejected: cost and latency scale with noise, not signal.',
+      'Insert a cheaper LLM tier as the shortcut for low-stakes filings. Rejected: the rule-based gatekeeper already captures that case at zero LLM cost, with no added routing complexity.',
     ],
     evidence: ['gatekeeper classifier', 'scoring pipeline', 'per-source classifier modules'],
     maturity: 'implemented',
@@ -94,8 +94,8 @@ export const hisarDecisions: Decision[] = [
       'Two integrated providers is more surface area to test and monitor than one.',
     ],
     alternatives: [
-      'Fall back to a cheaper model on the same provider — rejected: does not survive a provider-wide outage, which is the failure the fallback is for.',
-      'Per-call cheapest-available provider router — rejected: adds per-call selection and multi-schema handling with no current cost pressure to justify it.',
+      'Fall back to a cheaper model on the same provider. Rejected: does not survive a provider-wide outage, which is the failure the fallback is for.',
+      'Per-call cheapest-available provider router. Rejected: adds per-call selection and multi-schema handling with no current cost pressure to justify it.',
     ],
     evidence: ['scoring worker', 'provider abstraction layer', 'message queue with dead-letter routing'],
     maturity: 'implemented',
@@ -119,11 +119,11 @@ export const hisarDecisions: Decision[] = [
     tradeoffs: [
       'Multi-hop and structural relationship reasoning is limited until the ontology is activated.',
       'If the triggers are met later, there is a migration cost from flat tables to a richer model.',
-      'Capabilities that assume a graph cannot be claimed as present — this is a deliberately unbuilt path.',
+      'Capabilities that assume a graph cannot be claimed as present; this is a deliberately unbuilt path.',
     ],
     alternatives: [
-      'Build the full ontology/graph layer now — rejected: complexity unjustified by current requirements.',
-      'Reject ontology permanently — rejected: would foreclose a plausible future need; the decision is deferral, not denial.',
+      'Build the full ontology/graph layer now. Rejected: complexity unjustified by current requirements.',
+      'Reject ontology permanently. Rejected: would foreclose a plausible future need; the decision is deferral, not denial.',
     ],
     evidence: ['entity/context relational tables', 'prompt-context assembly'],
     maturity: 'implemented',
@@ -134,14 +134,14 @@ export const hisarDecisions: Decision[] = [
     id: 'hisar-no-lookahead-alignment',
     title: 'No-look-ahead alignment + prompt-leakage isolation in eval',
     summary:
-      'Evaluation aligns each filing to the next market interval and strips price/outcome from the prompt — leakage is checked, not assumed. Research-stage, not yet validated on real LLM outputs.',
+      'Evaluation aligns each filing to the next market interval and strips price/outcome from the prompt; leakage is checked, not assumed. Research-stage, not yet validated on real LLM outputs.',
     topics: [
       'look-ahead bias', 'leakage', 'evaluation', 'backtest', 'price alignment',
       'data leakage', 'no peeking', 'eval methodology', 'temporal integrity', 'next candle',
     ],
     repo: 'hisar',
     decision:
-      'In the research/evaluation pipeline, each filing is aligned to the next market interval after it becomes public (after-hours filings map to the next session open), and no price or outcome data is allowed into the scoring prompt — a separate check scans prompts for forbidden fields.',
+      'In the research/evaluation pipeline, each filing is aligned to the next market interval after it becomes public (after-hours filings map to the next session open), and no price or outcome data is allowed into the scoring prompt; a separate check scans prompts for forbidden fields.',
     rationale:
       'To honestly relate a model score to subsequent price movement, the score must be formed only from information available at filing time. Aligning to the next interval prevents the model from being implicitly credited with same-interval movement, and stripping price/outcome fields from the prompt prevents the model from grading its own future. The explicit leakage check turns "no peeking" from an assumption into something testable.',
     tradeoffs: [
@@ -150,8 +150,8 @@ export const hisarDecisions: Decision[] = [
       'This is research-stage methodology: the method is built but has NOT been validated on real LLM outputs, so it is not a production-proven result.',
     ],
     alternatives: [
-      'Align to the contemporaneous interval — rejected: introduces look-ahead bias.',
-      'Include price/volatility context in the prompt for richer reasoning — rejected: leaks the outcome the evaluation is trying to predict.',
+      'Align to the contemporaneous interval. Rejected: introduces look-ahead bias.',
+      'Include price/volatility context in the prompt for richer reasoning. Rejected: leaks the outcome the evaluation is trying to predict.',
     ],
     evidence: ['price-alignment module', 'market-hours helper', 'prompt leakage-check module'],
     maturity: 'partial',
@@ -173,13 +173,13 @@ export const hisarDecisions: Decision[] = [
     rationale:
       'The promise is that a user can ignore the app and trust that anything sent was worth the interruption, so a needless alert costs far more trust than a missed marginal one. Recording decisions to a log first lets the decision logic and thresholds be exercised and reviewed before any real delivery channel exists, so quality is proven before anyone can be annoyed.',
     tradeoffs: [
-      'No live delivery yet — the end-to-end notification experience is unproven with real recipients.',
+      'No live delivery yet: the end-to-end notification experience is unproven with real recipients.',
       'Whether a user genuinely valued an alert cannot be measured without real delivery and feedback.',
       'Judging suppression quality requires a dedicated evaluation; an empty inbox is not self-evidently correct.',
     ],
     alternatives: [
-      'Ship live notifications immediately — rejected: unvalidated alert quality erodes trust fastest in an anti-engagement product.',
-      'Offer a scrollable feed to browse — rejected: contradicts the silence-first promise of not requiring time in the app.',
+      'Ship live notifications immediately. Rejected: unvalidated alert quality erodes trust fastest in an anti-engagement product.',
+      'Offer a scrollable feed to browse. Rejected: contradicts the silence-first promise of not requiring time in the app.',
     ],
     evidence: ['notification worker', 'notification log table', 'per-user threshold settings'],
     maturity: 'partial',
@@ -190,24 +190,24 @@ export const hisarDecisions: Decision[] = [
     id: 'hisar-cross-model-judge',
     title: 'Independent cross-model judge for rare-event / unlabeled patterns',
     summary:
-      'Rare-event and unlabeled patterns would be validated by an independent cross-model judge rather than self-grading — a designed eval gate, NOT yet built.',
+      'Rare-event and unlabeled patterns would be validated by an independent cross-model judge rather than self-grading. A designed eval gate, NOT yet built.',
     topics: [
       'llm-as-judge', 'evaluation', 'self-validation', 'circularity', 'rare events',
       'label agreement', 'cross-model', 'judge', 'unsupervised', 'validation methodology',
     ],
     repo: 'hisar',
     decision:
-      'For patterns that fire too rarely for statistical accuracy gates, or that have no objective ground truth, the designed validation approach is an independent, more-capable model acting as a judge that agrees or disagrees with the production model — rather than a single accuracy metric. This eval gate is designed but NOT yet built.',
+      'For patterns that fire too rarely for statistical accuracy gates, or that have no objective ground truth, the designed validation approach is an independent, more-capable model acting as a judge that agrees or disagrees with the production model, rather than a single accuracy metric. This eval gate is designed but NOT yet built.',
     rationale:
-      'The model that produces a signal cannot credibly grade itself — using the same model on both ends measures self-consistency, not correctness. Some patterns also fire too infrequently for precision/recall to be meaningful, and some are inherently subjective. An independent judge from a different model family reduces correlated errors and gives a defensible, honestly-framed validation signal for these cases.',
+      'The model that produces a signal cannot credibly grade itself; using the same model on both ends measures self-consistency, not correctness. Some patterns also fire too infrequently for precision/recall to be meaningful, and some are inherently subjective. An independent judge from a different model family reduces correlated errors and gives a defensible, honestly-framed validation signal for these cases.',
     tradeoffs: [
-      'Designed but not yet built — no results from it exist yet, so its value is currently a hypothesis, not a measured outcome.',
+      'Designed but not yet built: no results from it exist yet, so its value is currently a hypothesis, not a measured outcome.',
       'A judge is a proxy for ground truth, not ground truth itself; agreement is not the same as predictive accuracy.',
       'Running multiple validation templates instead of one metric would increase evaluation-pipeline complexity and add a dependence on a second, more expensive model.',
     ],
     alternatives: [
-      'Apply one accuracy-gate framework to all patterns — rejected: rare-event patterns cannot support it, forcing either fake confidence or indefinite deferral.',
-      'Have the production model judge itself with a different prompt — rejected: still self-validation, since the priors are shared.',
+      'Apply one accuracy-gate framework to all patterns. Rejected: rare-event patterns cannot support it, forcing either fake confidence or indefinite deferral.',
+      'Have the production model judge itself with a different prompt. Rejected: still self-validation, since the priors are shared.',
     ],
     evidence: ['evaluation/judge harness (designed)', 'pattern detection modules', 'gold-set labeling process (designed)'],
     maturity: 'design',

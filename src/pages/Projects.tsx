@@ -261,7 +261,7 @@ const DecisionsModal = ({
       >
         <div className="flex items-center justify-between gap-3 px-4 py-2.5 border-b border-gray-800 shrink-0">
           <span className="text-white text-sm font-medium font-manrope truncate">
-            {data.title} — Design Decisions
+            {data.title}: Design Decisions
           </span>
           <button
             onClick={onClose}
@@ -273,7 +273,7 @@ const DecisionsModal = ({
         </div>
         <div className="overflow-y-auto px-4 sm:px-5 py-4">
           <p className="text-gray-500 text-xs sm:text-sm leading-relaxed mb-4">
-            How I think — architecture decisions from {data.title}, a private in-development project.
+            How I think. Architecture decisions from {data.title}, a private in-development project.
             Self-reported, with no public code to check. These also drive the{' '}
             <span className="text-indigo-300">explain_decision</span> tool in my MCP server.
           </p>
