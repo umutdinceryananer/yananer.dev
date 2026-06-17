@@ -47,6 +47,14 @@ export interface GrowthItem {
   note: string
 }
 
+export interface NowItem {
+  title: string
+  /** Short status pill, e.g. "In Development". */
+  badge?: string
+  /** One short line under the title. */
+  description: string
+}
+
 export interface Profile {
   name: string
   /** Display role, e.g. "Junior Solution Engineer @ SAS". */
@@ -71,6 +79,8 @@ export interface Profile {
   work: WorkEntry[]
   tech: TechItem[]
   growth: GrowthItem[]
+  /** "Currently focused on" cards for the Now strip. */
+  now: NowItem[]
 }
 
 export const profile: Profile = {
@@ -191,5 +201,10 @@ export const profile: Profile = {
     { area: 'Advanced LLM internals', note: 'Shaky even on transformer internals; actively closing the gap.' },
     { area: 'Computer vision', note: 'Far from it, and honestly not drawn to it.' },
     { area: 'Rust / systems programming', note: "Don't know it yet; keen to pick it up." },
+  ],
+  now: [
+    { title: 'Building Hisar', badge: 'In Development', description: 'LLM analysis over financial data.' },
+    { title: 'Shipping Themis', badge: 'Pre-launch', description: 'Offline-first iOS exam-prep app, headed to TestFlight.' },
+    { title: 'Closing LLM gaps', badge: 'Learning', description: 'Transformer internals; chasing a first paper.' },
   ],
 }

@@ -1,4 +1,5 @@
 import { projects, type Project } from '../data/projects'
+import { profile } from '../data/profile'
 
 const Tag = ({ children }: { children: React.ReactNode }) => (
   <span className="px-2 py-1 bg-[#1a1a1a] rounded-md text-gray-400 text-xs border border-gray-800">
@@ -11,6 +12,12 @@ const Badge = ({ children, className }: { children: React.ReactNode; className: 
     {children}
   </span>
 )
+
+const nowBadgeClass: Record<string, string> = {
+  'In Development': 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20',
+  'Pre-launch': 'bg-green-500/10 text-green-300 border-green-500/20',
+  Learning: 'bg-gray-500/10 text-gray-400 border-gray-500/25',
+}
 
 const GitHubIcon = () => (
   <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
@@ -82,6 +89,42 @@ const Projects = () => {
 
   return (
     <div className="pt-2">
+      {profile.now.length > 0 && (
+        <div className="mb-8">
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold text-white mb-3 text-center font-manrope flex items-center justify-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+              Now
+            </h2>
+            <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-gray-800 to-transparent" />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+            {profile.now.map((n, i) => (
+              <div
+                key={i}
+                className="relative overflow-hidden bg-[#1a1a1a] rounded-lg p-4 border border-gray-800 group hover:ring-2 hover:ring-indigo-500/20 transition-all"
+              >
+                <div className="absolute inset-0 pointer-events-none">
+                  <div className="absolute top-0 left-0 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl transform -translate-x-1/2 -translate-y-1/2" />
+                  <div className="absolute bottom-0 right-0 w-64 h-64 bg-indigo-500/3 rounded-full blur-2xl transform translate-x-1/2 translate-y-1/2" />
+                </div>
+                <div className="relative flex flex-col gap-1.5">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h4 className="text-base font-medium text-indigo-400 leading-tight">{n.title}</h4>
+                    {n.badge && (
+                      <Badge className={nowBadgeClass[n.badge] ?? 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20'}>
+                        {n.badge}
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="text-gray-300 text-sm">{n.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="mb-6">
         <h2 className="text-xl font-semibold text-white mb-3 text-center font-manrope">Projects</h2>
         <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-gray-800 to-transparent" />
