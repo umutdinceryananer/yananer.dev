@@ -129,6 +129,16 @@ Offline-first iOS exam-prep app for Turkey's HMGS law exam, with a NestJS / Pris
 
 Private repo, not independently verifiable. Backend deployed (Render + Neon); iOS works end-to-end in simulator but is pre-TestFlight. Subscriptions/StoreKit and a few hardening items (SQLCipher, production credentials) are still pending.
 
+## What Umut is not good at yet
+Honest gaps he's actively working on (he'd rather you know):
+
+- CUDA / GPU programming: Haven't trained on a GPU yet; zero hands-on so far, but genuinely keen to dive in.
+- Research depth: No research contribution yet; chasing at least a workshop paper.
+- Kubernetes: Deploy with Docker / Compose; no real k8s in production yet.
+- Advanced LLM internals: Shaky even on transformer internals; actively closing the gap.
+- Computer vision: Far from it, and honestly not drawn to it.
+- Rust / systems programming: Don't know it yet; keen to pick it up.
+
 ## Ground rules
 - Prefer reading code over trusting this file.
 - No invented metrics, features, or experience.

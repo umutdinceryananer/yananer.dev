@@ -103,6 +103,11 @@ ${ossContribs.map(renderOssForSkill).join('\n')}
 
 ${privateWork.map(renderPrivateForSkill).join('\n\n')}
 
+## What ${firstName} is not good at yet
+Honest gaps he's actively working on (he'd rather you know):
+
+${profile.growth.map((g) => `- ${g.area}: ${g.note}`).join('\n')}
+
 ## Ground rules
 - Prefer reading code over trusting this file.
 - No invented metrics, features, or experience.
@@ -141,6 +146,9 @@ ${ossContribs
 
 ## Private / in development
 ${privateWork.map((p) => `- ${p.name}: ${p.oneLiner} (not independently verifiable)`).join('\n')}
+
+## What ${firstName} is not good at yet
+${profile.growth.map((g) => `- ${g.area}: ${g.note}`).join('\n')}
 `
 
 // ---------------------------------------------------------------------------

@@ -40,6 +40,13 @@ export interface TechItem {
   hasTooltip?: boolean
 }
 
+export interface GrowthItem {
+  /** A skill/area not strong at yet. */
+  area: string
+  /** One honest, forward-looking line about it. */
+  note: string
+}
+
 export interface Profile {
   name: string
   /** Display role, e.g. "Junior Solution Engineer @ SAS". */
@@ -63,6 +70,7 @@ export interface Profile {
   education: EducationEntry[]
   work: WorkEntry[]
   tech: TechItem[]
+  growth: GrowthItem[]
 }
 
 export const profile: Profile = {
@@ -175,5 +183,13 @@ export const profile: Profile = {
     { name: 'Vite', description: 'Build Tool', hasTooltip: true },
     { name: 'Tailwind', description: 'CSS Framework', hasTooltip: true },
     { name: 'Git', description: 'Version Control', hasTooltip: true },
+  ],
+  growth: [
+    { area: 'CUDA / GPU programming', note: "Haven't trained on a GPU yet; zero hands-on so far, but genuinely keen to dive in." },
+    { area: 'Research depth', note: 'No research contribution yet; chasing at least a workshop paper.' },
+    { area: 'Kubernetes', note: 'Deploy with Docker / Compose; no real k8s in production yet.' },
+    { area: 'Advanced LLM internals', note: 'Shaky even on transformer internals; actively closing the gap.' },
+    { area: 'Computer vision', note: 'Far from it, and honestly not drawn to it.' },
+    { area: 'Rust / systems programming', note: "Don't know it yet; keen to pick it up." },
   ],
 }
