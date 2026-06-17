@@ -5,7 +5,7 @@ import TopNav, { type Route } from './components/TopNav'
 import Footer from './components/Footer'
 
 const routeFromHash = (): Route =>
-  window.location.hash.replace('#', '') === 'projects' ? 'projects' : 'about'
+  window.location.hash.replace('#', '') === 'work' ? 'work' : 'about'
 
 function App() {
   const [route, setRoute] = useState<Route>(routeFromHash())
@@ -21,7 +21,7 @@ function App() {
       <div className="min-h-screen w-full flex flex-col items-center overflow-x-hidden">
         <TopNav route={route} />
         <main className="w-full max-w-[1400px] px-2 sm:px-4 lg:px-8 pb-6 sm:pb-8 flex-1">
-          {route === 'projects' ? <Projects /> : <Home />}
+          {route === 'work' ? <Projects /> : <Home />}
         </main>
         <Footer />
       </div>

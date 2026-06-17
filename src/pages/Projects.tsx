@@ -150,23 +150,58 @@ const ProjectCard = ({ p, onPlay }: { p: Project; onPlay?: (p: Project) => void 
   </div>
 )
 
-const DecisionCard = ({ d }: { d: Decision }) => (
-  <div className="h-full flex flex-col bg-[#1a1a1a] rounded-lg p-4 relative overflow-hidden group hover:ring-2 hover:ring-indigo-500/20 transition-all">
-    <div className="absolute inset-0 pointer-events-none">
-      <div className="absolute top-0 left-0 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl transform -translate-x-1/2 -translate-y-1/2" />
-      <div className="absolute bottom-0 right-0 w-64 h-64 bg-indigo-500/3 rounded-full blur-2xl transform translate-x-1/2 translate-y-1/2" />
-    </div>
-    <div className="relative flex flex-col gap-1.5 h-full">
-      <div className="flex items-center gap-2 flex-wrap">
-        <h4 className="text-base font-medium text-indigo-400 leading-tight">{d.title}</h4>
+const FieldList = ({ label, items }: { label: string; items: string[] }) => (
+  <div>
+    <p className="text-gray-500 text-[11px] uppercase tracking-wide mb-1">{label}</p>
+    <ul className="list-disc list-inside space-y-0.5 text-gray-400 text-sm leading-relaxed marker:text-gray-600">
+      {items.map((t, i) => <li key={i}>{t}</li>)}
+    </ul>
+  </div>
+)
+
+// One collapsible ADR row. Collapsed = title + maturity badge; expanded = the
+// reasoning. Visually distinct from project cards (a log, not a grid).
+const DecisionRow = ({ d }: { d: Decision }) => {
+  const [open, setOpen] = useState(false)
+  return (
+    <div>
+      <button
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        className="w-full flex items-center gap-2.5 py-3 text-left group"
+      >
+        <svg
+          className={`w-3.5 h-3.5 shrink-0 text-gray-500 group-hover:text-indigo-400 transition-all duration-200 ${open ? 'rotate-90' : ''}`}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2.5}
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+        <span className="flex-1 min-w-0 text-sm text-gray-200 group-hover:text-white transition-colors">
+          {d.title}
+        </span>
         {d.maturity && (
           <Badge className={maturityBadge[d.maturity].cls}>{maturityBadge[d.maturity].label}</Badge>
         )}
-      </div>
-      <p className="text-gray-300 text-sm">{d.summary}</p>
+      </button>
+      {open && (
+        <div className="pl-6 pb-4 pr-1 flex flex-col gap-3">
+          <p className="text-gray-300 text-sm leading-relaxed">{d.summary}</p>
+          <div>
+            <p className="text-gray-500 text-[11px] uppercase tracking-wide mb-1">Why</p>
+            <p className="text-gray-400 text-sm leading-relaxed">{d.rationale}</p>
+          </div>
+          <FieldList label="Tradeoffs" items={d.tradeoffs} />
+          {d.alternatives && d.alternatives.length > 0 && (
+            <FieldList label="Alternatives considered" items={d.alternatives} />
+          )}
+        </div>
+      )}
     </div>
-  </div>
-)
+  )
+}
 
 const Projects = () => {
   const repos = projects.filter((p) => p.kind === 'repo')
@@ -233,42 +268,28 @@ const Projects = () => {
             <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-gray-800 to-transparent" />
           </div>
           <p className="text-center text-gray-500 text-xs sm:text-sm max-w-2xl mx-auto mb-5 leading-relaxed">
-            How I think, from <span className="text-gray-400">Hisar</span> — private, in-development work.
-            Self-reported and <span className="text-gray-400">not independently verifiable</span> (no public
-            code), so it sits in its own bucket, apart from the public repos above. These also drive the{' '}
-            <span className="text-indigo-300">explain_decision</span> tool in my MCP server.
+            How I think — architecture decisions from <span className="text-gray-400">Hisar</span>, my private
+            in-development project. Self-reported, with no public code to check, so they live in their own
+            bucket and also drive the <span className="text-indigo-300">explain_decision</span> tool in my MCP
+            server.
           </p>
 
-          <div className="relative rounded-xl border border-gray-800 bg-[#141414]/40 p-4 sm:p-5">
-            <div className="flex items-center gap-2 mb-4 flex-wrap">
-              <Badge className="bg-red-500/10 text-red-300 border-red-500/20">Private</Badge>
-              <Badge className="bg-gray-500/10 text-gray-400 border-gray-500/25">Not independently verifiable</Badge>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+          <div className="max-w-3xl mx-auto rounded-xl border border-gray-800 bg-[#141414]/40 px-4 sm:px-5">
+            <div className="divide-y divide-gray-800/60">
+              <div className="flex items-center gap-2 py-3 flex-wrap">
+                <Badge className="bg-red-500/10 text-red-300 border-red-500/20">Private</Badge>
+                <Badge className="bg-gray-500/10 text-gray-400 border-gray-500/25">Not independently verifiable</Badge>
+              </div>
               {featuredDecisions.map((d) => (
-                <DecisionCard key={d.id} d={d} />
+                <DecisionRow key={d.id} d={d} />
+              ))}
+              {otherDecisions.length > 0 && (
+                <p className="text-gray-500 text-[11px] uppercase tracking-wide pt-3 pb-1">Also designed</p>
+              )}
+              {otherDecisions.map((d) => (
+                <DecisionRow key={d.id} d={d} />
               ))}
             </div>
-
-            {otherDecisions.length > 0 && (
-              <div className="mt-4 pt-4 border-t border-gray-800/70">
-                <p className="text-gray-500 text-xs mb-2.5">Also designed</p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {otherDecisions.map((d) => (
-                    <div key={d.id} className="flex flex-col gap-0.5">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-gray-300 text-sm">{d.title}</span>
-                        {d.maturity && (
-                          <Badge className={maturityBadge[d.maturity].cls}>{maturityBadge[d.maturity].label}</Badge>
-                        )}
-                      </div>
-                      <span className="text-gray-500 text-xs leading-relaxed">{d.summary}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
         </div>
       )}
