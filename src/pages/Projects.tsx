@@ -210,19 +210,31 @@ const DecisionRow = ({ d }: { d: Decision }) => {
           <Badge className={maturityBadge[d.maturity].cls}>{maturityBadge[d.maturity].label}</Badge>
         )}
       </button>
-      {open && (
-        <div className="pl-6 pb-4 pr-1 flex flex-col gap-3">
-          <p className="text-gray-300 text-sm leading-relaxed">{d.summary}</p>
-          <div>
-            <p className="text-gray-500 text-[11px] uppercase tracking-wide mb-1">Why</p>
-            <p className="text-gray-400 text-sm leading-relaxed">{d.rationale}</p>
+      {/* Smooth accordion: animate grid-template-rows 0fr -> 1fr (collapses to the
+          content's natural height, no JS measuring), plus an opacity fade. */}
+      <div
+        className={`grid transition-[grid-template-rows] duration-300 ease-out motion-reduce:transition-none ${
+          open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
+        }`}
+      >
+        <div className="overflow-hidden">
+          <div
+            className={`pl-6 pb-4 pr-1 flex flex-col gap-3 transition-opacity duration-300 motion-reduce:transition-none ${
+              open ? 'opacity-100' : 'opacity-0'
+            }`}
+          >
+            <p className="text-gray-300 text-sm leading-relaxed">{d.summary}</p>
+            <div>
+              <p className="text-gray-500 text-[11px] uppercase tracking-wide mb-1">Why</p>
+              <p className="text-gray-400 text-sm leading-relaxed">{d.rationale}</p>
+            </div>
+            <FieldList label="Tradeoffs" items={d.tradeoffs} />
+            {d.alternatives && d.alternatives.length > 0 && (
+              <FieldList label="Alternatives considered" items={d.alternatives} />
+            )}
           </div>
-          <FieldList label="Tradeoffs" items={d.tradeoffs} />
-          {d.alternatives && d.alternatives.length > 0 && (
-            <FieldList label="Alternatives considered" items={d.alternatives} />
-          )}
         </div>
-      )}
+      </div>
     </div>
   )
 }
