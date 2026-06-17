@@ -109,6 +109,32 @@ A team-built veterinary healthcare platform (CTIS senior project) connecting pet
   - .github/workflows/ci.yml — CI pipeline
 - NOTE: Built with a team under the PetlystHQ org — the best public signal of collaborative work (vs. the mostly-solo repos above).
 
+### Spotify-Playlist-Watcher
+A scheduled service that watches public Spotify playlists for newly added tracks and sends a Telegram notification with an LLM-generated emotional/sentiment read of each track. Fully automated, zero-ops.
+
+- Signal: applied LLM / automation
+- Repo: https://github.com/umutdinceryananer/Spotify-Playlist-Watcher
+- Tech: Python, Groq, Spotify API, Telegram, SQLite, GitHub Actions
+- Start by reading:
+  - src/monitor.py — diff + de-dup of new tracks across runs
+  - src/groq_client.py — LLM sentiment / emotional analysis (Groq)
+  - src/spotify.py — Spotify Web API client
+  - src/telegram.py — notification delivery
+  - .github/workflows/monitor.yml — ~30-min scheduled run
+
+### Slack-Workflow-Engine
+A config-driven Slack bot for multi-step approval workflows (refund / expense / PTO) with modals, multi-level approvers, database persistence, and structured logging.
+
+- Signal: backend systems / workflow orchestration
+- Repo: https://github.com/umutdinceryananer/Slack-Workflow-Engine
+- Tech: Python, Slack Bolt, Flask, SQLAlchemy, Pydantic, structlog
+- Start by reading:
+  - slack_workflow_engine/workflows/ — config loader + workflow state machine (loader.py, state.py, storage.py)
+  - slack_workflow_engine/home/ — Slack App Home UI (views, filters, debounce)
+  - slack_workflow_engine/logging_config.py — structlog trace IDs across async boundaries
+  - tests/ — 15+ unit / integration tests
+  - .github/workflows/ci.yml — CI pipeline
+
 ## Open-source contributions
 
 - elastic/kibana — PR #268326 — Merged PR in elastic/kibana: show a "Go to dashboard" button in the save-success toast. [merged]

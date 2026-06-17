@@ -278,6 +278,32 @@
       ]
     },
     {
+      "name": "Spotify-Playlist-Watcher",
+      "description": "A scheduled service that watches public Spotify playlists for newly added tracks and sends a Telegram notification with an LLM-generated emotional/sentiment read of each track. Fully automated, zero-ops.",
+      "url": "https://github.com/umutdinceryananer/Spotify-Playlist-Watcher",
+      "keywords": [
+        "Python",
+        "Groq",
+        "Spotify API",
+        "Telegram",
+        "SQLite",
+        "GitHub Actions"
+      ]
+    },
+    {
+      "name": "Slack-Workflow-Engine",
+      "description": "A config-driven Slack bot for multi-step approval workflows (refund / expense / PTO) with modals, multi-level approvers, database persistence, and structured logging.",
+      "url": "https://github.com/umutdinceryananer/Slack-Workflow-Engine",
+      "keywords": [
+        "Python",
+        "Slack Bolt",
+        "Flask",
+        "SQLAlchemy",
+        "Pydantic",
+        "structlog"
+      ]
+    },
+    {
       "name": "elastic/kibana — PR #268326",
       "description": "Merged PR in elastic/kibana: show a \"Go to dashboard\" button in the save-success toast.",
       "url": "https://github.com/elastic/kibana/pull/268326"
