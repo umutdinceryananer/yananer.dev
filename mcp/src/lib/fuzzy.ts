@@ -9,24 +9,50 @@ function tokenize(s: string): string[] {
   return normalize(s).split(' ').filter(Boolean)
 }
 
+/** Crude singularization so "outages" matches "outage", "policies" → "policy". */
+function stem(t: string): string {
+  return t.length > 3 ? t.replace(/ies$/, 'y').replace(/s$/, '') : t
+}
+
+function stemPhrase(s: string): string {
+  return tokenize(s).map(stem).join(' ')
+}
+
 /** Score a query against a candidate string: 1 = exact, down to 0. */
 function scoreOne(query: string, candidate: string): number {
   const q = normalize(query)
   const c = normalize(candidate)
   if (!q || !c) return 0
   if (q === c) return 1
-  if (c.includes(q) || q.includes(c)) return 0.8
-  const qt = new Set(tokenize(query))
-  const ct = new Set(tokenize(candidate))
+  // Whole-token containment (word-boundary, stemmed), so a short key like "rag"
+  // does not match inside "graphrag", while plurals still align ("outages"→"outage").
+  const qs = ` ${stemPhrase(query)} `
+  const cs = ` ${stemPhrase(candidate)} `
+  if (cs.includes(qs) || qs.includes(cs)) return 0.8
+  const qt = new Set(tokenize(query).map(stem))
+  const ct = new Set(tokenize(candidate).map(stem))
   if (!qt.size || !ct.size) return 0
   const overlap = [...qt].filter((t) => ct.has(t)).length
   const union = new Set([...qt, ...ct]).size
   return overlap / union // Jaccard
 }
 
-/** Best score of a query across several candidate keys. */
+/**
+ * Best score of a query across several candidate keys, plus a small bonus for
+ * each *additional* strongly-matching key. This breaks ties where two items share
+ * a broad key (e.g. the repo name) but only one also matches a specific topic.
+ */
 export function scoreMatch(query: string, keys: string[]): number {
-  return keys.reduce((best, k) => Math.max(best, scoreOne(query, k)), 0)
+  let best = 0
+  let strong = 0
+  for (const k of keys) {
+    const s = scoreOne(query, k)
+    if (s > best) best = s
+    if (s >= 0.8) strong++
+  }
+  if (best >= 1) return 1
+  const bonus = strong > 1 ? Math.min(0.15, (strong - 1) * 0.05) : 0
+  return Math.min(0.99, best + bonus)
 }
 
 /** Pick the best-matching item, or undefined if nothing clears the threshold. */
