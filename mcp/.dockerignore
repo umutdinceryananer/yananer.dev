@@ -1,0 +1,6 @@
+node_modules
+npm-debug.log
+_smoke*.ts
+*.md
+!engine/VENDORED.md
+.DS_Store

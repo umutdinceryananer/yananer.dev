@@ -1,0 +1,25 @@
+{
+  "name": "yananer-mcp",
+  "private": true,
+  "type": "module",
+  "description": "Remote MCP server for yananer.dev — read-only tools grounded in real project data.",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "tsx src/server.ts",
+    "typecheck": "tsc --noEmit",
+    "inspect": "npx @modelcontextprotocol/inspector"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "express-rate-limit": "^7.4.1",
+    "tsx": "^4.22.4",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "typescript": "~5.6.2"
+  }
+}

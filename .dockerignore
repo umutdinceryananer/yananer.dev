@@ -1,0 +1,7 @@
+# Build context for the mcp/ image is the repo root; keep it lean.
+.git
+node_modules
+mcp/node_modules
+dist
+.vite
+*.log
