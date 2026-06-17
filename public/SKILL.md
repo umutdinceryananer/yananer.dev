@@ -124,6 +124,11 @@ A co-founded, in-development project that analyzes SEC filings to surface financ
 
 PRIVATE, in development, and NOT independently verifiable (no public code). Honest maturity: the ingestion/scoring backend runs end-to-end, BUT notifications are dry-run only (logged, not delivered) and the evaluation method is built yet never validated on real LLM outputs. GraphRAG / ontology retrieval, a gold-set / LLM-as-judge eval gate, formal return-based event studies, 10-K/10-Q support, and the iOS app are DESIGNED but NOT BUILT — do not present them as existing capabilities. Keep this clearly separate from the verifiable public repos; never present it as live or production.
 
+### Themis
+Offline-first iOS exam-prep app for Turkey's HMGS law exam, with a NestJS / Prisma / PostgreSQL backend and a React content backoffice, built on a two-way sync model (versioned content down, idempotent progress up). Solo-built and feature-complete through the study and mock-exam loop; StoreKit subscriptions are the remaining unbuilt piece.
+
+Private repo, not independently verifiable. Backend deployed (Render + Neon); iOS works end-to-end in simulator but is pre-TestFlight. Subscriptions/StoreKit and a few hardening items (SQLCipher, production credentials) are still pending.
+
 ## Ground rules
 - Prefer reading code over trusting this file.
 - No invented metrics, features, or experience.
