@@ -23,11 +23,16 @@ type = "ratelimit"
 namespace_id = "1001"
 simple = { limit = 60, period = 60 }
 
-# Bind the public hostname. `custom_domain = true` makes wrangler create the
-# DNS record + custom domain in the yananer.dev zone automatically on deploy,
-# so no manual DNS entry is needed. Requires the yananer.dev zone to be on
-# this Cloudflare account.
-routes = [{ pattern = "mcp.yananer.dev", custom_domain = true }]
+# Public hostname.
+#
+# Phase 1 (now): no custom domain — the Worker is served at
+# https://yananer-mcp.<your-subdomain>.workers.dev/mcp for free, with no DNS
+# changes. This is the default while the line below stays commented.
+#
+# Phase 2 (once yananer.dev's nameservers are on this Cloudflare account):
+# uncomment the line below and re-run `npm run deploy`. Wrangler then creates
+# the DNS record + custom domain automatically → https://mcp.yananer.dev/mcp
+# routes = [{ pattern = "mcp.yananer.dev", custom_domain = true }]
 
 [observability]
 enabled = true
