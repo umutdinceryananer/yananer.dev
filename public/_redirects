@@ -1,0 +1,5 @@
+# Cloudflare Pages SPA fallback: serve index.html for any path that isn't a
+# real static asset (replicates the GitHub Pages 404.html copy trick).
+# Static files (llms.txt, resume.json, SKILL.md, robots.txt, assets) are matched
+# first, so only unknown routes fall through to the app.
+/*  /index.html  200
