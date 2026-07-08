@@ -1,0 +1,33 @@
+# Cloudflare Workers config for yananer-mcp.
+# Deploy: npm run deploy   (needs `wrangler login` once)
+name = "yananer-mcp"
+main = "src/worker.ts"
+compatibility_date = "2025-05-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Serve the MCP agent from a Durable Object. SQLite-backed classes are
+# included on the Workers **free** plan.
+[[durable_objects.bindings]]
+name = "MCP_OBJECT"
+class_name = "YananerMCP"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["YananerMCP"]
+
+# Abuse backstop: 60 requests / 60s per client IP (matches the old
+# express-rate-limit). Free, counts per Cloudflare colo. `period` must be 10 or 60.
+[[unsafe.bindings]]
+name = "RATE_LIMITER"
+type = "ratelimit"
+namespace_id = "1001"
+simple = { limit = 60, period = 60 }
+
+# Bind the public hostname. `custom_domain = true` makes wrangler create the
+# DNS record + custom domain in the yananer.dev zone automatically on deploy,
+# so no manual DNS entry is needed. Requires the yananer.dev zone to be on
+# this Cloudflare account.
+routes = [{ pattern = "mcp.yananer.dev", custom_domain = true }]
+
+[observability]
+enabled = true

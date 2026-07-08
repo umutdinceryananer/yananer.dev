@@ -4,13 +4,16 @@
   "type": "module",
   "description": "Remote MCP server for yananer.dev — read-only tools grounded in real project data.",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
     "start": "tsx src/server.ts",
+    "node:dev": "tsx watch src/server.ts",
     "typecheck": "tsc --noEmit",
     "inspect": "npx @modelcontextprotocol/inspector"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@modelcontextprotocol/sdk": "1.23.0",
+    "agents": "^0.2.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "express-rate-limit": "^7.4.1",
@@ -18,8 +21,10 @@
     "zod": "^3.25.0"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250501.0",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
-    "typescript": "~5.6.2"
+    "typescript": "~5.6.2",
+    "wrangler": "^4.0.0"
   }
 }

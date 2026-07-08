@@ -23,10 +23,17 @@ Project/profile data is imported from the repo's single source of truth
 nothing drifts. `explain_decision` reads `src/data/decisions.ts` (MCP-only). The tournament
 engine is vendored under `engine/` (see `engine/VENDORED.md`).
 
-## Run locally
+## Hosting: Cloudflare Workers
+Deployed as a **Cloudflare Worker** (`src/worker.ts`), served through `McpAgent`
+(Streamable HTTP over a SQLite-backed Durable Object). Free-plan friendly.
+Config lives in `wrangler.toml`; the tools/data are shared verbatim with the
+Node path, so nothing drifts.
+
+> **Requires Node.js ≥ 22** for Wrangler 4 (`nvm install 22 && nvm use 22`).
+
 ```bash
 npm install
-npm start                      # http://localhost:8787/mcp  (+ /healthz)
+npm run dev                    # local Workers runtime → http://localhost:8787/mcp (+ /healthz)
 npm run typecheck
 ```
 Inspect with the MCP Inspector → Streamable HTTP, URL `http://localhost:8787/mcp`:
@@ -34,20 +41,22 @@ Inspect with the MCP Inspector → Streamable HTTP, URL `http://localhost:8787/m
 npx @modelcontextprotocol/inspector
 ```
 
-## Env
-| Var | Default | Notes |
-| --- | --- | --- |
-| `PORT` | `8787` | listen port |
-| `ALLOWED_HOSTS` | `mcp.yananer.dev,localhost,127.0.0.1` | DNS-rebinding allowlist (Host header); include `host:port` forms when testing locally |
-
-## Docker
+### Deploy
 ```bash
-# build from the REPO ROOT (needs src/data in context)
-docker build -f mcp/Dockerfile -t yananer-mcp .
+npx wrangler login             # once — opens a browser, authorizes the account with the yananer.dev zone
+npm run deploy                 # wrangler deploy → live at https://mcp.yananer.dev/mcp
+```
+`wrangler.toml` binds the hostname via `routes = [{ pattern = "mcp.yananer.dev",
+custom_domain = true }]`, so Wrangler creates the DNS record + custom domain
+automatically on first deploy. No manual dashboard DNS entry needed.
+
+## Legacy Node/Express path (optional)
+The original standalone server (`src/server.ts`) still works for a plain Node
+host or Docker, and is kept for reference:
+```bash
+npm start                                        # http://localhost:8787/mcp
+docker build -f mcp/Dockerfile -t yananer-mcp .  # build from REPO ROOT (needs src/data)
 docker run --rm -p 8787:8787 yananer-mcp
 ```
-
-## Deployment
-Runs in **Zone A** of the homelab, exposed at `mcp.yananer.dev` via Cloudflare Tunnel
-(no open ports). See the [My-AI-Homelab](https://github.com/umutdinceryananer/My-AI-Homelab)
-repo for the host/network/ingress setup.
+Its env: `PORT` (default `8787`), `ALLOWED_HOSTS` (default
+`mcp.yananer.dev,localhost,127.0.0.1`, DNS-rebinding allowlist).

@@ -11,7 +11,7 @@
     "noEmit": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "types": ["node"]
+    "types": ["node", "@cloudflare/workers-types"]
   },
   "include": ["src", "engine", "../src/data"]
 }
