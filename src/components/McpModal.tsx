@@ -1,20 +1,17 @@
 import { useState, useEffect } from 'react'
+import { profile } from '../data/profile'
 
 const MCP_URL = 'https://mcp.yananer.dev/mcp'
+const SKILL_URL = `${profile.siteUrl}/SKILL.md`
+const SKILL_PROMPT = `Read ${SKILL_URL} and help me summarize ${profile.name.split(' ')[0]}'s projects and code.`
 
-const TOOLS: { name: string; blurb: string }[] = [
-  { name: 'get_profile', blurb: 'Who I am — bio, focus, experience, honest gaps' },
-  { name: 'list_projects', blurb: 'Public repos, OSS contributions, private work' },
-  { name: 'get_project', blurb: 'One repo in detail + the key files to read first' },
-  { name: 'recommend_project', blurb: 'Best-matching projects for an interest area' },
-  { name: 'assess_fit', blurb: 'Map my work to a role / JD, with honest gaps' },
-  { name: 'explain_decision', blurb: 'A grounded architecture decision + tradeoffs' },
-  { name: 'run_tournament', blurb: 'Actually runs an Iterated Prisoner’s Dilemma tournament' },
-  { name: 'contact', blurb: 'How to reach me — email + socials' },
+const TOOLS = [
+  'get_profile', 'list_projects', 'get_project', 'recommend_project',
+  'assess_fit', 'explain_decision', 'run_tournament', 'contact',
 ]
 
 const McpModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
-  const [copied, setCopied] = useState(false)
+  const [copied, setCopied] = useState<'skill' | 'mcp' | null>(null)
 
   useEffect(() => {
     if (!open) return
@@ -25,11 +22,11 @@ const McpModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => 
 
   if (!open) return null
 
-  const copy = async () => {
+  const copy = async (text: string, key: 'skill' | 'mcp') => {
     try {
-      await navigator.clipboard.writeText(MCP_URL)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 1600)
+      await navigator.clipboard.writeText(text)
+      setCopied(key)
+      setTimeout(() => setCopied((k) => (k === key ? null : k)), 1600)
     } catch {
       /* clipboard blocked — user can still select the text */
     }
@@ -45,13 +42,13 @@ const McpModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => 
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-gray-800 sticky top-0 bg-[#141414]">
+        <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-gray-800 sticky top-0 bg-[#141414] z-10">
           <div className="flex items-center gap-2 min-w-0">
             <svg className="w-4 h-4 text-indigo-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z" />
             </svg>
             <h2 className="text-white text-sm font-semibold font-manrope truncate">
-              Talk to this site with your AI
+              Point your AI at my work
             </h2>
           </div>
           <button
@@ -63,58 +60,85 @@ const McpModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => 
           </button>
         </div>
 
-        <div className="px-5 py-4 space-y-5">
+        <div className="px-5 py-4 space-y-3">
           <p className="text-gray-400 text-xs sm:text-sm leading-relaxed">
-            This site is machine-readable. Point an AI agent at the static{' '}
-            <span className="text-indigo-300">SKILL.md</span>, or connect a live{' '}
-            <span className="text-indigo-300">MCP server</span> so Claude / ChatGPT can query my
-            work directly — grounded in real project data.
+            Two ways, depending on how much you want to set up.
           </p>
 
-          {/* Endpoint + copy */}
-          <div>
-            <p className="text-gray-500 text-[11px] uppercase tracking-wide mb-1.5">MCP server endpoint</p>
+          {/* Option 1 — SKILL.md (static, zero setup) */}
+          <section className="rounded-lg border border-gray-800 bg-[#0F0F0F] p-4">
+            <div className="flex items-center gap-2 mb-1">
+              <svg className="w-4 h-4 text-gray-300 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+              </svg>
+              <h3 className="text-white text-sm font-semibold font-manrope">SKILL.md</h3>
+              <span className="text-[10px] uppercase tracking-wide text-emerald-300/80 bg-emerald-500/10 border border-emerald-500/20 rounded px-1.5 py-0.5">No setup</span>
+            </div>
+            <p className="text-gray-500 text-xs leading-relaxed mb-2.5">
+              A static file any AI can read. Paste this one line into ChatGPT, Claude, anything — no
+              config, works right away.
+            </p>
+            <div className="flex items-center gap-2 bg-[#141414] border border-gray-800 rounded-lg p-1.5 pl-3">
+              <code className="text-gray-300 text-[11px] sm:text-xs font-mono truncate flex-1">{SKILL_PROMPT}</code>
+              <button
+                onClick={() => copy(SKILL_PROMPT, 'skill')}
+                className="shrink-0 px-3 py-1.5 rounded-md text-xs font-manrope bg-[#1f1f1f] hover:bg-[#262626] text-gray-200 border border-gray-700 transition-colors"
+              >
+                {copied === 'skill' ? 'Copied!' : 'Copy'}
+              </button>
+            </div>
+            <a href={SKILL_URL} target="_blank" rel="noopener noreferrer" className="inline-block mt-2 text-[11px] text-gray-500 hover:text-indigo-300 transition-colors">
+              view raw SKILL.md &rarr;
+            </a>
+          </section>
+
+          {/* Option 2 — MCP server (live, interactive) */}
+          <section className="rounded-lg border border-indigo-500/25 bg-gradient-to-b from-indigo-500/[0.07] to-transparent p-4">
+            <div className="flex items-center gap-2 mb-1">
+              <svg className="w-4 h-4 text-indigo-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" />
+              </svg>
+              <h3 className="text-white text-sm font-semibold font-manrope">MCP server</h3>
+              <span className="text-[10px] uppercase tracking-wide text-indigo-300/90 bg-indigo-500/10 border border-indigo-500/25 rounded px-1.5 py-0.5">Live · interactive</span>
+            </div>
+            <p className="text-gray-500 text-xs leading-relaxed mb-2.5">
+              Connect Claude or ChatGPT to a live server so it can query my work with real tools —
+              grounded in project data, not guesses.
+            </p>
             <div className="flex items-center gap-2 bg-[#0F0F0F] border border-gray-800 rounded-lg p-1.5 pl-3">
               <code className="text-indigo-300 text-xs sm:text-sm font-mono truncate flex-1">{MCP_URL}</code>
               <button
-                onClick={copy}
+                onClick={() => copy(MCP_URL, 'mcp')}
                 className="shrink-0 px-3 py-1.5 rounded-md text-xs font-manrope bg-indigo-500 hover:bg-indigo-600 text-white transition-colors"
               >
-                {copied ? 'Copied!' : 'Copy'}
+                {copied === 'mcp' ? 'Copied!' : 'Copy'}
               </button>
             </div>
-          </div>
 
-          {/* How to connect */}
-          <div>
-            <p className="text-gray-500 text-[11px] uppercase tracking-wide mb-2">Add it to Claude</p>
-            <ol className="text-gray-400 text-xs sm:text-sm leading-relaxed space-y-1 list-decimal list-inside marker:text-gray-600">
-              <li>Settings → <span className="text-gray-300">Connectors</span> → <span className="text-gray-300">Add custom connector</span></li>
-              <li>Paste the endpoint above, then <span className="text-gray-300">Connect</span></li>
-            </ol>
-            <p className="text-gray-500 text-[11px] mt-2">
-              Claude Code (CLI):{' '}
-              <code className="text-indigo-300/90 font-mono">claude mcp add --transport http yananer {MCP_URL}</code>
-            </p>
-          </div>
-
-          {/* Tools */}
-          <div>
-            <p className="text-gray-500 text-[11px] uppercase tracking-wide mb-2">What your AI can call</p>
-            <div className="divide-y divide-gray-800/60">
-              {TOOLS.map((t) => (
-                <div key={t.name} className="flex items-baseline gap-2 py-1.5">
-                  <code className="text-indigo-300 text-xs font-mono shrink-0">{t.name}</code>
-                  <span className="text-gray-500 text-[11px] sm:text-xs leading-snug">{t.blurb}</span>
-                </div>
-              ))}
+            <div className="mt-3">
+              <p className="text-gray-500 text-[11px] uppercase tracking-wide mb-1.5">Add it to Claude</p>
+              <ol className="text-gray-400 text-xs leading-relaxed space-y-1 list-decimal list-inside marker:text-gray-600">
+                <li>Settings → <span className="text-gray-300">Connectors</span> → <span className="text-gray-300">Add custom connector</span></li>
+                <li>Paste the endpoint above, then <span className="text-gray-300">Connect</span></li>
+              </ol>
+              <p className="text-gray-500 text-[11px] mt-1.5">
+                CLI: <code className="text-indigo-300/90 font-mono">claude mcp add --transport http yananer {MCP_URL}</code>
+              </p>
             </div>
-          </div>
+
+            <div className="mt-3 pt-3 border-t border-gray-800/70">
+              <p className="text-gray-500 text-[11px] uppercase tracking-wide mb-1.5">Tools your AI can call</p>
+              <div className="flex flex-wrap gap-1.5">
+                {TOOLS.map((t) => (
+                  <code key={t} className="text-indigo-300/90 text-[11px] font-mono bg-indigo-500/10 border border-indigo-500/15 rounded px-1.5 py-0.5">{t}</code>
+                ))}
+              </div>
+            </div>
+          </section>
 
           <p className="text-gray-600 text-[11px] leading-relaxed">
-            Read-only and rate-limited. Also machine-readable at{' '}
-            <a href="/llms.txt" className="text-indigo-400/80 hover:text-indigo-300">llms.txt</a>,{' '}
-            <a href="/SKILL.md" className="text-indigo-400/80 hover:text-indigo-300">SKILL.md</a>, and{' '}
+            Both read-only and rate-limited. Also machine-readable at{' '}
+            <a href="/llms.txt" className="text-indigo-400/80 hover:text-indigo-300">llms.txt</a> and{' '}
             <a href="/resume.json" className="text-indigo-400/80 hover:text-indigo-300">resume.json</a>.
           </p>
         </div>
