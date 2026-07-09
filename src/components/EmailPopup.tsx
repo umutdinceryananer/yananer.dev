@@ -103,7 +103,7 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm">
       <div className="bg-[#141414] w-[700px] rounded-xl p-[2px] shadow-[0_0_15px_rgba(0,0,0,0.6)]">
         <div className="bg-[#141414] rounded-[10px] p-8">
           <div className="flex justify-between items-center mb-8">
