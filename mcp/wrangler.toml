@@ -32,3 +32,9 @@ routes = [{ pattern = "mcp.yananer.dev", custom_domain = true }]
 
 [observability]
 enabled = true
+
+# `agents` lazily imports the optional `ai` SDK in a client-only code path this
+# server Worker never runs. Alias it to a tiny stub so the bundler resolves it
+# without pulling the full SDK into the bundle.
+[alias]
+ai = "./ai-stub.js"
