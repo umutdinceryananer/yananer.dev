@@ -2,7 +2,7 @@
 
 My personal portfolio — a single-page, bento-grid site with a dark theme, live GitHub
 contributions graph, and an EmailJS-powered contact form. Built with React, TypeScript,
-Vite, and Tailwind CSS v4, and deployed to GitHub Pages.
+Vite, and Tailwind CSS v4, and deployed to Cloudflare Pages.
 
 🔗 **Live:** [yananer.dev](https://yananer.dev)
 
@@ -14,7 +14,7 @@ Vite, and Tailwind CSS v4, and deployed to GitHub Pages.
 - **GitHub graph:** [`react-github-calendar`](https://github.com/grubersjoe/react-github-calendar)
 - **Contact form:** [EmailJS](https://www.emailjs.com/) (`@emailjs/browser`)
 - **Icons:** Heroicons + inline SVG
-- **Hosting:** GitHub Pages via GitHub Actions (custom domain through `CNAME`)
+- **Hosting:** Cloudflare Pages (Git integration — auto-builds on push to `main`)
 
 There is no router and no blog — the whole site renders as one page composed of grid cards.
 
@@ -22,10 +22,9 @@ There is no router and no blog — the whole site renders as one page composed o
 
 ```
 yananer.dev/
-├── .github/workflows/
-│   └── deploy.yml                  # Build + deploy to GitHub Pages on push to main
 ├── public/
-│   └── robots.txt
+│   ├── robots.txt
+│   └── _redirects                  # Cloudflare Pages SPA fallback (/* -> index.html)
 ├── src/
 │   ├── main.tsx                    # Entry point (mounts <App/> in StrictMode)
 │   ├── App.tsx                     # Full-screen dark shell, renders <Home/>
@@ -44,8 +43,7 @@ yananer.dev/
 │   └── assets/                     # Profile photo, résumé PDF
 ├── index.html                      # HTML shell + SEO/Open Graph meta tags
 ├── vite.config.ts
-├── tailwind.config.js
-└── CNAME                           # Custom domain (yananer.dev)
+└── tailwind.config.js
 ```
 
 Site content (work experience, education, skills, links) is hard-coded directly in the
@@ -75,7 +73,8 @@ VITE_EMAILJS_SERVICE_ID="your_service_id_here"
 VITE_EMAILJS_TEMPLATE_ID="your_template_id_here"
 ```
 
-In CI/production these are provided as GitHub Actions secrets (see `deploy.yml`).
+In production these are set as environment variables in the Cloudflare Pages project
+settings (Production + Preview), so the build injects them at deploy time.
 
 ## Scripts
 
@@ -84,14 +83,16 @@ npm run dev          # Start the dev server (port 3000)
 npm run build        # Type-check (tsc -b) and build to dist/
 npm run preview      # Preview the production build
 npm run lint         # Run ESLint
-npm run deploy       # Manual deploy to GitHub Pages (gh-pages -d dist)
 ```
 
 ## Deployment
 
-Pushing to `main` triggers `.github/workflows/deploy.yml`, which installs deps, builds
-the site (injecting the EmailJS secrets), copies `index.html` to `404.html` for SPA
-fallback, writes the `CNAME`, and publishes the `dist/` folder to GitHub Pages.
+Hosted on **Cloudflare Pages** with Git integration: pushing to `main` triggers a build
+(`npm run build`, output `dist/`) with the EmailJS env vars injected from the Pages
+project settings. SPA routing is handled by `public/_redirects` (`/* -> /index.html`).
+Custom domains `yananer.dev` and `www.yananer.dev` (www 301-redirects to the apex) are
+managed in Cloudflare. The remote MCP server is a separate Cloudflare Worker — see
+[`mcp/`](mcp/).
 
 ## License
 
