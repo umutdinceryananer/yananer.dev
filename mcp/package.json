@@ -5,6 +5,8 @@
   "description": "Remote MCP server for yananer.dev — read-only tools grounded in real project data.",
   "scripts": {
     "dev": "wrangler dev",
+    "audit": "tsx scripts/audit-capabilities.ts",
+    "predeploy": "tsx scripts/audit-capabilities.ts",
     "deploy": "wrangler deploy",
     "start": "tsx src/server.ts",
     "node:dev": "tsx watch src/server.ts",

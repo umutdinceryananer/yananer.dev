@@ -20,7 +20,7 @@ export const capabilities: Capability[] = [
   {
     id: 'rag',
     label: 'RAG / retrieval',
-    keywords: ['rag', 'retrieval', 'vector', 'embeddings', 'semantic search', 'grounding', 'knowledge base', 'pinecone', 'ai engineer', 'ai'],
+    keywords: ['rag', 'retrieval', 'vector', 'embeddings', 'semantic search', 'grounding', 'knowledge base', 'ai engineer', 'ai'],
     evidence: ['Government-Citizen-Services-Voice-Agent — rag/retriever.py, rag/embed.py'],
   },
   {
@@ -32,7 +32,7 @@ export const capabilities: Capability[] = [
   {
     id: 'backend',
     label: 'Async backend & API design',
-    keywords: ['backend', 'api', 'rest', 'flask', 'fastapi', 'python', 'server', 'microservice', 'endpoint', 'sqlalchemy'],
+    keywords: ['backend', 'api', 'rest', 'flask', 'fastapi', 'python', 'server', 'endpoint', 'sqlalchemy'],
     evidence: [
       'Government-Citizen-Services-Voice-Agent — agent/server.py (FastAPI streaming/SSE endpoint)',
       'FX-Risk-Engine — app/__init__.py (Flask app-factory), Flask-Smorest blueprints',
@@ -59,7 +59,7 @@ export const capabilities: Capability[] = [
   {
     id: 'ml',
     label: 'ML modeling',
-    keywords: ['machine learning', 'ml', 'model', 'xgboost', 'scikit', 'sklearn', 'classification', 'churn', 'regression', 'clustering', 'ai engineer', 'ml engineer', 'ai', 'artificial intelligence'],
+    keywords: ['machine learning', 'ml', 'model', 'xgboost', 'scikit', 'sklearn', 'classification', 'churn', 'regression', 'ai engineer', 'ml engineer', 'ai', 'artificial intelligence'],
     evidence: ['Mobile-Game-Analytics-Pipeline — mobile_game_analytics_pipeline/modeling/ (LogReg + XGBoost)'],
   },
   {
@@ -89,7 +89,7 @@ export const capabilities: Capability[] = [
   {
     id: 'cloud',
     label: 'Cloud / AWS',
-    keywords: ['cloud', 'aws', 'lambda', 's3', 'serverless', 'eventbridge'],
+    keywords: ['cloud', 'aws', 's3'],
     evidence: ['Petlyst-Web — AWS S3', 'AWS Cloud Practitioner certified'],
   },
   {
