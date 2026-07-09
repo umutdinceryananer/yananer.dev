@@ -33,7 +33,10 @@ export const capabilities: Capability[] = [
     id: 'backend',
     label: 'Async backend & API design',
     keywords: ['backend', 'api', 'rest', 'flask', 'fastapi', 'python', 'server', 'microservice', 'endpoint', 'sqlalchemy'],
-    evidence: ['FX-Risk-Engine — app/__init__.py (Flask app-factory), Flask-Smorest blueprints'],
+    evidence: [
+      'Government-Citizen-Services-Voice-Agent — agent/server.py (FastAPI streaming/SSE endpoint)',
+      'FX-Risk-Engine — app/__init__.py (Flask app-factory), Flask-Smorest blueprints',
+    ],
   },
   {
     id: 'workflow',
