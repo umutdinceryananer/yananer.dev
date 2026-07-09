@@ -25,9 +25,12 @@ simple = { limit = 60, period = 60 }
 
 # Public hostname.
 #
-# yananer.dev's nameservers are on this Cloudflare account, so the custom
-# domain is bound directly. Wrangler creates the DNS record + custom domain
-# automatically on deploy → https://mcp.yananer.dev/mcp
+# Custom domain → https://mcp.yananer.dev/mcp
+# NOTE: wrangler 4.107 silently ignored this custom_domain route on deploy, so
+# the domain was attached once via the Workers Domains API (equivalent to
+# dashboard: Worker → Settings → Domains & Routes → Add Custom Domain). It
+# persists account-side; this entry is kept as the declared intent. If a future
+# `wrangler deploy` errors that the domain already exists, remove this line.
 routes = [{ pattern = "mcp.yananer.dev", custom_domain = true }]
 
 [observability]
