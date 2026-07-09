@@ -13,7 +13,7 @@ Transport: **Streamable HTTP** (stateless). Public, read-only, rate-limited.
 | `get_project(name)` | Structured detail + the key files to read first, for one repo. |
 | `recommend_project(interest)` | Given an interest/focus area, the best-matching projects + why + files to read first. |
 | `explain_decision(topic)` | A grounded architecture decision — decision, rationale, tradeoffs, alternatives — fuzzy-matched by topic. Public-repo entries cite real evidence files; sterilized Hisar ADRs are flagged self-reported / not independently verifiable. |
-| `assess_fit(role)` | Maps Umut's verifiable work to a role / job description (capability → evidence) + honest gaps. Self-hosted: a guided pointer, not a neutral evaluation. |
+| `assess_fit(role?, keywords?)` | Maps Umut's verifiable work to a role / job description (capability → evidence) + honest gaps. Recruiters can also pass explicit `keywords` — each is reported as covered (with evidence), a known gap, or not found. Self-hosted: a guided pointer, not a neutral evaluation. |
 | `run_tournament(config)` | **Actually runs** an Iterated Prisoner's Dilemma tournament (vendored My-Game-Theory-Lab engine) and returns standings. Seedable → reproducible. |
 | `contact` | How to reach Umut — email + social links. |
 

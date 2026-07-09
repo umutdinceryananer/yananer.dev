@@ -14,19 +14,19 @@ export const capabilities: Capability[] = [
   {
     id: 'agentic',
     label: 'Agentic orchestration (LangGraph)',
-    keywords: ['agent', 'agents', 'agentic', 'langgraph', 'orchestration', 'multi step', 'tool use', 'llm agent', 'mcp'],
+    keywords: ['agent', 'agents', 'agentic', 'langgraph', 'orchestration', 'multi step', 'tool use', 'llm agent', 'mcp', 'ai engineer', 'ai'],
     evidence: ['Government-Citizen-Services-Voice-Agent — agent/graph.py, agent/nodes/', 'yananer.dev — this MCP server (mcp/)'],
   },
   {
     id: 'rag',
     label: 'RAG / retrieval',
-    keywords: ['rag', 'retrieval', 'vector', 'embeddings', 'semantic search', 'grounding', 'knowledge base', 'pinecone'],
+    keywords: ['rag', 'retrieval', 'vector', 'embeddings', 'semantic search', 'grounding', 'knowledge base', 'pinecone', 'ai engineer', 'ai'],
     evidence: ['Government-Citizen-Services-Voice-Agent — rag/retriever.py, rag/embed.py'],
   },
   {
     id: 'llm-integration',
     label: 'LLM application integration',
-    keywords: ['llm', 'gpt', 'claude', 'openai', 'anthropic', 'groq', 'prompt', 'generative ai', 'genai', 'inference'],
+    keywords: ['llm', 'gpt', 'claude', 'openai', 'anthropic', 'groq', 'prompt', 'generative ai', 'genai', 'inference', 'ai engineer', 'ai', 'artificial intelligence'],
     evidence: ['Government-Citizen-Services-Voice-Agent — OpenAI', 'Spotify-Playlist-Watcher — src/groq_client.py (Groq)'],
   },
   {
@@ -50,13 +50,13 @@ export const capabilities: Capability[] = [
   {
     id: 'data-eng',
     label: 'Data engineering / analytics',
-    keywords: ['data engineering', 'analytics', 'sql', 'duckdb', 'etl', 'cohort', 'funnel', 'kpi', 'dashboard', 'tableau'],
+    keywords: ['data engineering', 'data engineer', 'analytics', 'sql', 'duckdb', 'etl', 'cohort', 'funnel', 'kpi', 'dashboard', 'tableau'],
     evidence: ['Mobile-Game-Analytics-Pipeline — DuckDB, references/sql/, notebooks/'],
   },
   {
     id: 'ml',
     label: 'ML modeling',
-    keywords: ['machine learning', 'ml', 'model', 'xgboost', 'scikit', 'sklearn', 'classification', 'churn', 'regression', 'clustering'],
+    keywords: ['machine learning', 'ml', 'model', 'xgboost', 'scikit', 'sklearn', 'classification', 'churn', 'regression', 'clustering', 'ai engineer', 'ml engineer', 'ai', 'artificial intelligence'],
     evidence: ['Mobile-Game-Analytics-Pipeline — mobile_game_analytics_pipeline/modeling/ (LogReg + XGBoost)'],
   },
   {
