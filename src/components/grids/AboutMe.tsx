@@ -153,8 +153,11 @@ const AboutMe = () => {
             className="group mt-3 w-full flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg border border-indigo-500/25 bg-gradient-to-r from-indigo-500/10 to-transparent hover:from-indigo-500/20 hover:border-indigo-500/50 transition-all duration-300"
           >
             <span className="flex items-center gap-2 min-w-0">
-              <svg className="w-4 h-4 text-indigo-400 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456Z" />
+              {/* Official Model Context Protocol mark */}
+              <svg className="w-4 h-4 text-indigo-400 flex-shrink-0" viewBox="8 8 176 184" fill="none" stroke="currentColor" strokeWidth="12" strokeLinecap="round">
+                <path d="M25 97.8528L92.8822 29.9706C102.255 20.598 117.451 20.598 126.823 29.9706V29.9706C136.196 39.3431 136.196 54.5391 126.823 63.9117L75.5581 115.177" />
+                <path d="M76.2652 114.47L126.823 63.9117C136.196 54.5391 151.392 54.5391 160.765 63.9117L161.118 64.2652C170.491 73.6378 170.491 88.8338 161.118 98.2063L99.7248 159.6C96.6006 162.724 96.6006 167.789 99.7248 170.913L112.331 183.52" />
+                <path d="M109.853 46.9411L59.6482 97.1457C50.2756 106.518 50.2756 121.714 59.6482 131.087V131.087C69.0208 140.459 84.2167 140.459 93.5893 131.087L143.794 80.8822" />
               </svg>
               <span className="text-gray-300 text-sm truncate">
                 Connect your AI to this site

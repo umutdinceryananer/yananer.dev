@@ -28,7 +28,7 @@ const McpModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => 
       setCopied(key)
       setTimeout(() => setCopied((k) => (k === key ? null : k)), 1600)
     } catch {
-      /* clipboard blocked — user can still select the text */
+      /* clipboard blocked; user can still select the text */
     }
   }
 
@@ -65,7 +65,7 @@ const McpModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => 
             Two ways, depending on how much you want to set up.
           </p>
 
-          {/* Option 1 — SKILL.md (static, zero setup) */}
+          {/* Option 1: SKILL.md (static, zero setup) */}
           <section className="rounded-lg border border-gray-800 bg-[#0F0F0F] p-4">
             <div className="flex items-center gap-2 mb-1">
               <svg className="w-4 h-4 text-gray-300 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -75,7 +75,7 @@ const McpModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => 
               <span className="text-[10px] uppercase tracking-wide text-emerald-300/80 bg-emerald-500/10 border border-emerald-500/20 rounded px-1.5 py-0.5">No setup</span>
             </div>
             <p className="text-gray-500 text-xs leading-relaxed mb-2.5">
-              A static file any AI can read. Paste this one line into ChatGPT, Claude, anything — no
+              A static file any AI can read. Paste this one line into ChatGPT, Claude, anything. No
               config, works right away.
             </p>
             <div className="flex items-center gap-2 bg-[#141414] border border-gray-800 rounded-lg p-1.5 pl-3">
@@ -92,7 +92,7 @@ const McpModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => 
             </a>
           </section>
 
-          {/* Option 2 — MCP server (live, interactive) */}
+          {/* Option 2: MCP server (live, interactive) */}
           <section className="rounded-lg border border-indigo-500/25 bg-gradient-to-b from-indigo-500/[0.07] to-transparent p-4">
             <div className="flex items-center gap-2 mb-1">
               <svg className="w-4 h-4 text-indigo-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -102,7 +102,7 @@ const McpModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => 
               <span className="text-[10px] uppercase tracking-wide text-indigo-300/90 bg-indigo-500/10 border border-indigo-500/25 rounded px-1.5 py-0.5">Live · interactive</span>
             </div>
             <p className="text-gray-500 text-xs leading-relaxed mb-2.5">
-              Connect Claude or ChatGPT to a live server so it can query my work with real tools —
+              Connect Claude or ChatGPT to a live server so it can query my work with real tools,
               grounded in project data, not guesses.
             </p>
             <div className="flex items-center gap-2 bg-[#0F0F0F] border border-gray-800 rounded-lg p-1.5 pl-3">
