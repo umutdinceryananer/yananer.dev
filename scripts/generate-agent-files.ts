@@ -62,7 +62,10 @@ function renderOssForSkill(p: Project): string {
 }
 
 function renderPrivateForSkill(p: Project): string {
-  return [`### ${p.name}`, p.oneLiner, '', p.note ?? ''].join('\n').trimEnd()
+  const lines = [`### ${p.name}`, p.oneLiner]
+  if (p.liveDemoUrl) lines.push('', `- Live: ${p.liveDemoUrl}`)
+  if (p.note) lines.push('', p.note)
+  return lines.join('\n').trimEnd()
 }
 
 const skillMd = `<!-- ${GENERATED} -->
@@ -99,7 +102,7 @@ ${publicRepos.map(renderRepoForSkill).join('\n\n')}
 
 ${ossContribs.map(renderOssForSkill).join('\n')}
 
-## Private / in development
+## Private / closed-source
 
 ${privateWork.map(renderPrivateForSkill).join('\n\n')}
 
@@ -144,8 +147,17 @@ ${ossContribs
   .map((p) => `- [${p.name}](${p.repoUrl}): ${p.oneLiner} (${p.contributionState})`)
   .join('\n')}
 
-## Private / in development
-${privateWork.map((p) => `- ${p.name}: ${p.oneLiner} (not independently verifiable)`).join('\n')}
+## Private / closed-source
+${privateWork
+  .map((p) => {
+    const tag = p.isVerifiable
+      ? p.liveDemoUrl
+        ? ` (live: ${p.liveDemoUrl})`
+        : ''
+      : ' (not independently verifiable)'
+    return `- ${p.name}: ${p.oneLiner}${tag}`
+  })
+  .join('\n')}
 
 ## What ${firstName} is not good at yet
 ${profile.growth.map((g) => `- ${g.area}: ${g.note}`).join('\n')}
@@ -209,7 +221,7 @@ const resume = {
   projects: projects.map((p) => ({
     name: p.name,
     description: p.note ? `${p.oneLiner} (${p.note})` : p.oneLiner,
-    ...(p.repoUrl ? { url: p.repoUrl } : {}),
+    ...(p.repoUrl ?? p.liveDemoUrl ? { url: p.repoUrl ?? p.liveDemoUrl } : {}),
     ...(p.tech?.length ? { keywords: p.tech } : {}),
   })),
 }

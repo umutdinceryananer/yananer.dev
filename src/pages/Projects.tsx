@@ -333,6 +333,23 @@ const Projects = () => {
                   <div className="absolute top-0 left-0 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl transform -translate-x-1/2 -translate-y-1/2" />
                   <div className="absolute bottom-0 right-0 w-64 h-64 bg-indigo-500/3 rounded-full blur-2xl transform translate-x-1/2 translate-y-1/2" />
                 </div>
+                {n.url && (
+                  <>
+                    <a
+                      href={n.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${n.title} (opens in a new tab)`}
+                      className="absolute inset-0 z-10"
+                    />
+                    <svg
+                      className="absolute top-3 right-3 w-4 h-4 text-gray-600 group-hover:text-indigo-300 transition-colors pointer-events-none"
+                      fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                    </svg>
+                  </>
+                )}
                 <div className="relative flex flex-col gap-1.5">
                   <div className="flex items-center gap-2 flex-wrap">
                     <h4 className="text-base font-medium text-indigo-400 leading-tight">{n.title}</h4>

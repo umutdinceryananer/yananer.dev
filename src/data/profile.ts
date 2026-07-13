@@ -53,6 +53,8 @@ export interface NowItem {
   badge?: string
   /** One short line under the title. */
   description: string
+  /** Optional link (repo, product, etc.) — makes the Now card clickable. */
+  url?: string
 }
 
 export interface Profile {
@@ -200,11 +202,11 @@ export const profile: Profile = {
     { area: 'Kubernetes', note: 'Deploy with Docker / Compose; no real k8s in production yet.' },
     { area: 'Advanced LLM internals', note: 'Shaky even on transformer internals; actively closing the gap.' },
     { area: 'Computer vision', note: 'Far from it, and honestly not drawn to it.' },
-    { area: 'Rust / systems programming', note: "Don't know it yet; keen to pick it up." },
+    { area: 'Rust / systems programming', note: 'Early: nightlightd (a small X11 daemon) is my first real Rust project; still leveling up on ownership and systems patterns.' },
   ],
   now: [
     { title: 'Building Hisar', badge: 'In Development', description: 'LLM analysis over financial data.' },
-    { title: 'Shipping Themis', badge: 'Pre-launch', description: 'Offline-first iOS exam-prep app, headed to TestFlight.' },
+    { title: 'Building nightlightd', badge: 'In Development', description: 'Zero-config screen colour-temperature daemon for X11, in Rust.', url: 'https://github.com/umutdinceryananer/nightlightd' },
     { title: 'Closing LLM gaps', badge: 'Learning', description: 'Transformer internals; chasing a first paper.' },
   ],
 }

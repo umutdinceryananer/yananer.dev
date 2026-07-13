@@ -143,17 +143,21 @@ A config-driven Slack bot for multi-step approval workflows (refund / expense / 
   https://github.com/langfuse/langfuse-docs/pull/2821
   NOTE: Open pull request — under review, NOT yet merged. Describe it as a pending contribution, not a landed one.
 
-## Private / in development
+## Private / closed-source
 
 ### Hisar
 A co-founded, in-development project that analyzes SEC filings to surface financial-risk signals. The working backend is an async pipeline — EDGAR ingestion → a rule-based gatekeeper (routine vs. material) → LLM scoring with multi-provider fallback (Anthropic primary, OpenAI/Google) → PostgreSQL → cross-filing pattern detection → "silence-first" notifications — and a separate research prototype adds no-look-ahead price alignment and a volatility-lift correlation method. Stack: Python, FastAPI, SQLModel/asyncpg, RabbitMQ, Redis, Docker, plus a FRED macro-rate pipeline.
 
+- Live: https://hisar.app/
+
 PRIVATE, in development, and NOT independently verifiable (no public code). Honest maturity: the ingestion/scoring backend runs end-to-end, BUT notifications are dry-run only (logged, not delivered) and the evaluation method is built yet never validated on real LLM outputs. GraphRAG / ontology retrieval, a gold-set / LLM-as-judge eval gate, formal return-based event studies, 10-K/10-Q support, and the iOS app are DESIGNED but NOT BUILT — do not present them as existing capabilities. Keep this clearly separate from the verifiable public repos; never present it as live or production.
 
 ### Themis
-Offline-first iOS exam-prep app for Turkey's HMGS law exam, with a NestJS / Prisma / PostgreSQL backend and a React content backoffice, built on a two-way sync model (versioned content down, idempotent progress up). Solo-built and feature-complete through the study and mock-exam loop; StoreKit subscriptions are the remaining unbuilt piece.
+Offline-first iOS exam-prep app for Turkey's HMGS law exam, live on the App Store (free download with a premium subscription). A NestJS / Prisma / PostgreSQL backend and a React content backoffice drive a two-way sync model (versioned content down, idempotent progress up); the SwiftUI client works fully offline with local GRDB storage.
 
-Private repo, not independently verifiable. Backend deployed (Render + Neon); iOS works end-to-end in simulator but is pre-TestFlight. Subscriptions/StoreKit and a few hardening items (SQLCipher, production credentials) are still pending.
+- Live: https://apps.apple.com/app/id6777488979
+
+Closed-source (private repo), so the code can't be inspected, but the app is live and public on the App Store, so it is independently verifiable as a shipped product. Solo-built: SwiftUI client plus a NestJS / Prisma backend (Render + Neon).
 
 ## What Umut is not good at yet
 Honest gaps he's actively working on (he'd rather you know):
@@ -163,7 +167,7 @@ Honest gaps he's actively working on (he'd rather you know):
 - Kubernetes: Deploy with Docker / Compose; no real k8s in production yet.
 - Advanced LLM internals: Shaky even on transformer internals; actively closing the gap.
 - Computer vision: Far from it, and honestly not drawn to it.
-- Rust / systems programming: Don't know it yet; keen to pick it up.
+- Rust / systems programming: Early: nightlightd (a small X11 daemon) is my first real Rust project; still leveling up on ownership and systems patterns.
 
 ## Ground rules
 - Prefer reading code over trusting this file.

@@ -224,11 +224,12 @@ export const projects: Project[] = [
     name: 'Themis',
     kind: 'repo',
     oneLiner:
-      "Offline-first iOS exam-prep app for Turkey's HMGS law exam, with a NestJS / Prisma / PostgreSQL backend and a React content backoffice, built on a two-way sync model (versioned content down, idempotent progress up). Solo-built and feature-complete through the study and mock-exam loop; StoreKit subscriptions are the remaining unbuilt piece.",
-    signal: 'full-stack solo product / offline-first iOS + sync',
-    tech: ['Swift / SwiftUI', 'NestJS', 'Prisma + PostgreSQL', 'React', 'GRDB', 'TypeScript'],
+      "Offline-first iOS exam-prep app for Turkey's HMGS law exam, live on the App Store (free download with a premium subscription). A NestJS / Prisma / PostgreSQL backend and a React content backoffice drive a two-way sync model (versioned content down, idempotent progress up); the SwiftUI client works fully offline with local GRDB storage.",
+    signal: 'shipped full-stack solo product / offline-first iOS + sync',
+    tech: ['Swift / SwiftUI', 'StoreKit', 'NestJS', 'Prisma + PostgreSQL', 'React', 'GRDB', 'TypeScript'],
+    liveDemoUrl: 'https://apps.apple.com/app/id6777488979',
     isPrivate: true,
-    isVerifiable: false,
-    note: 'Private repo, not independently verifiable. Backend deployed (Render + Neon); iOS works end-to-end in simulator but is pre-TestFlight. Subscriptions/StoreKit and a few hardening items (SQLCipher, production credentials) are still pending.',
+    isVerifiable: true,
+    note: "Closed-source (private repo), so the code can't be inspected, but the app is live and public on the App Store, so it is independently verifiable as a shipped product. Solo-built: SwiftUI client plus a NestJS / Prisma backend (Render + Neon).",
   },
 ]

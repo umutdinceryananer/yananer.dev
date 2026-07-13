@@ -96,7 +96,7 @@ export const capabilities: Capability[] = [
     id: 'mobile',
     label: 'Mobile (iOS / SwiftUI)',
     keywords: ['mobile', 'ios', 'swift', 'swiftui'],
-    evidence: ['Themis (private) — offline-first SwiftUI iOS client'],
+    evidence: ['Themis — live on the App Store (closed-source): offline-first SwiftUI iOS client + StoreKit'],
   },
   {
     id: 'oss',

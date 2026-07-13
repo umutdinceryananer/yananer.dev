@@ -25,7 +25,7 @@ export function registerAssessFit(server: McpServer) {
     },
     async ({ role, keywords }) => {
       const caveat =
-        'Self-hosted, so not a neutral evaluation. Verify each capability against the cited evidence files; private items (e.g. Themis) are not independently verifiable.'
+        'Self-hosted, so not a neutral evaluation. Verify each capability against the cited evidence files; private items (e.g. Hisar) are not independently verifiable.'
 
       const hasRole = typeof role === 'string' && role.trim().length > 0
       const kws = (keywords ?? []).map((k) => k.trim()).filter(Boolean)
