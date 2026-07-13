@@ -135,6 +135,21 @@ A config-driven Slack bot for multi-step approval workflows (refund / expense / 
   - tests/ — 15+ unit / integration tests
   - .github/workflows/ci.yml — CI pipeline
 
+### nightlightd
+A zero-config screen colour-temperature daemon for X11, in Rust: it reads your timezone to schedule warmth by solar elevation, refuses to run twice, and survives suspend/resume. A reusable core library plus a thin CLI daemon (a redshift / gammastep alternative).
+
+- Signal: systems programming / Rust / Linux daemon
+- Repo: https://github.com/umutdinceryananer/nightlightd
+- Tech: Rust, X11, xrandr, D-Bus, Linux
+- Start by reading:
+  - cli/src/main.rs — daemon entry point and event loop
+  - core/src/solar.rs — solar-elevation schedule derived from the local timezone
+  - cli/src/x11.rs — applies gamma / colour temperature via X11 (xrandr)
+  - cli/src/dbus.rs, cli/src/suspend.rs — D-Bus logind integration; survives suspend/resume
+  - cli/src/state.rs — single-instance guard ("refuses to run twice")
+  - docs/HOW-IT-WORKS.md — architecture writeup
+- NOTE: Early Rust / systems work: a small, single-purpose daemon and my first real project in the language.
+
 ## Open-source contributions
 
 - elastic/kibana — PR #268326 — Merged PR in elastic/kibana: show a "Go to dashboard" button in the save-success toast. [merged]

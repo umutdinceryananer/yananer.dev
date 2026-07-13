@@ -186,6 +186,26 @@ export const projects: Project[] = [
     isVerifiable: true,
   },
   {
+    name: 'nightlightd',
+    kind: 'repo',
+    repoUrl: 'https://github.com/umutdinceryananer/nightlightd',
+    oneLiner:
+      'A zero-config screen colour-temperature daemon for X11, in Rust: it reads your timezone to schedule warmth by solar elevation, refuses to run twice, and survives suspend/resume. A reusable core library plus a thin CLI daemon (a redshift / gammastep alternative).',
+    signal: 'systems programming / Rust / Linux daemon',
+    tech: ['Rust', 'X11', 'xrandr', 'D-Bus', 'Linux'],
+    keyEntryPoints: [
+      'cli/src/main.rs — daemon entry point and event loop',
+      'core/src/solar.rs — solar-elevation schedule derived from the local timezone',
+      'cli/src/x11.rs — applies gamma / colour temperature via X11 (xrandr)',
+      'cli/src/dbus.rs, cli/src/suspend.rs — D-Bus logind integration; survives suspend/resume',
+      'cli/src/state.rs — single-instance guard ("refuses to run twice")',
+      'docs/HOW-IT-WORKS.md — architecture writeup',
+    ],
+    isPrivate: false,
+    isVerifiable: true,
+    note: 'Early Rust / systems work: a small, single-purpose daemon and my first real project in the language.',
+  },
+  {
     name: 'elastic/kibana — PR #268326',
     kind: 'oss-contribution',
     repoUrl: 'https://github.com/elastic/kibana/pull/268326',

@@ -305,6 +305,18 @@
       ]
     },
     {
+      "name": "nightlightd",
+      "description": "A zero-config screen colour-temperature daemon for X11, in Rust: it reads your timezone to schedule warmth by solar elevation, refuses to run twice, and survives suspend/resume. A reusable core library plus a thin CLI daemon (a redshift / gammastep alternative). (Early Rust / systems work: a small, single-purpose daemon and my first real project in the language.)",
+      "url": "https://github.com/umutdinceryananer/nightlightd",
+      "keywords": [
+        "Rust",
+        "X11",
+        "xrandr",
+        "D-Bus",
+        "Linux"
+      ]
+    },
+    {
       "name": "elastic/kibana — PR #268326",
       "description": "Merged PR in elastic/kibana: show a \"Go to dashboard\" button in the save-success toast.",
       "url": "https://github.com/elastic/kibana/pull/268326"

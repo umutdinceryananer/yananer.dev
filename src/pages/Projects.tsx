@@ -116,7 +116,12 @@ const ProjectCard = ({
     <div className="relative flex flex-col gap-1.5 h-full">
       <div className="flex items-center gap-2 flex-wrap">
         <h4 className="text-base font-medium text-indigo-400 leading-tight">{p.name}</h4>
-        {p.isPrivate && <Badge className="bg-red-500/10 text-red-300 border-red-500/20">Private</Badge>}
+        {p.isPrivate &&
+          (p.isVerifiable ? (
+            <Badge className="bg-green-500/10 text-green-300 border-green-500/20">Live</Badge>
+          ) : (
+            <Badge className="bg-red-500/10 text-red-300 border-red-500/20">Private</Badge>
+          ))}
         {!p.isVerifiable && <Badge className="bg-gray-500/10 text-gray-400 border-gray-500/25">Unverifiable</Badge>}
         {p.syntheticData && <Badge className="bg-gray-500/10 text-gray-400 border-gray-500/25">Synthetic</Badge>}
       </div>

@@ -17,6 +17,7 @@
 - [Petlyst-Web](https://github.com/PetlystHQ/Petlyst-Web): A team-built veterinary healthcare platform (CTIS senior project) connecting pet owners, vets, and clinics: a Node/Express + PostgreSQL backend with a TypeScript frontend, AWS S3 storage, token auth, and CI.
 - [Spotify-Playlist-Watcher](https://github.com/umutdinceryananer/Spotify-Playlist-Watcher): A scheduled service that watches public Spotify playlists for newly added tracks and sends a Telegram notification with an LLM-generated emotional/sentiment read of each track. Fully automated, zero-ops.
 - [Slack-Workflow-Engine](https://github.com/umutdinceryananer/Slack-Workflow-Engine): A config-driven Slack bot for multi-step approval workflows (refund / expense / PTO) with modals, multi-level approvers, database persistence, and structured logging.
+- [nightlightd](https://github.com/umutdinceryananer/nightlightd): A zero-config screen colour-temperature daemon for X11, in Rust: it reads your timezone to schedule warmth by solar elevation, refuses to run twice, and survives suspend/resume. A reusable core library plus a thin CLI daemon (a redshift / gammastep alternative).
 
 ## Open-source contributions
 - [elastic/kibana — PR #268326](https://github.com/elastic/kibana/pull/268326): Merged PR in elastic/kibana: show a "Go to dashboard" button in the save-success toast. (merged)
