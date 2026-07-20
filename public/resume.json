@@ -6,7 +6,7 @@
   },
   "basics": {
     "name": "Umut Dinçer Yananer",
-    "label": "Software Engineer & Founder",
+    "label": "Junior Solution Engineer @ SAS",
     "email": "umutdncr@gmail.com",
     "url": "https://yananer.dev",
     "summary": "Software Engineer & Founder, turning business needs into GenAI and agentic solutions. AWS Cloud Practitioner.",
@@ -29,7 +29,6 @@
       "name": "SAS Institute",
       "position": "Junior Solution Engineer",
       "startDate": "2025-04",
-      "endDate": "2026-07",
       "summary": "Deliver live technical demos and end-to-end PoCs (data pipelines, ML, RAG) to public-sector clients, scoping AI/GenAI use cases with their teams and presenting to senior decision-makers."
     },
     {

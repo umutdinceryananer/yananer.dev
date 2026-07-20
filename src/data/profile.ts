@@ -87,9 +87,9 @@ export interface Profile {
 
 export const profile: Profile = {
   name: 'Umut Dinçer Yananer',
-  role: 'Software Engineer & Founder',
-  roleTitle: 'Software Engineer & Founder',
-  employer: 'Hisar',
+  role: 'Junior Solution Engineer @ SAS',
+  roleTitle: 'Junior Solution Engineer',
+  employer: 'SAS',
   headline: 'Software Engineer & Founder',
   tagline:
     'Software engineer who builds across backend and data/ML.',
@@ -118,7 +118,7 @@ export const profile: Profile = {
       order: 7,
       title: 'Junior Solution Engineer',
       company: 'SAS Institute',
-      period: 'Apr 2025 - Jul 2026',
+      period: 'Apr 2025 - Present',
       description:
         'Deliver live technical demos and end-to-end PoCs (data pipelines, ML, RAG) to public-sector clients, scoping AI/GenAI use cases with their teams and presenting to senior decision-makers.',
     },
