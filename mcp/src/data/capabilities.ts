@@ -69,6 +69,19 @@ export const capabilities: Capability[] = [
     evidence: ['My-Game-Theory-Lab — src/core/ (tournament engine)'],
   },
   {
+    id: 'systems',
+    label: 'Linux systems / daemons & D-Bus IPC',
+    // NOTE: 'rust' is deliberately NOT a keyword here. The Linux/daemon/IPC work is
+    // evidenced by nightlightd, but Rust proficiency itself is still self-declared as
+    // early — it stays in profile.growth so `assess_fit("Rust")` returns that honest
+    // gap (with nightlightd cited in the note) rather than a flat "covered".
+    keywords: ['linux', 'daemon', 'systemd', 'd bus', 'dbus', 'ipc', 'x11', 'xrandr', 'systems programming', 'cli', 'tui'],
+    evidence: [
+      'nightlightd — cli/src/main.rs (daemon event loop), cli/src/dbus.rs (D-Bus service), cli/src/suspend.rs (logind suspend/resume)',
+      'nightlightd — cli/src/x11.rs (X11 / XRandR gamma ramps), dist/ (systemd units, Debian packaging)',
+    ],
+  },
+  {
     id: 'frontend',
     label: 'Frontend (React / TypeScript)',
     keywords: ['frontend', 'react', 'typescript', 'vite', 'tailwind', 'ui', 'spa', 'web'],

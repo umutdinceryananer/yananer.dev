@@ -305,13 +305,15 @@
     },
     {
       "name": "nightlightd",
-      "description": "A zero-config screen colour-temperature daemon for X11, in Rust: it reads your timezone to schedule warmth by solar elevation, refuses to run twice, and survives suspend/resume. A reusable core library plus a thin CLI daemon (a redshift / gammastep alternative). (Early Rust / systems work: a small, single-purpose daemon and my first real project in the language.)",
+      "description": "A zero-config screen colour-temperature daemon for X11, in Rust: it reads your timezone to schedule warmth by solar elevation, refuses to run twice, and survives suspend/resume. A five-crate workspace — a pure core library and the daemon itself, plus three front-ends that drive it over D-Bus: a tray icon, an f.lux-style egui panel, and a ratatui dashboard. Released as v0.1.1 with a .deb package and a static musl binary (a redshift / gammastep alternative). (Shipped but early. v0.1.1 is installable (.deb + static musl binary) and the daemon plus all three front-ends work, but it is a young 0.1.x project under active development, so expect rough edges. GPL-3.0. Also my first real Rust project.)",
       "url": "https://github.com/umutdinceryananer/nightlightd",
       "keywords": [
         "Rust",
-        "X11",
-        "xrandr",
-        "D-Bus",
+        "X11 / xrandr",
+        "D-Bus (zbus)",
+        "egui",
+        "ratatui",
+        "systemd",
         "Linux"
       ]
     },

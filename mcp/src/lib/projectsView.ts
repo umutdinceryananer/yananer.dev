@@ -67,6 +67,7 @@ export function projectDetail(p: Project) {
     note: p.note,
     isPrivate: p.isPrivate,
     isVerifiable: p.isVerifiable,
+    ...(p.status ? { status: p.status } : {}),
     ...(p.syntheticData ? { syntheticData: true } : {}),
     ...(p.contributionState ? { contributionState: p.contributionState } : {}),
   }

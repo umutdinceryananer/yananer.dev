@@ -34,6 +34,8 @@ export interface Project {
   syntheticData?: boolean
   /** For kind: 'oss-contribution' — whether the PR is merged or still open. */
   contributionState?: 'merged' | 'open'
+  /** Optional release/build state pill, e.g. "Early release". */
+  status?: string
   /** Honest caveat, surfaced everywhere this project is rendered. */
   note?: string
 }
@@ -190,20 +192,25 @@ export const projects: Project[] = [
     kind: 'repo',
     repoUrl: 'https://github.com/umutdinceryananer/nightlightd',
     oneLiner:
-      'A zero-config screen colour-temperature daemon for X11, in Rust: it reads your timezone to schedule warmth by solar elevation, refuses to run twice, and survives suspend/resume. A reusable core library plus a thin CLI daemon (a redshift / gammastep alternative).',
-    signal: 'systems programming / Rust / Linux daemon',
-    tech: ['Rust', 'X11', 'xrandr', 'D-Bus', 'Linux'],
+      'A zero-config screen colour-temperature daemon for X11, in Rust: it reads your timezone to schedule warmth by solar elevation, refuses to run twice, and survives suspend/resume. A five-crate workspace — a pure core library and the daemon itself, plus three front-ends that drive it over D-Bus: a tray icon, an f.lux-style egui panel, and a ratatui dashboard. Released as v0.1.1 with a .deb package and a static musl binary (a redshift / gammastep alternative).',
+    signal: 'systems programming / Rust / Linux daemon + D-Bus IPC',
+    tech: ['Rust', 'X11 / xrandr', 'D-Bus (zbus)', 'egui', 'ratatui', 'systemd', 'Linux'],
     keyEntryPoints: [
       'cli/src/main.rs — daemon entry point and event loop',
       'core/src/solar.rs — solar-elevation schedule derived from the local timezone',
-      'cli/src/x11.rs — applies gamma / colour temperature via X11 (xrandr)',
-      'cli/src/dbus.rs, cli/src/suspend.rs — D-Bus logind integration; survives suspend/resume',
+      'cli/src/x11.rs — applies the gamma ramp via X11 / XRandR (x11rb, no libxcb build dep)',
+      'cli/src/dbus.rs, cli/src/suspend.rs — D-Bus service + logind integration; survives suspend/resume',
       'cli/src/state.rs — single-instance guard ("refuses to run twice")',
+      'tray/src/main.rs — StatusNotifierItem tray icon (ksni), talks to the daemon over D-Bus',
+      'panel/src/curve.rs — f.lux-style panel: the temperature-curve UI (egui / eframe)',
+      'tui/src/today.rs — ratatui dashboard: the day\'s schedule view',
+      'dist/ — systemd units, .desktop entry, Debian packaging',
       'docs/HOW-IT-WORKS.md — architecture writeup',
     ],
+    status: 'Early release',
     isPrivate: false,
     isVerifiable: true,
-    note: 'Early Rust / systems work: a small, single-purpose daemon and my first real project in the language.',
+    note: 'Shipped but early. v0.1.1 is installable (.deb + static musl binary) and the daemon plus all three front-ends work, but it is a young 0.1.x project under active development, so expect rough edges. GPL-3.0. Also my first real Rust project.',
   },
   {
     name: 'elastic/kibana — PR #268326',

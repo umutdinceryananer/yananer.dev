@@ -18,6 +18,8 @@ const Badge = ({ children, className }: { children: React.ReactNode; className: 
 const nowBadgeClass: Record<string, string> = {
   'In Development': 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20',
   'Pre-launch': 'bg-green-500/10 text-green-300 border-green-500/20',
+  // Shipped, but early (0.1.x) — deliberately not the green used for mature work.
+  'Early release': 'bg-amber-500/10 text-amber-300 border-amber-500/20',
   Learning: 'bg-gray-500/10 text-gray-400 border-gray-500/25',
 }
 
@@ -122,6 +124,11 @@ const ProjectCard = ({
           ) : (
             <Badge className="bg-red-500/10 text-red-300 border-red-500/20">Private</Badge>
           ))}
+        {p.status && (
+          <Badge className={nowBadgeClass[p.status] ?? 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20'}>
+            {p.status}
+          </Badge>
+        )}
         {!p.isVerifiable && <Badge className="bg-gray-500/10 text-gray-400 border-gray-500/25">Unverifiable</Badge>}
         {p.syntheticData && <Badge className="bg-gray-500/10 text-gray-400 border-gray-500/25">Synthetic</Badge>}
       </div>
