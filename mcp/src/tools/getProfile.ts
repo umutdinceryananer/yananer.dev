@@ -18,7 +18,12 @@ export function registerGetProfile(server: McpServer) {
         tagline: profile.tagline,
         bio: profile.bio,
         location: profile.location ?? null,
-        now: profile.now.map((n) => ({ title: n.title, status: n.badge ?? null, detail: n.description })),
+        now: profile.now.map((n) => ({
+          title: n.title,
+          status: n.badge ?? null,
+          detail: n.description,
+          ...(n.url ? { url: n.url } : {}),
+        })),
         experience: profile.work
           .slice()
           .sort((a, b) => b.order - a.order)

@@ -114,6 +114,70 @@ const publicRepoDecisions: Decision[] = [
     source: 'public-repo',
   },
   {
+    id: 'nightlightd-dbus-single-instance',
+    title: 'nightlightd: the D-Bus well-known name IS the single-instance lock',
+    topics: ['single instance', 'refuses to run twice', 'd bus name', 'donotqueue', 'duplicate daemons', 'autostart'],
+    repo: 'nightlightd',
+    decision:
+      'The daemon claims a well-known D-Bus name with the DoNotQueue flag at startup. Losing the race means another instance already owns it, so the process logs "already running" and exits cleanly instead of queueing or fighting over the screen.',
+    rationale:
+      'Colour-temperature tools get started by several autostart mechanisms that do not know about each other. On a stock Mint Xfce install four redshift instances had accumulated from three such mechanisms, each fighting over the same gamma ramp. Reusing the D-Bus name the daemon already needs for its control interface makes the lock free: no PID file to go stale, and no lock left behind by a crash.',
+    tradeoffs: [
+      'Ties the single-instance guarantee to a working D-Bus session bus; without one, the guard cannot arbitrate.',
+      'The name must be claimed before the screen is touched, which constrains startup ordering.',
+    ],
+    evidence: ['cli/src/dbus.rs', 'cli/src/main.rs'],
+    source: 'public-repo',
+  },
+  {
+    id: 'nightlightd-loop-owns-screen',
+    title: 'nightlightd: one poll loop owns the screen; D-Bus handlers only mutate state',
+    topics: ['shared state', 'concurrency', 'screen ownership', 'poll loop', 'thread safety', 'gamma ramp'],
+    repo: 'nightlightd',
+    decision:
+      'D-Bus handlers never touch the screen. They write to a small shared state struct and wake the poll loop, which stays the single owner of all gamma-ramp writes.',
+    rationale:
+      'The gamma ramp is a single piece of global hardware state that is also reset externally on resume, resolution change, or monitor hotplug. Funnelling every write through one loop keeps "what should the screen look like now" in one place, so external resets and user commands cannot race each other into a half-applied ramp.',
+    tradeoffs: [
+      'Commands are not applied synchronously in the handler; they take effect when the loop wakes.',
+      'The shared state is the one place needing a mutex, so it must stay small and lock-free of I/O.',
+    ],
+    evidence: ['cli/src/state.rs', 'cli/src/dbus.rs', 'cli/src/main.rs'],
+    source: 'public-repo',
+  },
+  {
+    id: 'nightlightd-tray-async-io',
+    title: 'nightlightd: the tray uses ksni on async-io, deliberately keeping tokio out',
+    topics: ['tray icon', 'ksni', 'tokio', 'async io', 'nested runtime', 'statusnotifieritem'],
+    repo: 'nightlightd',
+    decision:
+      "The tray depends on ksni with default features off, selecting the blocking API driven by async-io rather than ksni's default tokio backend.",
+    rationale:
+      'The default tokio feature drives ksni\'s blocking spawn from inside a nested tokio runtime, which panics with "Cannot start a runtime from within a runtime". The two backends are mutually exclusive, and async-io is the one that works with the blocking API, so choosing it both fixes the panic and keeps a whole async runtime out of a tray icon that does almost nothing.',
+    tradeoffs: [
+      'Diverges from the library default, so the reason has to be documented or a future dependency bump silently reintroduces the panic.',
+      'Mixing this crate with a tokio-based one later would mean reconciling two async ecosystems.',
+    ],
+    evidence: ['tray/Cargo.toml', 'tray/src/main.rs', 'tray/src/daemon.rs'],
+    source: 'public-repo',
+  },
+  {
+    id: 'nightlightd-x11rb-pure-rust',
+    title: 'nightlightd: pure-Rust X11 bindings (x11rb) instead of C libxcb',
+    topics: ['x11rb', 'libxcb', 'xrandr', 'build dependency', 'static musl', 'gamma ramp'],
+    repo: 'nightlightd',
+    decision:
+      'Screen access goes through x11rb with the randr feature, rather than binding the C libxcb library.',
+    rationale:
+      'Pure-Rust bindings remove the C build dependency, which is what makes the fully static musl builds shipped in the release possible on any x86_64 Linux. The randr feature supplies exactly the CRTC and gamma-ramp APIs the backend needs, so nothing wider is pulled in.',
+    tradeoffs: [
+      'Bound by what x11rb exposes rather than the full C API surface.',
+      'X11 only: this path has no Wayland equivalent, which is an accepted scope limit for the project.',
+    ],
+    evidence: ['cli/Cargo.toml', 'cli/src/x11.rs'],
+    source: 'public-repo',
+  },
+  {
     id: 'portfolio-single-source',
     title: 'yananer.dev: one data source feeds the site, SKILL.md, and this MCP',
     topics: ['single source of truth', 'codegen', 'skill.md', 'llms.txt', 'agent files', 'projects.ts'],
