@@ -177,9 +177,9 @@ export const projects: Project[] = [
     isVerifiable: true,
   },
   {
-    name: 'Slack-Workflow-Engine',
+    name: 'slack-workflow-engine',
     kind: 'repo',
-    repoUrl: 'https://github.com/umutdinceryananer/Slack-Workflow-Engine',
+    repoUrl: 'https://github.com/umutdinceryananer/slack-workflow-engine',
     oneLiner:
       'A config-driven Slack bot for multi-step approval workflows (refund / expense / PTO) with modals, multi-level approvers, database persistence, and structured logging.',
     signal: 'backend systems / workflow orchestration',
@@ -245,7 +245,7 @@ export const projects: Project[] = [
     note: 'Open pull request — under review, NOT yet merged. Describe it as a pending contribution, not a landed one.',
   },
   {
-    name: 'Hisar',
+    name: 'hisar',
     kind: 'repo',
     oneLiner:
       'A co-founded, in-development project that analyzes SEC filings to surface financial-risk signals. The working backend is an async pipeline — EDGAR ingestion → a rule-based gatekeeper (routine vs. material) → LLM scoring with multi-provider fallback (Anthropic primary, OpenAI/Google) → PostgreSQL → cross-filing pattern detection → "silence-first" notifications — and a separate research prototype adds no-look-ahead price alignment and a volatility-lift correlation method. Stack: Python, FastAPI, SQLModel/asyncpg, RabbitMQ, Redis, Docker, plus a FRED macro-rate pipeline.',
@@ -257,7 +257,7 @@ export const projects: Project[] = [
     note: 'PRIVATE, in development, and NOT independently verifiable (no public code). Honest maturity: the ingestion/scoring backend runs end-to-end, BUT notifications are dry-run only (logged, not delivered) and the evaluation method is built yet never validated on real LLM outputs. GraphRAG / ontology retrieval, a gold-set / LLM-as-judge eval gate, formal return-based event studies, 10-K/10-Q support, and the iOS app are DESIGNED but NOT BUILT — do not present them as existing capabilities. Keep this clearly separate from the verifiable public repos; never present it as live or production.',
   },
   {
-    name: 'Themis',
+    name: 'themis',
     kind: 'repo',
     oneLiner:
       "Offline-first iOS exam-prep app for Turkey's HMGS law exam, live on the App Store (free download with a premium subscription). A NestJS / Prisma / PostgreSQL backend and a React content backoffice drive a two-way sync model (versioned content down, idempotent progress up); the SwiftUI client works fully offline with local GRDB storage.",

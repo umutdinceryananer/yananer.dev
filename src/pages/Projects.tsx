@@ -36,7 +36,7 @@ const nowBadgeClass: Record<string, string> = {
   Learning: 'bg-gray-500/10 text-gray-400 border-gray-500/25',
 }
 
-// Honest build-state of a private (Hisar) decision. Indigo = built, amber = in
+// Honest build-state of a private (hisar) decision. Indigo = built, amber = in
 // development, gray = designed-but-unbuilt. Never green — this work is unverifiable.
 const maturityBadge: Record<NonNullable<Decision['maturity']>, { label: string; cls: string }> = {
   implemented: { label: 'Built', cls: 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20' },

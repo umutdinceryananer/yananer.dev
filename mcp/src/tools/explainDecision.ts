@@ -12,7 +12,7 @@ const MATURITY: Record<NonNullable<Decision['maturity']>, string> = {
 function shape(d: Decision) {
   const caveat =
     d.source === 'sterilized-adr'
-      ? "Source: the author's ADR for a PRIVATE project (Hisar) — self-reported, NOT independently verifiable (no public code to check). Keep separate from the verifiable public repos."
+      ? "Source: the author's ADR for a PRIVATE project (hisar) — self-reported, NOT independently verifiable (no public code to check). Keep separate from the verifiable public repos."
       : 'Source: analysis of public code — verify the WHAT against the evidence files.'
   return {
     id: d.id,

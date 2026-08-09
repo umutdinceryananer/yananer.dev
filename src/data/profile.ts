@@ -211,7 +211,7 @@ export const profile: Profile = {
     { area: 'Rust / systems programming', note: 'Shipped nightlightd (a 5-crate X11 daemon, packaged for Debian and the AUR) as my first real Rust project, but still early: leveling up on ownership, unsafe boundaries and systems patterns.' },
   ],
   now: [
-    { title: 'Building Hisar', badge: 'In Development', description: 'LLM analysis over financial data.' },
+    { title: 'Building hisar', badge: 'In Development', description: 'LLM analysis over financial data.' },
     { title: 'Building nightlightd', badge: 'Early release', description: 'Zero-config X11 colour-temperature daemon in Rust; released and iterating.', url: 'https://github.com/umutdinceryananer/nightlightd', releaseRepo: 'umutdinceryananer/nightlightd' },
     { title: 'Closing LLM gaps', badge: 'Learning', description: 'Transformer internals; chasing a first paper.' },
   ],

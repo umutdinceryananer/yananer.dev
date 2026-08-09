@@ -5,7 +5,7 @@
 // relative re-import, by the MCP server's explain_decision tool (mcp/src/data/
 // decisions.ts), so the two never drift.
 //
-// These are STERILIZED ADRs for Hisar — a PRIVATE, in-development project with no
+// These are STERILIZED ADRs for hisar — a PRIVATE, in-development project with no
 // public code. They are self-reported and NOT independently verifiable, and must
 // always be rendered in a bucket separate from the verifiable public repos.
 // The MCP layer adds its own public-repo decisions (code-grounded) on top.

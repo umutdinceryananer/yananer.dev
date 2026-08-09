@@ -42,7 +42,7 @@ export const capabilities: Capability[] = [
     id: 'workflow',
     label: 'Event-driven workflows / state machines',
     keywords: ['workflow', 'state machine', 'event driven', 'approval', 'slack', 'orchestration'],
-    evidence: ['Slack-Workflow-Engine — slack_workflow_engine/workflows/state.py'],
+    evidence: ['slack-workflow-engine — slack_workflow_engine/workflows/state.py'],
   },
   {
     id: 'scheduling',
@@ -91,7 +91,7 @@ export const capabilities: Capability[] = [
     id: 'testing-ci',
     label: 'Testing & CI',
     keywords: ['testing', 'tests', 'unit test', 'ci', 'continuous integration', 'pytest', 'vitest'],
-    evidence: ['Slack-Workflow-Engine — tests/ (15+), .github/workflows/ci.yml', 'my-game-theory-lab — Vitest'],
+    evidence: ['slack-workflow-engine — tests/ (15+), .github/workflows/ci.yml', 'my-game-theory-lab — Vitest'],
   },
   {
     id: 'quant',
@@ -109,7 +109,7 @@ export const capabilities: Capability[] = [
     id: 'mobile',
     label: 'Mobile (iOS / SwiftUI)',
     keywords: ['mobile', 'ios', 'swift', 'swiftui'],
-    evidence: ['Themis — live on the App Store (closed-source): offline-first SwiftUI iOS client + StoreKit'],
+    evidence: ['themis — live on the App Store (closed-source): offline-first SwiftUI iOS client + StoreKit'],
   },
   {
     id: 'oss',

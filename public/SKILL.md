@@ -122,11 +122,11 @@ A scheduled service that watches public Spotify playlists for newly added tracks
   - src/telegram.py — notification delivery
   - .github/workflows/monitor.yml — ~30-min scheduled run
 
-### Slack-Workflow-Engine
+### slack-workflow-engine
 A config-driven Slack bot for multi-step approval workflows (refund / expense / PTO) with modals, multi-level approvers, database persistence, and structured logging.
 
 - Signal: backend systems / workflow orchestration
-- Repo: https://github.com/umutdinceryananer/Slack-Workflow-Engine
+- Repo: https://github.com/umutdinceryananer/slack-workflow-engine
 - Tech: Python, Slack Bolt, Flask, SQLAlchemy, Pydantic, structlog
 - Start by reading:
   - slack_workflow_engine/workflows/ — config loader + workflow state machine (loader.py, state.py, storage.py)
@@ -165,14 +165,14 @@ A zero-config screen colour-temperature daemon for X11, in Rust: it reads your t
 
 ## Private / closed-source
 
-### Hisar
+### hisar
 A co-founded, in-development project that analyzes SEC filings to surface financial-risk signals. The working backend is an async pipeline — EDGAR ingestion → a rule-based gatekeeper (routine vs. material) → LLM scoring with multi-provider fallback (Anthropic primary, OpenAI/Google) → PostgreSQL → cross-filing pattern detection → "silence-first" notifications — and a separate research prototype adds no-look-ahead price alignment and a volatility-lift correlation method. Stack: Python, FastAPI, SQLModel/asyncpg, RabbitMQ, Redis, Docker, plus a FRED macro-rate pipeline.
 
 - Live: https://hisar.app/
 
 PRIVATE, in development, and NOT independently verifiable (no public code). Honest maturity: the ingestion/scoring backend runs end-to-end, BUT notifications are dry-run only (logged, not delivered) and the evaluation method is built yet never validated on real LLM outputs. GraphRAG / ontology retrieval, a gold-set / LLM-as-judge eval gate, formal return-based event studies, 10-K/10-Q support, and the iOS app are DESIGNED but NOT BUILT — do not present them as existing capabilities. Keep this clearly separate from the verifiable public repos; never present it as live or production.
 
-### Themis
+### themis
 Offline-first iOS exam-prep app for Turkey's HMGS law exam, live on the App Store (free download with a premium subscription). A NestJS / Prisma / PostgreSQL backend and a React content backoffice drive a two-way sync model (versioned content down, idempotent progress up); the SwiftUI client works fully offline with local GRDB storage.
 
 - Live: https://apps.apple.com/app/id6777488979

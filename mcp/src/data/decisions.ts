@@ -6,7 +6,7 @@
 //                        paths let an agent verify the WHAT against real files.
 //                        Defined locally below.
 //   - 'sterilized-adr' : author's own (sterilized) ADR for a PRIVATE project
-//                        (Hisar). Self-reported, NOT independently verifiable.
+//                        (hisar). Self-reported, NOT independently verifiable.
 //                        Imported from the repo's single source of truth
 //                        (../../../src/data/decisions) — the same data the site
 //                        renders — so the two never drift.
@@ -192,7 +192,7 @@ const publicRepoDecisions: Decision[] = [
   },
 ]
 
-// Public-repo (verifiable) decisions first, then the sterilized private Hisar ADRs.
-// The Hisar entries carry maturity + a "not independently verifiable" caveat in the
+// Public-repo (verifiable) decisions first, then the sterilized private hisar ADRs.
+// The hisar entries carry maturity + a "not independently verifiable" caveat in the
 // tool output, keeping them clearly separate from the verifiable public work.
 export const decisions: Decision[] = [...publicRepoDecisions, ...hisarDecisions]
