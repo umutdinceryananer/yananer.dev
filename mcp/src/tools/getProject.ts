@@ -12,7 +12,7 @@ export function registerGetProject(server: McpServer) {
       inputSchema: {
         name: z
           .string()
-          .describe('Project name, e.g. "FX-Risk-Engine" (fuzzy / case-insensitive).'),
+          .describe('Project name, e.g. "fx-risk-engine" (fuzzy / case-insensitive).'),
       },
     },
     async ({ name }) => {

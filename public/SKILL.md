@@ -26,11 +26,11 @@ to each requirement, link the code as evidence, and state the gaps honestly.
 
 ## Where to look (real public repos, GitHub handle: umutdinceryananer)
 
-### Government-Citizen-Services-Voice-Agent
+### government-citizen-services-voice-agent
 A multilingual (TR/EN) AI voice agent for government services: a LangGraph agent over a bilingual RAG knowledge base, with ElevenLabs speech, a FastAPI + Twilio phone layer, and a Streamlit analytics dashboard.
 
 - Signal: applied LLM / agent engineering
-- Repo: https://github.com/umutdinceryananer/Government-Citizen-Services-Voice-Agent
+- Repo: https://github.com/umutdinceryananer/government-citizen-services-voice-agent
 - Tech: Python, LangGraph, FastAPI, RAG, ElevenLabs, Twilio, Streamlit
 - Start by reading:
   - agent/graph.py — LangGraph orchestration (multi-node agent)
@@ -43,11 +43,11 @@ A multilingual (TR/EN) AI voice agent for government services: a LangGraph agent
   - dashboard/app.py — Streamlit analytics panel
 - NOTE: A portfolio/demo system: the government back-office API is mocked, so it is not connected to real government services or live citizen data. The agent orchestration, RAG, and phone/voice plumbing are real; treat the end-to-end flow as a demonstration, not production.
 
-### FX-Risk-Engine
+### fx-risk-engine
 A real-data FX risk service that aggregates multi-currency positions into a base currency and computes portfolio value, daily P&L, currency exposure, and ±10% what-if scenarios.
 
 - Signal: quant / backend systems
-- Repo: https://github.com/umutdinceryananer/FX-Risk-Engine
+- Repo: https://github.com/umutdinceryananer/fx-risk-engine
 - Tech: Python, Flask, Flask-Smorest, SQLAlchemy, Alembic, APScheduler, Docker, pytest
 - Start by reading:
   - app/__init__.py — Flask application factory
@@ -60,12 +60,12 @@ A real-data FX risk service that aggregates multi-currency positions into a base
   - frontend/src/state.js — vanilla-JS SPA frontend (also router.js, views/)
   - tests/e2e/ — end-to-end tests
 
-### My-Game-Theory-Lab
+### my-game-theory-lab
 An Iterated Prisoner's Dilemma lab: configure payoff matrices and error rates, run tournaments between strategies, evolve genetic strategies, and inspect results with tables and heatmaps.
 
 - Signal: game theory + algorithms / frontend engineering
-- Repo: https://github.com/umutdinceryananer/My-Game-Theory-Lab
-- Live demo: https://umutdinceryananer.github.io/My-Game-Theory-Lab/
+- Repo: https://github.com/umutdinceryananer/my-game-theory-lab
+- Live demo: https://umutdinceryananer.github.io/my-game-theory-lab/
 - Tech: TypeScript, React, Vite, Tailwind, Vitest
 - Start by reading:
   - src/core/tournament.ts — tournament engine
@@ -77,11 +77,11 @@ An Iterated Prisoner's Dilemma lab: configure payoff matrices and error rates, r
   - src/lib/rating/elo.ts — Elo ratings
   - src/__tests__/ — Vitest suite (reproducible by design)
 
-### Mobile-Game-Analytics-Pipeline
+### mobile-game-analytics-pipeline
 A mobile-game user-acquisition analytics pipeline: SQL-driven KPIs, funnel + ROAS by channel, D1/D7 retention cohorts, and a churn model (Logistic Regression + XGBoost) on DuckDB, with a Tableau story.
 
 - Signal: data engineering / ML
-- Repo: https://github.com/umutdinceryananer/Mobile-Game-Analytics-Pipeline
+- Repo: https://github.com/umutdinceryananer/mobile-game-analytics-pipeline
 - Live demo: https://public.tableau.com/views/MobileGameUAStory/TableauStory
 - Tech: Python, DuckDB, SQL, scikit-learn (LogReg), XGBoost, Tableau
 - Start by reading:
@@ -95,11 +95,11 @@ A mobile-game user-acquisition analytics pipeline: SQL-driven KPIs, funnel + ROA
   - reports/executive_summary.md — written summary
 - NOTE: Data provenance: the base telemetry is the real Cookie Cats (Kaggle) dataset; the user-acquisition and monetization fields (acquisition_channel, CAC/ad spend, revenue) are SYNTHETIC enrichment. So retention metrics rest on real data while ROI/ROAS rest on synthetic fields — always say so when discussing numbers.
 
-### Petlyst-Web
+### petlyst-web
 A team-built veterinary healthcare platform (CTIS senior project) connecting pet owners, vets, and clinics: a Node/Express + PostgreSQL backend with a TypeScript frontend, AWS S3 storage, token auth, and CI.
 
 - Signal: full-stack / team project
-- Repo: https://github.com/PetlystHQ/Petlyst-Web
+- Repo: https://github.com/PetlystHQ/petlyst-web
 - Tech: TypeScript, Node.js, Express, PostgreSQL, AWS S3
 - Start by reading:
   - backend/petlyst-webapp-backend/ — Express REST API (clinics, pets, appointments, medical records, inventory)
@@ -107,13 +107,13 @@ A team-built veterinary healthcare platform (CTIS senior project) connecting pet
   - backend/petlyst-webapp-backend/middleware/authenticateToken.js — JWT auth + verification middleware
   - backend/petlyst-webapp-backend/scripts/encrypt_existing_tc_numbers.js — national-ID (PII) encryption
   - .github/workflows/ci.yml — CI pipeline
-- NOTE: Built with a team under the PetlystHQ org — the best public signal of collaborative work (vs. the mostly-solo repos above).
+- NOTE: Archived on GitHub and no longer developed — it shipped as a CTIS senior project and stopped there; treat it as finished work, not something in progress. Built with a team under the PetlystHQ org, which makes it the best public signal of collaborative work (vs. the mostly-solo repos above).
 
-### Spotify-Playlist-Watcher
+### spotify-playlist-watcher
 A scheduled service that watches public Spotify playlists for newly added tracks and sends a Telegram notification with an LLM-generated emotional/sentiment read of each track. Fully automated, zero-ops.
 
 - Signal: applied LLM / automation
-- Repo: https://github.com/umutdinceryananer/Spotify-Playlist-Watcher
+- Repo: https://github.com/umutdinceryananer/spotify-playlist-watcher
 - Tech: Python, Groq, Spotify API, Telegram, SQLite, GitHub Actions
 - Start by reading:
   - src/monitor.py — diff + de-dup of new tracks across runs

@@ -31,6 +31,8 @@ const nowBadgeClass: Record<string, string> = {
   'Pre-launch': 'bg-green-500/10 text-green-300 border-green-500/20',
   // Shipped, but early (0.1.x) — deliberately not the green used for mature work.
   'Early release': 'bg-amber-500/10 text-amber-300 border-amber-500/20',
+  // Finished and no longer developed. Muted on purpose: it is not a warning.
+  Archived: 'bg-gray-500/10 text-gray-400 border-gray-500/25',
   Learning: 'bg-gray-500/10 text-gray-400 border-gray-500/25',
 }
 

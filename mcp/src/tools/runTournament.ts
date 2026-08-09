@@ -21,7 +21,7 @@ export function registerRunTournament(server: McpServer) {
     {
       title: 'Run an IPD tournament',
       description:
-        `Actually run an Iterated Prisoner's Dilemma tournament (My-Game-Theory-Lab engine) and return standings. ` +
+        `Actually run an Iterated Prisoner's Dilemma tournament (my-game-theory-lab engine) and return standings. ` +
         `Strategies by name: ${catalogNames.join(', ')}.`,
       inputSchema: {
         strategies: z

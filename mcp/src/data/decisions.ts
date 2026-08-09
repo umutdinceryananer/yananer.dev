@@ -18,9 +18,9 @@ export type { Decision }
 const publicRepoDecisions: Decision[] = [
   {
     id: 'fx-provider-fallback',
-    title: 'FX-Risk-Engine: multi-provider rate fetching with fallback',
+    title: 'fx-risk-engine: multi-provider rate fetching with fallback',
     topics: ['fx rate provider', 'fallback', 'ecb frankfurter', 'exchange rate', 'mock provider', 'resilience'],
-    repo: 'FX-Risk-Engine',
+    repo: 'fx-risk-engine',
     decision:
       'Rates are fetched through a provider registry with a fallback chain — ECB via Frankfurter and ExchangeRate.host as real sources, plus a mock provider — behind a single FX orchestrator and a rate store.',
     rationale:
@@ -41,9 +41,9 @@ const publicRepoDecisions: Decision[] = [
   },
   {
     id: 'fx-scheduled-refresh',
-    title: 'FX-Risk-Engine: APScheduler background rate refresh',
+    title: 'fx-risk-engine: APScheduler background rate refresh',
     topics: ['apscheduler', 'background job', 'rate refresh', 'scheduler', 'cron'],
-    repo: 'FX-Risk-Engine',
+    repo: 'fx-risk-engine',
     decision:
       'Rates are refreshed by APScheduler background jobs (BackgroundScheduler + CronTrigger) rather than on the request path.',
     rationale:
@@ -57,9 +57,9 @@ const publicRepoDecisions: Decision[] = [
   },
   {
     id: 'fx-app-factory-blueprints',
-    title: 'FX-Risk-Engine: Flask app-factory + Flask-Smorest blueprints',
+    title: 'fx-risk-engine: Flask app-factory + Flask-Smorest blueprints',
     topics: ['flask', 'app factory', 'flask-smorest', 'blueprints', 'api structure', 'openapi'],
-    repo: 'FX-Risk-Engine',
+    repo: 'fx-risk-engine',
     decision:
       'The API uses a Flask application factory (create_app) and Flask-Smorest blueprints split per domain (rates, portfolios, positions, metrics).',
     rationale:
@@ -70,9 +70,9 @@ const publicRepoDecisions: Decision[] = [
   },
   {
     id: 'gtl-seedable-rng',
-    title: 'My-Game-Theory-Lab: seedable PRNG for reproducible tournaments',
+    title: 'my-game-theory-lab: seedable PRNG for reproducible tournaments',
     topics: ['reproducibility', 'seed', 'prng random', 'deterministic tournament', 'noise error rate'],
-    repo: 'My-Game-Theory-Lab',
+    repo: 'my-game-theory-lab',
     decision:
       'Match noise (the error rate) is driven by a seedable PRNG threaded through the tournament, so a given seed reproduces identical results.',
     rationale:
@@ -83,9 +83,9 @@ const publicRepoDecisions: Decision[] = [
   },
   {
     id: 'pipeline-synthetic-separation',
-    title: 'Mobile-Game-Analytics-Pipeline: real base data vs synthetic enrichment',
+    title: 'mobile-game-analytics-pipeline: real base data vs synthetic enrichment',
     topics: ['synthetic data', 'kaggle cookie cats', 'roas roi', 'data provenance', 'monetization fields'],
-    repo: 'Mobile-Game-Analytics-Pipeline',
+    repo: 'mobile-game-analytics-pipeline',
     decision:
       'The pipeline keeps a real base dataset (Cookie Cats / Kaggle telemetry) separate from synthetically generated user-acquisition & monetization fields (channel, CAC, revenue).',
     rationale:
@@ -99,9 +99,9 @@ const publicRepoDecisions: Decision[] = [
   },
   {
     id: 'voice-agent-langgraph-rag',
-    title: 'Government-Citizen-Services-Voice-Agent: LangGraph routing + RAG grounding',
+    title: 'government-citizen-services-voice-agent: LangGraph routing + RAG grounding',
     topics: ['langgraph', 'agent graph', 'intent routing', 'rag', 'retrieval', 'voice agent', 'service router'],
-    repo: 'Government-Citizen-Services-Voice-Agent',
+    repo: 'government-citizen-services-voice-agent',
     decision:
       'A LangGraph multi-node agent classifies intent then routes to per-service nodes (appointments, documents, complaints, escalation); answers are grounded by RAG retrieval over a bilingual knowledge base.',
     rationale:

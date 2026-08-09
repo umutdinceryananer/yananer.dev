@@ -48,9 +48,9 @@ export interface Project {
 
 export const projects: Project[] = [
   {
-    name: 'Government-Citizen-Services-Voice-Agent',
+    name: 'government-citizen-services-voice-agent',
     kind: 'repo',
-    repoUrl: 'https://github.com/umutdinceryananer/Government-Citizen-Services-Voice-Agent',
+    repoUrl: 'https://github.com/umutdinceryananer/government-citizen-services-voice-agent',
     oneLiner:
       'A multilingual (TR/EN) AI voice agent for government services: a LangGraph agent over a bilingual RAG knowledge base, with ElevenLabs speech, a FastAPI + Twilio phone layer, and a Streamlit analytics dashboard.',
     signal: 'applied LLM / agent engineering',
@@ -70,9 +70,9 @@ export const projects: Project[] = [
     note: 'A portfolio/demo system: the government back-office API is mocked, so it is not connected to real government services or live citizen data. The agent orchestration, RAG, and phone/voice plumbing are real; treat the end-to-end flow as a demonstration, not production.',
   },
   {
-    name: 'FX-Risk-Engine',
+    name: 'fx-risk-engine',
     kind: 'repo',
-    repoUrl: 'https://github.com/umutdinceryananer/FX-Risk-Engine',
+    repoUrl: 'https://github.com/umutdinceryananer/fx-risk-engine',
     oneLiner:
       "A real-data FX risk service that aggregates multi-currency positions into a base currency and computes portfolio value, daily P&L, currency exposure, and ±10% what-if scenarios.",
     signal: 'quant / backend systems',
@@ -92,9 +92,9 @@ export const projects: Project[] = [
     isVerifiable: true,
   },
   {
-    name: 'My-Game-Theory-Lab',
+    name: 'my-game-theory-lab',
     kind: 'repo',
-    repoUrl: 'https://github.com/umutdinceryananer/My-Game-Theory-Lab',
+    repoUrl: 'https://github.com/umutdinceryananer/my-game-theory-lab',
     oneLiner:
       "An Iterated Prisoner's Dilemma lab: configure payoff matrices and error rates, run tournaments between strategies, evolve genetic strategies, and inspect results with tables and heatmaps.",
     signal: 'game theory + algorithms / frontend engineering',
@@ -109,15 +109,15 @@ export const projects: Project[] = [
       'src/lib/rating/elo.ts — Elo ratings',
       'src/__tests__/ — Vitest suite (reproducible by design)',
     ],
-    liveDemoUrl: 'https://umutdinceryananer.github.io/My-Game-Theory-Lab/',
+    liveDemoUrl: 'https://umutdinceryananer.github.io/my-game-theory-lab/',
     embedDemo: true,
     isPrivate: false,
     isVerifiable: true,
   },
   {
-    name: 'Mobile-Game-Analytics-Pipeline',
+    name: 'mobile-game-analytics-pipeline',
     kind: 'repo',
-    repoUrl: 'https://github.com/umutdinceryananer/Mobile-Game-Analytics-Pipeline',
+    repoUrl: 'https://github.com/umutdinceryananer/mobile-game-analytics-pipeline',
     oneLiner:
       'A mobile-game user-acquisition analytics pipeline: SQL-driven KPIs, funnel + ROAS by channel, D1/D7 retention cohorts, and a churn model (Logistic Regression + XGBoost) on DuckDB, with a Tableau story.',
     signal: 'data engineering / ML',
@@ -139,9 +139,9 @@ export const projects: Project[] = [
     note: 'Data provenance: the base telemetry is the real Cookie Cats (Kaggle) dataset; the user-acquisition and monetization fields (acquisition_channel, CAC/ad spend, revenue) are SYNTHETIC enrichment. So retention metrics rest on real data while ROI/ROAS rest on synthetic fields — always say so when discussing numbers.',
   },
   {
-    name: 'Petlyst-Web',
+    name: 'petlyst-web',
     kind: 'repo',
-    repoUrl: 'https://github.com/PetlystHQ/Petlyst-Web',
+    repoUrl: 'https://github.com/PetlystHQ/petlyst-web',
     oneLiner:
       'A team-built veterinary healthcare platform (CTIS senior project) connecting pet owners, vets, and clinics: a Node/Express + PostgreSQL backend with a TypeScript frontend, AWS S3 storage, token auth, and CI.',
     signal: 'full-stack / team project',
@@ -153,14 +153,15 @@ export const projects: Project[] = [
       'backend/petlyst-webapp-backend/scripts/encrypt_existing_tc_numbers.js — national-ID (PII) encryption',
       '.github/workflows/ci.yml — CI pipeline',
     ],
+    status: 'Archived',
     isPrivate: false,
     isVerifiable: true,
-    note: 'Built with a team under the PetlystHQ org — the best public signal of collaborative work (vs. the mostly-solo repos above).',
+    note: 'Archived on GitHub and no longer developed — it shipped as a CTIS senior project and stopped there; treat it as finished work, not something in progress. Built with a team under the PetlystHQ org, which makes it the best public signal of collaborative work (vs. the mostly-solo repos above).',
   },
   {
-    name: 'Spotify-Playlist-Watcher',
+    name: 'spotify-playlist-watcher',
     kind: 'repo',
-    repoUrl: 'https://github.com/umutdinceryananer/Spotify-Playlist-Watcher',
+    repoUrl: 'https://github.com/umutdinceryananer/spotify-playlist-watcher',
     oneLiner:
       'A scheduled service that watches public Spotify playlists for newly added tracks and sends a Telegram notification with an LLM-generated emotional/sentiment read of each track. Fully automated, zero-ops.',
     signal: 'applied LLM / automation',

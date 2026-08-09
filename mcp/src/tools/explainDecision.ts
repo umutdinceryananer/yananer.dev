@@ -35,7 +35,7 @@ export function registerExplainDecision(server: McpServer) {
     {
       title: 'Explain a design decision',
       description:
-        'Explain why something was built a certain way, with the decision, rationale, tradeoffs, and alternatives considered. Covers public repos (evidence = real files) and sterilized Hisar ADRs (private, self-reported). Pass a topic or question, e.g. "why APScheduler in FX-Risk-Engine", "reproducible tournaments", "Hisar gatekeeper before the LLM", "why defer GraphRAG".',
+        'Explain why something was built a certain way, with the decision, rationale, tradeoffs, and alternatives considered. Covers public repos (evidence = real files) and sterilized Hisar ADRs (private, self-reported). Pass a topic or question, e.g. "why APScheduler in fx-risk-engine", "reproducible tournaments", "Hisar gatekeeper before the LLM", "why defer GraphRAG".',
       inputSchema: {
         topic: z.string().describe('A topic or question about an architecture decision.'),
       },
