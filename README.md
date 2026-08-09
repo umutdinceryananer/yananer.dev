@@ -24,7 +24,7 @@ There is no router and no blog — the whole site renders as one page composed o
 yananer.dev/
 ├── public/
 │   ├── robots.txt
-│   └── _redirects                  # Cloudflare Pages SPA fallback (/* -> index.html)
+│   └── 404.html                    # Served by Cloudflare Pages for unknown paths
 ├── src/
 │   ├── main.tsx                    # Entry point (mounts <App/> in StrictMode)
 │   ├── App.tsx                     # Full-screen dark shell, renders <Home/>
@@ -89,7 +89,9 @@ npm run lint         # Run ESLint
 
 Hosted on **Cloudflare Pages** with Git integration: pushing to `main` triggers a build
 (`npm run build`, output `dist/`) with the EmailJS env vars injected from the Pages
-project settings. SPA routing is handled by `public/_redirects` (`/* -> /index.html`).
+project settings. Routing is hash-based (`#about` / `#work`), so there is deliberately
+no SPA catch-all: unknown paths return a real 404 (`public/404.html`) instead of the app
+shell, which keeps vulnerability-scanner noise out of the pageview stats.
 Custom domains `yananer.dev` and `www.yananer.dev` (www 301-redirects to the apex) are
 managed in Cloudflare. The remote MCP server is a separate Cloudflare Worker — see
 [`mcp/`](mcp/).
