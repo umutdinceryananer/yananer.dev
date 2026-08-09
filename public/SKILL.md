@@ -136,7 +136,7 @@ A config-driven Slack bot for multi-step approval workflows (refund / expense / 
   - .github/workflows/ci.yml — CI pipeline
 
 ### nightlightd
-A zero-config screen colour-temperature daemon for X11, in Rust: it reads your timezone to schedule warmth by solar elevation, refuses to run twice, and survives suspend/resume. A five-crate workspace — a pure core library and the daemon itself, plus three front-ends that drive it over D-Bus: a tray icon, an f.lux-style egui panel, and a ratatui dashboard. Released as v0.1.1: a .deb package, an AUR package, and fully static musl binaries (a redshift / gammastep alternative).
+A zero-config screen colour-temperature daemon for X11, in Rust: it reads your timezone to schedule warmth by solar elevation, refuses to run twice, and survives suspend/resume. A five-crate workspace — a pure core library and the daemon itself, plus three front-ends that drive it over D-Bus: a tray icon, an f.lux-style egui panel, and a ratatui dashboard. Released and iterating, with a .deb package, an AUR package, and fully static musl binaries on every release (a redshift / gammastep alternative).
 
 - Signal: systems programming / Rust / Linux daemon + D-Bus IPC
 - Repo: https://github.com/umutdinceryananer/nightlightd
@@ -153,7 +153,7 @@ A zero-config screen colour-temperature daemon for X11, in Rust: it reads your t
   - tui/src/today.rs — ratatui dashboard: the day's schedule view
   - dist/ — systemd units, .desktop entry, Debian packaging
   - docs/HOW-IT-WORKS.md — architecture writeup
-- NOTE: Shipped but early. v0.1.1 is installable (.deb, AUR, static musl) and the daemon plus all three front-ends work, but it's young software with one machine's worth of dogfooding, so expect rough edges. X11 only (no Wayland). GPL-3.0. Also my first real Rust project.
+- NOTE: Shipped but early, and under active development — releases land often, so check the repo's releases page for the current version rather than trusting any number quoted elsewhere. Installable (.deb, AUR, static musl) and the daemon plus all three front-ends work, but it's young software with one machine's worth of dogfooding, so expect rough edges. X11 only (no Wayland). GPL-3.0. Also my first real Rust project.
 
 ## Open-source contributions
 
@@ -187,7 +187,7 @@ Honest gaps he's actively working on (he'd rather you know):
 - Kubernetes: Deploy with Docker / Compose; no real k8s in production yet.
 - Advanced LLM internals: Shaky even on transformer internals; actively closing the gap.
 - Computer vision: Far from it, and honestly not drawn to it.
-- Rust / systems programming: Shipped nightlightd (a 5-crate X11 daemon, v0.1.x with .deb packaging) as my first real Rust project, but still early: leveling up on ownership, unsafe boundaries and systems patterns.
+- Rust / systems programming: Shipped nightlightd (a 5-crate X11 daemon, packaged for Debian and the AUR) as my first real Rust project, but still early: leveling up on ownership, unsafe boundaries and systems patterns.
 
 ## Ground rules
 - Prefer reading code over trusting this file.

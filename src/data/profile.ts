@@ -55,6 +55,12 @@ export interface NowItem {
   description: string
   /** Optional link (repo, product, etc.) — makes the Now card clickable. */
   url?: string
+  /**
+   * Optional "owner/repo". When set, the UI fetches that repo's latest release
+   * tag at runtime and shows it, so an actively-released project never goes
+   * stale here. Deliberately opt-in: each one costs a GitHub API call.
+   */
+  releaseRepo?: string
 }
 
 export interface Profile {
@@ -202,11 +208,11 @@ export const profile: Profile = {
     { area: 'Kubernetes', note: 'Deploy with Docker / Compose; no real k8s in production yet.' },
     { area: 'Advanced LLM internals', note: 'Shaky even on transformer internals; actively closing the gap.' },
     { area: 'Computer vision', note: 'Far from it, and honestly not drawn to it.' },
-    { area: 'Rust / systems programming', note: 'Shipped nightlightd (a 5-crate X11 daemon, v0.1.x with .deb packaging) as my first real Rust project, but still early: leveling up on ownership, unsafe boundaries and systems patterns.' },
+    { area: 'Rust / systems programming', note: 'Shipped nightlightd (a 5-crate X11 daemon, packaged for Debian and the AUR) as my first real Rust project, but still early: leveling up on ownership, unsafe boundaries and systems patterns.' },
   ],
   now: [
     { title: 'Building Hisar', badge: 'In Development', description: 'LLM analysis over financial data.' },
-    { title: 'Building nightlightd', badge: 'Early release', description: 'Zero-config X11 colour-temperature daemon in Rust; v0.1.1 is out, still building.', url: 'https://github.com/umutdinceryananer/nightlightd' },
+    { title: 'Building nightlightd', badge: 'Early release', description: 'Zero-config X11 colour-temperature daemon in Rust; released and iterating.', url: 'https://github.com/umutdinceryananer/nightlightd', releaseRepo: 'umutdinceryananer/nightlightd' },
     { title: 'Closing LLM gaps', badge: 'Learning', description: 'Transformer internals; chasing a first paper.' },
   ],
 }

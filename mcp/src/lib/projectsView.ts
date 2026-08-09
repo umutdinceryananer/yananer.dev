@@ -68,6 +68,11 @@ export function projectDetail(p: Project) {
     isPrivate: p.isPrivate,
     isVerifiable: p.isVerifiable,
     ...(p.status ? { status: p.status } : {}),
+    // Actively-released repos: point at the releases feed instead of quoting a
+    // version that would go stale here. Fetch it if you need the current one.
+    ...(p.releaseRepo
+      ? { releasesUrl: `https://github.com/${p.releaseRepo}/releases/latest` }
+      : {}),
     ...(p.syntheticData ? { syntheticData: true } : {}),
     ...(p.contributionState ? { contributionState: p.contributionState } : {}),
   }

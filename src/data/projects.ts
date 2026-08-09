@@ -36,6 +36,12 @@ export interface Project {
   contributionState?: 'merged' | 'open'
   /** Optional release/build state pill, e.g. "Early release". */
   status?: string
+  /**
+   * Optional "owner/repo". When set, the UI fetches that repo's latest release
+   * tag at runtime and shows it, so an actively-released project never goes
+   * stale here. Deliberately opt-in: each one costs a GitHub API call.
+   */
+  releaseRepo?: string
   /** Honest caveat, surfaced everywhere this project is rendered. */
   note?: string
 }
@@ -192,7 +198,7 @@ export const projects: Project[] = [
     kind: 'repo',
     repoUrl: 'https://github.com/umutdinceryananer/nightlightd',
     oneLiner:
-      'A zero-config screen colour-temperature daemon for X11, in Rust: it reads your timezone to schedule warmth by solar elevation, refuses to run twice, and survives suspend/resume. A five-crate workspace — a pure core library and the daemon itself, plus three front-ends that drive it over D-Bus: a tray icon, an f.lux-style egui panel, and a ratatui dashboard. Released as v0.1.1: a .deb package, an AUR package, and fully static musl binaries (a redshift / gammastep alternative).',
+      'A zero-config screen colour-temperature daemon for X11, in Rust: it reads your timezone to schedule warmth by solar elevation, refuses to run twice, and survives suspend/resume. A five-crate workspace — a pure core library and the daemon itself, plus three front-ends that drive it over D-Bus: a tray icon, an f.lux-style egui panel, and a ratatui dashboard. Released and iterating, with a .deb package, an AUR package, and fully static musl binaries on every release (a redshift / gammastep alternative).',
     signal: 'systems programming / Rust / Linux daemon + D-Bus IPC',
     tech: ['Rust', 'X11 / xrandr', 'D-Bus (zbus)', 'egui', 'ratatui', 'systemd', 'Linux'],
     keyEntryPoints: [
@@ -209,9 +215,10 @@ export const projects: Project[] = [
       'docs/HOW-IT-WORKS.md — architecture writeup',
     ],
     status: 'Early release',
+    releaseRepo: 'umutdinceryananer/nightlightd',
     isPrivate: false,
     isVerifiable: true,
-    note: "Shipped but early. v0.1.1 is installable (.deb, AUR, static musl) and the daemon plus all three front-ends work, but it's young software with one machine's worth of dogfooding, so expect rough edges. X11 only (no Wayland). GPL-3.0. Also my first real Rust project.",
+    note: "Shipped but early, and under active development — releases land often, so check the repo's releases page for the current version rather than trusting any number quoted elsewhere. Installable (.deb, AUR, static musl) and the daemon plus all three front-ends work, but it's young software with one machine's worth of dogfooding, so expect rough edges. X11 only (no Wayland). GPL-3.0. Also my first real Rust project.",
   },
   {
     name: 'elastic/kibana — PR #268326',

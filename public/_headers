@@ -1,0 +1,19 @@
+# Cloudflare Pages response headers.
+#
+# The CSP allowlist below was derived from the actual build output, not guessed:
+#   api.emailjs.com                     contact form submissions
+#   github-contributions-api.jogruber.de  contributions calendar data
+#   api.github.com                      latest-release lookup (LatestRelease.tsx)
+#   fonts.googleapis.com / fonts.gstatic.com   Manrope webfont
+#   cdn.jsdelivr.net                    devicon stylesheet + its icon font
+#   umutdinceryananer.github.io / public.tableau.com   embedded project demos
+# If you add a new external origin, add it here too or the browser will block it.
+
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' data: https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data: https:; connect-src 'self' https://api.emailjs.com https://github-contributions-api.jogruber.de https://api.github.com; frame-src https://umutdinceryananer.github.io https://public.tableau.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=(), usb=(), interest-cohort=()
+  Cross-Origin-Opener-Policy: same-origin

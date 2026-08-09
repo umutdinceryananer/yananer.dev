@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { projects, type Project } from '../data/projects'
 import { hisarDecisions, type Decision } from '../data/decisions'
 import { profile } from '../data/profile'
+import { useLatestRelease } from '../lib/useLatestRelease'
 
 const Tag = ({ children }: { children: React.ReactNode }) => (
   <span className="px-2 py-1 bg-[#1a1a1a] rounded-md text-gray-400 text-xs border border-gray-800">
@@ -14,6 +15,16 @@ const Badge = ({ children, className }: { children: React.ReactNode; className: 
     {children}
   </span>
 )
+
+// Live "latest release" pill for actively-released repos. The version is fetched
+// at runtime instead of being written into src/data, which used to go stale
+// between deploys. Renders nothing until (and unless) the lookup succeeds, so a
+// failed/blocked request never shows a wrong version.
+const ReleaseTag = ({ repo }: { repo?: string }) => {
+  const tag = useLatestRelease(repo)
+  if (!tag) return null
+  return <Badge className="bg-gray-500/10 text-gray-300 border-gray-500/25">{tag}</Badge>
+}
 
 const nowBadgeClass: Record<string, string> = {
   'In Development': 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20',
@@ -129,6 +140,7 @@ const ProjectCard = ({
             {p.status}
           </Badge>
         )}
+        <ReleaseTag repo={p.releaseRepo} />
         {!p.isVerifiable && <Badge className="bg-gray-500/10 text-gray-400 border-gray-500/25">Unverifiable</Badge>}
         {p.syntheticData && <Badge className="bg-gray-500/10 text-gray-400 border-gray-500/25">Synthetic</Badge>}
       </div>
@@ -370,6 +382,7 @@ const Projects = () => {
                         {n.badge}
                       </Badge>
                     )}
+                    <ReleaseTag repo={n.releaseRepo} />
                   </div>
                   <p className="text-gray-300 text-sm">{n.description}</p>
                 </div>
