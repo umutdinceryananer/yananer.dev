@@ -126,7 +126,7 @@ export const profile: Profile = {
       company: 'SAS Institute',
       period: 'Aug 2026 - Present',
       description:
-        'Own the technical side of platform delivery for public-sector clients, from deployment architecture and infrastructure constraints through to migration tooling and technical specification review, working with offshore engineering teams.',
+        'Handle the technical side of platform delivery for public-sector clients, from deployment architecture and infrastructure constraints through to migration tooling and technical specification review, working with offshore engineering teams.',
     },
     {
       order: 7,
