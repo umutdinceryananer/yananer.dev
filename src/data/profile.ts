@@ -126,7 +126,7 @@ export const profile: Profile = {
       company: 'SAS Institute',
       period: 'Aug 2026 - Present',
       description:
-        'Drive delivery of a national computer-vision programme across global, offshore and local partners, acting as the coordination point between the offshore engineering team and the ministry, and building supporting tooling for on-prem platform migrations.',
+        'Coordinate delivery between offshore engineering teams and public-sector clients, translating requirements and technical constraints in both directions, building supporting tooling for on-prem migrations and reviewing technical tender specifications.',
     },
     {
       order: 7,
