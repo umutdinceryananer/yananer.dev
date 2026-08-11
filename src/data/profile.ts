@@ -65,9 +65,9 @@ export interface NowItem {
 
 export interface Profile {
   name: string
-  /** Display role, e.g. "Junior Solution Engineer @ SAS". */
+  /** Display role, e.g. "Associate Solutions Consultant @ SAS". */
   role: string
-  /** Bare job title for JSON-LD / resume.json, e.g. "Junior Solution Engineer". */
+  /** Bare job title for JSON-LD / resume.json, e.g. "Associate Solutions Consultant". */
   roleTitle: string
   employer: string
   /** Self-positioning headline for the page <title> / OG title, e.g. "Software Engineer & Founder". */
@@ -93,8 +93,8 @@ export interface Profile {
 
 export const profile: Profile = {
   name: 'Umut Dinçer Yananer',
-  role: 'Junior Solution Engineer @ SAS',
-  roleTitle: 'Junior Solution Engineer',
+  role: 'Associate Solutions Consultant @ SAS',
+  roleTitle: 'Associate Solutions Consultant',
   employer: 'SAS',
   headline: 'Software Engineer & Founder',
   tagline:
@@ -121,12 +121,20 @@ export const profile: Profile = {
   ],
   work: [
     {
+      order: 8,
+      title: 'Associate Solutions Consultant',
+      company: 'SAS Institute',
+      period: 'Aug 2026 - Present',
+      description:
+        'Deliver live technical demos and end-to-end PoCs (data pipelines, ML, RAG) to public-sector clients, scoping AI/GenAI use cases with their teams and presenting to senior decision-makers.',
+    },
+    {
       order: 7,
       title: 'Junior Solution Engineer',
       company: 'SAS Institute',
-      period: 'Apr 2025 - Present',
+      period: 'Apr 2025 - Aug 2026',
       description:
-        'Deliver live technical demos and end-to-end PoCs (data pipelines, ML, RAG) to public-sector clients, scoping AI/GenAI use cases with their teams and presenting to senior decision-makers.',
+        'Delivered live technical demos and end-to-end PoCs (data pipelines, ML, RAG) to public-sector clients, scoping AI/GenAI use cases with their teams and presenting to senior decision-makers.',
     },
     {
       order: 6,
