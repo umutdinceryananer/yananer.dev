@@ -126,11 +126,11 @@ export const profile: Profile = {
       company: 'SAS Institute',
       period: 'Aug 2026 - Present',
       description:
-        'Deliver live technical demos and end-to-end PoCs (data pipelines, ML, RAG) to public-sector clients, scoping AI/GenAI use cases with their teams and presenting to senior decision-makers.',
+        'Drive delivery of a national computer-vision programme across global, offshore and local partners, acting as the coordination point between the offshore engineering team and the ministry, and building supporting tooling for on-prem platform migrations.',
     },
     {
       order: 7,
-      title: 'Junior Solution Engineer',
+      title: 'Junior Solutions Engineer',
       company: 'SAS Institute',
       period: 'Apr 2025 - Aug 2026',
       description:
