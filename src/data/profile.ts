@@ -126,7 +126,7 @@ export const profile: Profile = {
       company: 'SAS Institute',
       period: 'Aug 2026 - Present',
       description:
-        'Coordinate delivery between offshore engineering teams and public-sector clients, translating requirements and technical constraints in both directions, building supporting tooling for on-prem migrations and reviewing technical tender specifications.',
+        'Scope on-prem deployment models around infrastructure constraints and build tooling for platform migrations at public-sector clients; review technical specifications and coordinate delivery with offshore engineering teams.',
     },
     {
       order: 7,
