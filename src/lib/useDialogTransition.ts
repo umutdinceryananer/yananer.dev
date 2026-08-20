@@ -38,3 +38,24 @@ export function useDialogTransition(open: boolean, durationMs = 200) {
 
   return { render, shown }
 }
+
+/**
+ * The shared open/close chrome for a dialog, so the four of them cannot drift
+ * apart. Each caller adds its own backdrop tint and panel box on top.
+ *
+ * The backdrop is a separate, click-through layer: it fades on its own while
+ * the panel scales, and letting clicks pass keeps whatever close-on-outside
+ * behaviour the container already had.
+ *
+ * Durations here must match the exitMs given to useDialogTransition.
+ */
+export function dialogChrome(shown: boolean) {
+  return {
+    backdrop: `absolute inset-0 backdrop-blur-sm pointer-events-none transition-opacity duration-200 motion-reduce:transition-none ${
+      shown ? 'opacity-100' : 'opacity-0'
+    }`,
+    panel: `relative transition-all duration-200 ease-out motion-reduce:transition-none ${
+      shown ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-2'
+    }`,
+  }
+}

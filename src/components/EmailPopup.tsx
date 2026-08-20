@@ -1,7 +1,8 @@
 import { useState, FormEvent } from 'react';   
+import { createPortal } from 'react-dom';
 import emailjs from '@emailjs/browser';
 import { profile } from '../data/profile';
-import { useDialogTransition } from '../lib/useDialogTransition';
+import { useDialogTransition, dialogChrome } from '../lib/useDialogTransition';
 
 // Initialize EmailJS with your public key
 emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
@@ -20,6 +21,7 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
   const [isSending, setIsSending] = useState(false);
   const [sendStatus, setSendStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const { render, shown } = useDialogTransition(isOpen);
+  const chrome = dialogChrome(shown);
 
   if (!render) return null;
 
@@ -104,18 +106,13 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
     }
   };
 
-  return (
+  // Portalled to <body> so the overlay can never be trapped by an ancestor
+  // that creates a containing block for fixed positioning (a transform,
+  // filter or contain), which would shrink it to that ancestor's box.
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
-      {/* Backdrop is its own layer so it can fade independently of the panel. */}
-      <div
-        aria-hidden
-        className={`absolute inset-0 bg-black/60 backdrop-blur-sm pointer-events-none transition-opacity duration-200 motion-reduce:transition-none ${shown ? 'opacity-100' : 'opacity-0'}`}
-      />
-      <div
-        className={`relative bg-surface-1 w-[700px] rounded-xl p-[2px] shadow-[0_0_15px_rgba(0,0,0,0.6)] transition-all duration-200 ease-out motion-reduce:transition-none ${
-          shown ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-2'
-        }`}
-      >
+      <div aria-hidden className={`${chrome.backdrop} bg-black/60`} />
+      <div className={`${chrome.panel} bg-surface-1 w-[700px] rounded-xl p-[2px] shadow-[0_0_15px_rgba(0,0,0,0.6)]`}>
         <div className="bg-surface-1 rounded-[10px] p-8">
           <div className="flex justify-between items-center mb-8">
             <h3 className="text-2xl font-semibold text-ink">Mail to Umut</h3>
@@ -230,7 +227,8 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
           </form>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };
 

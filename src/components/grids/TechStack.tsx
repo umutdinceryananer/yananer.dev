@@ -38,7 +38,7 @@ const TechStack = () => {
                 whole-width translate always lands on the other segment. */}
             <span
               aria-hidden
-              className="absolute top-0.5 bottom-0.5 left-0.5 w-[calc(50%-0.125rem)] rounded-full bg-accent-500 transition-transform duration-300 ease-out motion-reduce:transition-none"
+              className="absolute top-0.5 bottom-0.5 left-0.5 w-[calc(50%-0.125rem)] rounded-full bg-accent-500 will-change-transform transition-transform duration-300 ease-out motion-reduce:transition-none"
               style={{ transform: `translateX(${VIEWS.findIndex((v) => v.id === view) * 100}%)` }}
             />
             {VIEWS.map((v) => (

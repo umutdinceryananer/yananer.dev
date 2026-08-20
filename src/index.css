@@ -91,6 +91,22 @@ a, button, [role="button"], input[type="submit"] {
   scrollbar-width: none;
 }
 
+/* The one scroll container reserves its scrollbar gutter permanently.
+   About Me is laid out to fit a single screen while Work overflows, so without
+   this the scrollbar appears and disappears on every route change: the
+   container narrows by a scrollbar width and the centred header jumps
+   sideways. Engines without scrollbar-gutter keep the scrollbar on instead,
+   which is stable for the same reason. */
+.app-scroll {
+  scrollbar-gutter: stable;
+}
+
+@supports not (scrollbar-gutter: stable) {
+  .app-scroll {
+    overflow-y: scroll;
+  }
+}
+
 /* Flowing sweep for the demo "Play" button. Reads the accent scale so it
    follows whatever palette is set above. */
 @keyframes play-gradient {

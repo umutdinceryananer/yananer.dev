@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { projects, type Project } from '../data/projects'
 import { hisarDecisions, type Decision } from '../data/decisions'
 import { profile } from '../data/profile'
 import { useLatestRelease } from '../lib/useLatestRelease'
+import { useDialogTransition, dialogChrome } from '../lib/useDialogTransition'
 
 const Tag = ({ children }: { children: React.ReactNode }) => (
   <span className="px-2 py-1 bg-surface-2 rounded-md text-gray-400 text-xs border border-gray-800">
@@ -71,6 +73,16 @@ const DecisionsIcon = () => (
 // Full-screen demo overlay. The iframe is only mounted while open, so the
 // embedded app is loaded lazily (on click), never on page load.
 const DemoModal = ({ demo, onClose }: { demo: { url: string; title: string } | null; onClose: () => void }) => {
+  const { render, shown } = useDialogTransition(!!demo)
+  const chrome = dialogChrome(shown)
+  // Hold on to the last payload. By the time the overlay animates out `demo` is
+  // already null, and there would be nothing left to draw.
+  const [current, setCurrent] = useState(demo)
+
+  useEffect(() => {
+    if (demo) setCurrent(demo)
+  }, [demo])
+
   useEffect(() => {
     if (!demo) return
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
@@ -82,20 +94,24 @@ const DemoModal = ({ demo, onClose }: { demo: { url: string; title: string } | n
     }
   }, [demo, onClose])
 
-  if (!demo) return null
-  return (
+  if (!render || !current) return null
+  // Portalled to <body> so the overlay can never be trapped by an ancestor
+  // that creates a containing block for fixed positioning (a transform,
+  // filter or contain), which would shrink it to that ancestor's box.
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6"
       onClick={onClose}
     >
+      <div aria-hidden className={`${chrome.backdrop} bg-black/70`} />
       <div
-        className="relative w-full max-w-6xl h-[85vh] bg-surface-1 rounded-xl border border-gray-800 overflow-hidden flex flex-col"
+        className={`${chrome.panel} w-full max-w-6xl h-[85vh] bg-surface-1 rounded-xl border border-gray-800 overflow-hidden flex flex-col`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between gap-3 px-4 py-2.5 border-b border-gray-800 shrink-0">
-          <span className="text-ink text-sm font-medium truncate">{demo.title}</span>
+          <span className="text-ink text-sm font-medium truncate">{current.title}</span>
           <div className="flex items-center gap-4 shrink-0">
-            <a href={demo.url} target="_blank" rel="noopener noreferrer" className="text-accent-400 hover:text-accent-300 text-xs">
+            <a href={current.url} target="_blank" rel="noopener noreferrer" className="text-accent-400 hover:text-accent-300 text-xs">
               Open in new tab ↗
             </a>
             <button onClick={onClose} aria-label="Close demo" className="text-gray-400 hover:text-ink transition-colors text-lg leading-none">
@@ -103,9 +119,10 @@ const DemoModal = ({ demo, onClose }: { demo: { url: string; title: string } | n
             </button>
           </div>
         </div>
-        <iframe src={demo.url} title={demo.title} className="flex-1 w-full bg-surface-0" />
+        <iframe src={current.url} title={current.title} className="flex-1 w-full bg-surface-0" />
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }
 
@@ -274,6 +291,16 @@ const DecisionsModal = ({
   data: { title: string; items: Decision[] } | null
   onClose: () => void
 }) => {
+  const { render, shown } = useDialogTransition(!!data)
+  const chrome = dialogChrome(shown)
+  // Same trick as DemoModal: keep the last set of decisions around so the
+  // overlay has content to render while it fades away.
+  const [current, setCurrent] = useState(data)
+
+  useEffect(() => {
+    if (data) setCurrent(data)
+  }, [data])
+
   useEffect(() => {
     if (!data) return
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
@@ -285,21 +312,25 @@ const DecisionsModal = ({
     }
   }, [data, onClose])
 
-  if (!data) return null
-  const featured = data.items.filter((d) => d.featured)
-  const others = data.items.filter((d) => !d.featured)
-  return (
+  if (!render || !current) return null
+  const featured = current.items.filter((d) => d.featured)
+  const others = current.items.filter((d) => !d.featured)
+  // Portalled to <body> so the overlay can never be trapped by an ancestor
+  // that creates a containing block for fixed positioning (a transform,
+  // filter or contain), which would shrink it to that ancestor's box.
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6"
       onClick={onClose}
     >
+      <div aria-hidden className={`${chrome.backdrop} bg-black/70`} />
       <div
-        className="relative w-full max-w-2xl max-h-[85vh] bg-surface-1 rounded-xl border border-gray-800 overflow-hidden flex flex-col"
+        className={`${chrome.panel} w-full max-w-2xl max-h-[85vh] bg-surface-1 rounded-xl border border-gray-800 overflow-hidden flex flex-col`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between gap-3 px-4 py-2.5 border-b border-gray-800 shrink-0">
           <span className="text-ink text-sm font-medium truncate">
-            {data.title}: Design Decisions
+            {current.title}: Design Decisions
           </span>
           <button
             onClick={onClose}
@@ -311,7 +342,7 @@ const DecisionsModal = ({
         </div>
         <div className="overflow-y-auto px-4 sm:px-5 py-4">
           <p className="text-gray-500 text-xs sm:text-sm leading-relaxed mb-4">
-            How I think. Architecture decisions from {data.title}, a private in-development project.
+            How I think. Architecture decisions from {current.title}, a private in-development project.
             Self-reported, with no public code to check. These also drive the{' '}
             <span className="text-accent-300">explain_decision</span> tool in my MCP server.
           </p>
@@ -328,7 +359,8 @@ const DecisionsModal = ({
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }
 

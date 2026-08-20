@@ -17,7 +17,7 @@ const TopNav = ({ route }: { route: Route }) => {
             measuring, and nothing to re-sync when the font loads. */}
         <span
           aria-hidden
-          className="absolute top-1 bottom-1 left-1 w-[calc(50%-0.25rem)] rounded-full bg-accent-500 transition-transform duration-300 ease-out motion-reduce:transition-none"
+          className="absolute top-1 bottom-1 left-1 w-[calc(50%-0.25rem)] rounded-full bg-accent-500 will-change-transform transition-transform duration-300 ease-out motion-reduce:transition-none"
           style={{ transform: `translateX(${activeIndex * 100}%)` }}
         />
         {TABS.map((t) => (

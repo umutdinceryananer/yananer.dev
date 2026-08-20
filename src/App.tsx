@@ -3,12 +3,17 @@ import Home from './pages/Home'
 import Projects from './pages/Projects'
 import TopNav, { type Route } from './components/TopNav'
 import Footer from './components/Footer'
+import { useSwapTransition } from './lib/useSwapTransition'
 
 const routeFromHash = (): Route =>
   window.location.hash.replace('#', '') === 'work' ? 'work' : 'about'
 
+// Must match the exit duration on the page classes below.
+const PAGE_EXIT_MS = 150
+
 function App() {
   const [route, setRoute] = useState<Route>(routeFromHash())
+  const { rendered, shown } = useSwapTransition(route, PAGE_EXIT_MS)
 
   useEffect(() => {
     const onHashChange = () => setRoute(routeFromHash())
@@ -16,14 +21,43 @@ function App() {
     return () => window.removeEventListener('hashchange', onHashChange)
   }, [])
 
+  // Opacity only, deliberately. A translate or transform here -- even a zero
+  // one -- would make <main> the containing block for fixed-position
+  // descendants and give it a stacking context, which traps every modal
+  // rendered inside the page: the overlay covers <main> instead of the
+  // viewport, and the nav paints straight through it. Opacity does neither at
+  // full strength, and the margins that do the centring must not be animated
+  // anyway, since that animates layout rather than pixels.
+  const page = `transition-opacity ease-out motion-reduce:transition-none ${
+    shown ? 'opacity-100 duration-200' : 'opacity-0 duration-150'
+  }`
+
   return (
-    <div className="fixed inset-0 bg-surface-0 overflow-auto">
-      <div className="min-h-screen w-full flex flex-col items-center overflow-x-hidden">
+    <div className="app-scroll fixed inset-0 bg-surface-0 overflow-auto">
+      {/* overflow-x-clip, not -hidden: `hidden` on one axis forces the other
+          to `auto`, which silently makes this a scroll container. The page
+          transition's translate then counts as scrollable overflow, raises a
+          scrollbar, narrows the content box and shunts every centred item
+          sideways. `clip` clips the same way without ever scrolling. */}
+      <div className="min-h-screen w-full flex flex-col items-center overflow-x-clip">
+        {/* The nav answers the click straight away -- its highlight starts
+            sliding while the page underneath is still fading out. */}
         <TopNav route={route} />
-        <main className="w-full max-w-[1400px] px-2 sm:px-4 lg:px-8 pb-6 sm:pb-8 flex-1">
-          {route === 'work' ? <Projects /> : <Home />}
+        {/* The nav stays put and the content centres in the space left between
+            it and the footer, so the control being clicked never moves.
+
+            Auto margins rather than justify-center: on a route that outgrows the
+            viewport they collapse to zero, where centring would push the top of
+            the content above the scroll origin and put it out of reach. The
+            footer carries no auto margin of its own -- a third one would split
+            the free space three ways and pull the content off centre. */}
+        <main className={`my-auto w-full max-w-[1400px] px-2 sm:px-4 lg:px-8 pb-6 sm:pb-8 ${page}`}>
+          {rendered === 'work' ? <Projects /> : <Home />}
         </main>
-        <Footer />
+        {/* The footer fades with the page: the two routes differ enough in
+            height that it sits on screen for one and below the fold for the
+            other, and hiding it through the swap keeps that from popping. */}
+        <Footer className={page} />
       </div>
     </div>
   )

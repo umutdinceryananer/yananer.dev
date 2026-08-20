@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { profile } from '../data/profile'
-import { useDialogTransition } from '../lib/useDialogTransition'
+import { useDialogTransition, dialogChrome } from '../lib/useDialogTransition'
 
 const MCP_URL = 'https://mcp.yananer.dev/mcp'
 const SKILL_URL = `${profile.siteUrl}/SKILL.md`
@@ -14,6 +15,7 @@ const TOOLS = [
 const McpModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
   const [copied, setCopied] = useState<'skill' | 'mcp' | null>(null)
   const { render, shown } = useDialogTransition(open)
+  const chrome = dialogChrome(shown)
 
   useEffect(() => {
     if (!open) return
@@ -34,21 +36,17 @@ const McpModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => 
     }
   }
 
-  return (
+  // Portalled to <body> so the overlay can never be trapped by an ancestor
+  // that creates a containing block for fixed positioning (a transform,
+  // filter or contain), which would shrink it to that ancestor's box.
+  return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4"
       onClick={onClose}
     >
-      {/* Backdrop is a separate, click-through layer so the fade is independent
-          of the panel and clicking anywhere outside still closes the dialog. */}
+      <div aria-hidden className={`${chrome.backdrop} bg-black/60`} />
       <div
-        aria-hidden
-        className={`absolute inset-0 bg-black/60 backdrop-blur-sm pointer-events-none transition-opacity duration-200 motion-reduce:transition-none ${shown ? 'opacity-100' : 'opacity-0'}`}
-      />
-      <div
-        className={`relative w-full max-w-lg max-h-[85vh] overflow-y-auto bg-surface-1 border border-gray-800 rounded-xl shadow-2xl transition-all duration-200 ease-out motion-reduce:transition-none ${
-          shown ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-2'
-        }`}
+        className={`${chrome.panel} w-full max-w-lg max-h-[85vh] overflow-y-auto bg-surface-1 border border-gray-800 rounded-xl shadow-2xl`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -153,7 +151,8 @@ const McpModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => 
           </p>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }
 

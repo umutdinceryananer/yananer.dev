@@ -1,8 +1,8 @@
 import { profile } from '../data/profile'
 
-const Footer = () => {
+const Footer = ({ className = '' }: { className?: string }) => {
   return (
-    <footer className="w-full bg-surface-0 py-6 mt-auto">
+    <footer className={`w-full bg-surface-0 py-6 ${className}`}>
       <div className="w-full max-w-[1400px] mx-auto px-2 sm:px-4 lg:px-8">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-gray-400 text-sm">
           <p className="text-center sm:text-left">
