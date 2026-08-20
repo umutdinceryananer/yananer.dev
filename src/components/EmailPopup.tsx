@@ -1,6 +1,7 @@
 import { useState, FormEvent } from 'react';   
 import emailjs from '@emailjs/browser';
 import { profile } from '../data/profile';
+import { useDialogTransition } from '../lib/useDialogTransition';
 
 // Initialize EmailJS with your public key
 emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
@@ -18,8 +19,9 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isSending, setIsSending] = useState(false);
   const [sendStatus, setSendStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  
-  if (!isOpen) return null;
+  const { render, shown } = useDialogTransition(isOpen);
+
+  if (!render) return null;
 
   const handleCopyEmail = () => {
     navigator.clipboard.writeText(profile.email);
@@ -103,14 +105,23 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm">
-      <div className="bg-[#141414] w-[700px] rounded-xl p-[2px] shadow-[0_0_15px_rgba(0,0,0,0.6)]">
-        <div className="bg-[#141414] rounded-[10px] p-8">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
+      {/* Backdrop is its own layer so it can fade independently of the panel. */}
+      <div
+        aria-hidden
+        className={`absolute inset-0 bg-black/60 backdrop-blur-sm pointer-events-none transition-opacity duration-200 motion-reduce:transition-none ${shown ? 'opacity-100' : 'opacity-0'}`}
+      />
+      <div
+        className={`relative bg-surface-1 w-[700px] rounded-xl p-[2px] shadow-[0_0_15px_rgba(0,0,0,0.6)] transition-all duration-200 ease-out motion-reduce:transition-none ${
+          shown ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-2'
+        }`}
+      >
+        <div className="bg-surface-1 rounded-[10px] p-8">
           <div className="flex justify-between items-center mb-8">
-            <h3 className="text-2xl font-semibold text-white font-manrope">Mail to Umut</h3>
+            <h3 className="text-2xl font-semibold text-ink">Mail to Umut</h3>
             <button 
               onClick={onClose}
-              className="text-gray-400 hover:text-white transition-colors"
+              className="text-gray-400 hover:text-ink transition-colors"
               disabled={isSending}
             >
               ✕
@@ -120,12 +131,12 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-gray-300 text-sm mb-2 font-manrope">From:</label>
+                <label className="block text-gray-300 text-sm font-medium mb-2">From:</label>
                 <input 
                   type="email"
                   value={fromEmail}
                   onChange={(e) => setFromEmail(e.target.value)}
-                  className="w-full bg-[#1a1a1a] text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-manrope"
+                  className="w-full bg-surface-2 text-ink rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-accent-500"
                   placeholder="Enter your email"
                 />
                 {errors.fromEmail && (
@@ -134,14 +145,14 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
               </div>
 
               <div>
-                <label className="block text-gray-300 text-sm mb-2 font-manrope">To:</label>
+                <label className="block text-gray-300 text-sm font-medium mb-2">To:</label>
                 <div className="relative group">
                   <input 
                     type="text"
                     value={showCopied ? "Copied!" : profile.email}
                     readOnly
                     onClick={handleCopyEmail}
-                    className={`w-full bg-[#1a1a1a] text-gray-400 rounded-lg px-4 py-3 cursor-pointer hover:bg-[#242424] transition-all duration-300 font-manrope relative ${!showCopied && 'group-hover:text-transparent'}`}
+                    className={`w-full bg-surface-2 text-gray-400 rounded-lg px-4 py-3 cursor-pointer hover:bg-surface-4 transition-all duration-300 relative ${!showCopied && 'group-hover:text-transparent'}`}
                   />
                   <div className={`absolute inset-0 flex items-center px-4 py-3 opacity-0 transition-all duration-300 pointer-events-none ${!showCopied && 'group-hover:opacity-100'}`}>
                     <span className="text-gray-400">Click to Copy</span>
@@ -151,12 +162,12 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
             </div>
 
             <div>
-              <label className="block text-gray-300 text-sm mb-2 font-manrope">Subject</label>
+              <label className="block text-gray-300 text-sm font-medium mb-2">Subject</label>
               <input 
                 type="text"
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
-                className="w-full bg-[#1a1a1a] text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-manrope"
+                className="w-full bg-surface-2 text-ink rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-accent-500"
                 placeholder="Enter subject"
               />
               {errors.subject && (
@@ -165,11 +176,11 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
             </div>
             
             <div>
-              <label className="block text-gray-300 text-sm mb-2 font-manrope">Message</label>
+              <label className="block text-gray-300 text-sm font-medium mb-2">Message</label>
               <textarea 
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                className="w-full bg-[#1a1a1a] text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-manrope h-48 resize-none"
+                className="w-full bg-surface-2 text-ink rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-accent-500 h-48 resize-none"
                 placeholder="Type your message here..."
               />
               {errors.message && (
@@ -181,16 +192,16 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
               <button
                 type="button"
                 onClick={onClose}
-                className="px-5 py-2.5 text-gray-300 hover:text-white transition-colors font-manrope disabled:opacity-50"
+                className="px-5 py-2.5 font-medium text-gray-300 hover:text-ink transition-colors disabled:opacity-50"
                 disabled={isSending}
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className={`px-7 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg transition-colors font-manrope flex items-center gap-2 disabled:opacity-50 ${
-                  sendStatus === 'success' ? 'bg-green-500 hover:bg-green-600' :
-                  sendStatus === 'error' ? 'bg-red-500 hover:bg-red-600' : ''
+                className={`px-7 py-2.5 font-medium bg-accent-500 hover:bg-accent-600 text-accent-fg rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50 ${
+                  sendStatus === 'success' ? 'bg-green-500 hover:bg-green-600 text-ink' :
+                  sendStatus === 'error' ? 'bg-red-500 hover:bg-red-600 text-ink' : ''
                 }`}
                 disabled={isSending}
               >

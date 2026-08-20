@@ -1,16 +1,36 @@
 export type Route = 'about' | 'work'
 
+const TABS: { id: Route; href: string; label: string }[] = [
+  { id: 'about', href: '#about', label: 'About Me' },
+  { id: 'work', href: '#work', label: 'Work' },
+]
+
 const TopNav = ({ route }: { route: Route }) => {
-  const tab = (active: boolean) =>
-    `px-5 py-1.5 rounded-full text-sm font-manrope transition-colors ${
-      active ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/25' : 'text-gray-400 hover:text-white'
-    }`
+  const activeIndex = Math.max(0, TABS.findIndex((t) => t.id === route))
 
   return (
     <nav className="w-full flex justify-center pt-8 pb-6">
-      <div className="inline-flex items-center gap-1 bg-[#141414] border border-gray-800 rounded-full p-1">
-        <a href="#about" className={tab(route === 'about')}>About Me</a>
-        <a href="#work" className={tab(route === 'work')}>Work</a>
+      <div className="relative inline-grid grid-cols-2 bg-surface-1 border border-gray-800 rounded-full p-1">
+        {/* A single highlight that slides, instead of two backgrounds swapping.
+            The grid keeps both columns exactly equal, so translating by whole
+            multiples of the pill's own width always lands it on a tab — no
+            measuring, and nothing to re-sync when the font loads. */}
+        <span
+          aria-hidden
+          className="absolute top-1 bottom-1 left-1 w-[calc(50%-0.25rem)] rounded-full bg-accent-500 transition-transform duration-300 ease-out motion-reduce:transition-none"
+          style={{ transform: `translateX(${activeIndex * 100}%)` }}
+        />
+        {TABS.map((t) => (
+          <a
+            key={t.id}
+            href={t.href}
+            className={`relative z-10 inline-flex items-center justify-center px-5 py-2.5 rounded-full text-sm font-medium leading-none transition-colors duration-300 ${
+              route === t.id ? 'text-accent-fg' : 'text-gray-400 hover:text-ink'
+            }`}
+          >
+            {t.label}
+          </a>
+        ))}
       </div>
     </nav>
   )

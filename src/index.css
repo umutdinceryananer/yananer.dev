@@ -1,13 +1,53 @@
 @import "tailwindcss";
 
+/* ---------------------------------------------------------------------------
+   Design tokens — the single source of truth for type, surfaces and accent.
+
+   Everything the app paints reads one of these, so the whole look shifts from
+   this one block: `surface-*` for backgrounds, `gray-*` for text and hairlines
+   (Tailwind's own scale, redefined pure-neutral and a shade deeper), `ink` for
+   the brightest text, `accent-*` for what used to be indigo, and `accent-fg`
+   for text sitting on a solid accent fill.
+   --------------------------------------------------------------------------- */
+@theme {
+  --font-sans: 'DM Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Stacked backgrounds, darkest first: page -> card -> inset -> hover -> hover-2 */
+  --color-surface-0: #050505;
+  --color-surface-1: #0a0a0a;
+  --color-surface-2: #0e0e0e;
+  --color-surface-3: #131313;
+  --color-surface-4: #181818;
+
+  --color-ink: #c6c6c6;
+
+  /* Tailwind's gray, redefined: no blue cast, and pitched darker throughout. */
+  --color-gray-200: #a3a3a3;
+  --color-gray-300: #8c8c8c;
+  --color-gray-400: #717171;
+  --color-gray-500: #666666;
+  --color-gray-600: #404040;
+  --color-gray-700: #2e2e2e;
+  --color-gray-800: #1d1d1d;
+
+  --color-accent-200: #969696;
+  --color-accent-300: #7e7e7e;
+  --color-accent-400: #646464;
+  --color-accent-500: #4b4b4b;
+  --color-accent-600: #393939;
+  --color-accent-700: #2e2e2e;
+  --color-accent-fg: #ffffff;
+}
+
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: var(--font-sans);
+  font-optical-sizing: auto;
   line-height: 1.5;
   font-weight: 400;
 
   color-scheme: dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #0F0F0F;
+  color: var(--color-gray-300);
+  background-color: var(--color-surface-0);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -20,8 +60,13 @@ html, body {
   padding: 0;
   overflow: hidden;
   height: 100%;
-  background-color: #0F0F0F;
+  background-color: var(--color-surface-0);
   cursor: default;
+}
+
+/* DM Sans runs wide at display sizes; pull the headings back in a touch. */
+h1, h2, h3, h4 {
+  letter-spacing: -0.018em;
 }
 
 * {
@@ -46,15 +91,22 @@ a, button, [role="button"], input[type="submit"] {
   scrollbar-width: none;
 }
 
-/* Flowing cool-spectrum gradient for the demo "Play" button (stays in the
-   indigo/purple/fuchsia/cyan family, looping back to indigo). */
+/* Flowing sweep for the demo "Play" button. Reads the accent scale so it
+   follows whatever palette is set above. */
 @keyframes play-gradient {
   0%, 100% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
 }
 
 .play-gradient {
-  background-image: linear-gradient(90deg, #6366f1, #818cf8, #a78bfa, #60a5fa, #6366f1);
+  background-image: linear-gradient(
+    90deg,
+    var(--color-accent-500),
+    var(--color-accent-400),
+    var(--color-accent-200),
+    var(--color-accent-400),
+    var(--color-accent-500)
+  );
   background-size: 300% 100%;
   animation: play-gradient 12s ease-in-out infinite;
 }

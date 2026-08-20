@@ -7,36 +7,36 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        manrope: ['Manrope', 'sans-serif'],
+        sans: ['DM Sans', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       typography: {
         DEFAULT: {
           css: {
-            color: '#fff',
+            color: '#e4e4e4',
             a: {
-              color: '#818cf8',
+              color: '#9c9c9c',
               '&:hover': {
-                color: '#6366f1',
+                color: '#b9b9b9',
               },
             },
             h1: {
-              color: '#fff',
+              color: '#e4e4e4',
             },
             h2: {
-              color: '#fff',
+              color: '#e4e4e4',
             },
             h3: {
-              color: '#fff',
+              color: '#e4e4e4',
             },
             h4: {
-              color: '#fff',
+              color: '#e4e4e4',
             },
             strong: {
-              color: '#fff',
+              color: '#e4e4e4',
             },
             code: {
-              color: '#fff',
-              backgroundColor: '#1f2937',
+              color: '#e4e4e4',
+              backgroundColor: '#1c1c1c',
               padding: '0.2em 0.4em',
               borderRadius: '0.25rem',
             },

@@ -5,13 +5,13 @@ import { profile } from '../data/profile'
 import { useLatestRelease } from '../lib/useLatestRelease'
 
 const Tag = ({ children }: { children: React.ReactNode }) => (
-  <span className="px-2 py-1 bg-[#1a1a1a] rounded-md text-gray-400 text-xs border border-gray-800">
+  <span className="px-2 py-1 bg-surface-2 rounded-md text-gray-400 text-xs border border-gray-800">
     {children}
   </span>
 )
 
 const Badge = ({ children, className }: { children: React.ReactNode; className: string }) => (
-  <span className={`px-1.5 py-0.5 rounded-full text-[10px] border whitespace-nowrap ${className}`}>
+  <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-medium border whitespace-nowrap ${className}`}>
     {children}
   </span>
 )
@@ -27,7 +27,7 @@ const ReleaseTag = ({ repo }: { repo?: string }) => {
 }
 
 const nowBadgeClass: Record<string, string> = {
-  'In Development': 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20',
+  'In Development': 'bg-accent-500/10 text-accent-300 border-accent-500/20',
   'Pre-launch': 'bg-green-500/10 text-green-300 border-green-500/20',
   // Shipped, but early (0.1.x) — deliberately not the green used for mature work.
   'Early release': 'bg-amber-500/10 text-amber-300 border-amber-500/20',
@@ -36,10 +36,10 @@ const nowBadgeClass: Record<string, string> = {
   Learning: 'bg-gray-500/10 text-gray-400 border-gray-500/25',
 }
 
-// Honest build-state of a private (hisar) decision. Indigo = built, amber = in
+// Honest build-state of a private (hisar) decision. Accent = built, amber = in
 // development, gray = designed-but-unbuilt. Never green — this work is unverifiable.
 const maturityBadge: Record<NonNullable<Decision['maturity']>, { label: string; cls: string }> = {
-  implemented: { label: 'Built', cls: 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20' },
+  implemented: { label: 'Built', cls: 'bg-accent-500/10 text-accent-300 border-accent-500/20' },
   partial: { label: 'In progress', cls: 'bg-amber-500/10 text-amber-300 border-amber-500/20' },
   design: { label: 'Designed', cls: 'bg-gray-500/10 text-gray-400 border-gray-500/25' },
 }
@@ -89,21 +89,21 @@ const DemoModal = ({ demo, onClose }: { demo: { url: string; title: string } | n
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-6xl h-[85vh] bg-[#141414] rounded-xl border border-gray-800 overflow-hidden flex flex-col"
+        className="relative w-full max-w-6xl h-[85vh] bg-surface-1 rounded-xl border border-gray-800 overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between gap-3 px-4 py-2.5 border-b border-gray-800 shrink-0">
-          <span className="text-white text-sm font-medium font-manrope truncate">{demo.title}</span>
+          <span className="text-ink text-sm font-medium truncate">{demo.title}</span>
           <div className="flex items-center gap-4 shrink-0">
-            <a href={demo.url} target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:text-indigo-300 text-xs">
+            <a href={demo.url} target="_blank" rel="noopener noreferrer" className="text-accent-400 hover:text-accent-300 text-xs">
               Open in new tab ↗
             </a>
-            <button onClick={onClose} aria-label="Close demo" className="text-gray-400 hover:text-white transition-colors text-lg leading-none">
+            <button onClick={onClose} aria-label="Close demo" className="text-gray-400 hover:text-ink transition-colors text-lg leading-none">
               ✕
             </button>
           </div>
         </div>
-        <iframe src={demo.url} title={demo.title} className="flex-1 w-full bg-[#0F0F0F]" />
+        <iframe src={demo.url} title={demo.title} className="flex-1 w-full bg-surface-0" />
       </div>
     </div>
   )
@@ -120,17 +120,17 @@ const ProjectCard = ({
   onDecisions?: (p: Project) => void
   hasDecisions?: boolean
 }) => (
-  <div className="h-full flex flex-col bg-[#1a1a1a] rounded-lg p-4 relative overflow-hidden group hover:ring-2 hover:ring-indigo-500/20 transition-all">
+  <div className="h-full flex flex-col bg-surface-2 rounded-lg p-4 relative overflow-hidden group hover:ring-2 hover:ring-accent-500/20 transition-all">
     {/* Decorative Elements (match Education) */}
     <div className="absolute inset-0 pointer-events-none">
-      <div className="absolute top-0 left-0 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl transform -translate-x-1/2 -translate-y-1/2" />
-      <div className="absolute bottom-0 right-0 w-64 h-64 bg-indigo-500/3 rounded-full blur-2xl transform translate-x-1/2 translate-y-1/2" />
+      <div className="absolute top-0 left-0 w-96 h-96 bg-accent-500/5 rounded-full blur-3xl transform -translate-x-1/2 -translate-y-1/2" />
+      <div className="absolute bottom-0 right-0 w-64 h-64 bg-accent-500/3 rounded-full blur-2xl transform translate-x-1/2 translate-y-1/2" />
     </div>
 
     {/* Content */}
     <div className="relative flex flex-col gap-1.5 h-full">
       <div className="flex items-center gap-2 flex-wrap">
-        <h4 className="text-base font-medium text-indigo-400 leading-tight">{p.name}</h4>
+        <h4 className="text-base font-medium text-accent-400 leading-tight">{p.name}</h4>
         {p.isPrivate &&
           (p.isVerifiable ? (
             <Badge className="bg-green-500/10 text-green-300 border-green-500/20">Live</Badge>
@@ -138,7 +138,7 @@ const ProjectCard = ({
             <Badge className="bg-red-500/10 text-red-300 border-red-500/20">Private</Badge>
           ))}
         {p.status && (
-          <Badge className={nowBadgeClass[p.status] ?? 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20'}>
+          <Badge className={nowBadgeClass[p.status] ?? 'bg-accent-500/10 text-accent-300 border-accent-500/20'}>
             {p.status}
           </Badge>
         )}
@@ -162,7 +162,7 @@ const ProjectCard = ({
               href={p.repoUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-[#141414] text-gray-300 hover:text-white border border-indigo-500/30 hover:border-indigo-500/50 hover:bg-[#1f1f1f] transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-surface-1 text-gray-300 hover:text-ink border border-accent-500/30 hover:border-accent-500/50 hover:bg-surface-3 transition-colors"
             >
               <GitHubIcon /> Repo
             </a>
@@ -172,7 +172,7 @@ const ProjectCard = ({
               onClick={() => onPlay?.(p)}
               className="play-gradient group inline-flex rounded-lg p-[1px]"
             >
-              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-[7px] bg-[#141414] text-gray-200 group-hover:bg-[#1f1f1f] group-hover:text-white text-xs font-medium transition-colors">
+              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-[7px] bg-surface-1 text-gray-200 group-hover:bg-surface-3 group-hover:text-ink text-xs font-medium transition-colors">
                 <PlayIcon /> Enter Lab
               </span>
             </button>
@@ -181,7 +181,7 @@ const ProjectCard = ({
               href={p.liveDemoUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-indigo-500/10 text-indigo-300 hover:text-indigo-200 border border-indigo-500/30 hover:border-indigo-500/50 hover:bg-indigo-500/20 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-accent-500/10 text-accent-300 hover:text-accent-200 border border-accent-500/30 hover:border-accent-500/50 hover:bg-accent-500/20 transition-colors"
             >
               <ExternalIcon /> Live
             </a>
@@ -189,7 +189,7 @@ const ProjectCard = ({
           {hasDecisions && (
             <button
               onClick={() => onDecisions?.(p)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-[#141414] text-gray-300 hover:text-white border border-indigo-500/30 hover:border-indigo-500/50 hover:bg-[#1f1f1f] transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-surface-1 text-gray-300 hover:text-ink border border-accent-500/30 hover:border-accent-500/50 hover:bg-surface-3 transition-colors"
             >
               <DecisionsIcon /> Decisions
             </button>
@@ -202,7 +202,7 @@ const ProjectCard = ({
 
 const FieldList = ({ label, items }: { label: string; items: string[] }) => (
   <div>
-    <p className="text-gray-500 text-[11px] uppercase tracking-wide mb-1">{label}</p>
+    <p className="text-gray-500 text-[11px] font-medium uppercase tracking-wide mb-1">{label}</p>
     <ul className="list-disc list-inside space-y-0.5 text-gray-400 text-sm leading-relaxed marker:text-gray-600">
       {items.map((t, i) => <li key={i}>{t}</li>)}
     </ul>
@@ -221,7 +221,7 @@ const DecisionRow = ({ d }: { d: Decision }) => {
         className="w-full flex items-center gap-2.5 py-3 text-left group"
       >
         <svg
-          className={`w-3.5 h-3.5 shrink-0 text-gray-500 group-hover:text-indigo-400 transition-all duration-200 ${open ? 'rotate-90' : ''}`}
+          className={`w-3.5 h-3.5 shrink-0 text-gray-500 group-hover:text-accent-400 transition-all duration-200 ${open ? 'rotate-90' : ''}`}
           fill="none"
           stroke="currentColor"
           strokeWidth={2.5}
@@ -229,7 +229,7 @@ const DecisionRow = ({ d }: { d: Decision }) => {
         >
           <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
         </svg>
-        <span className="flex-1 min-w-0 text-sm text-gray-200 group-hover:text-white transition-colors">
+        <span className="flex-1 min-w-0 text-sm text-gray-200 group-hover:text-ink transition-colors">
           {d.title}
         </span>
         {d.maturity && (
@@ -251,7 +251,7 @@ const DecisionRow = ({ d }: { d: Decision }) => {
           >
             <p className="text-gray-300 text-sm leading-relaxed">{d.summary}</p>
             <div>
-              <p className="text-gray-500 text-[11px] uppercase tracking-wide mb-1">Why</p>
+              <p className="text-gray-500 text-[11px] font-medium uppercase tracking-wide mb-1">Why</p>
               <p className="text-gray-400 text-sm leading-relaxed">{d.rationale}</p>
             </div>
             <FieldList label="Tradeoffs" items={d.tradeoffs} />
@@ -294,17 +294,17 @@ const DecisionsModal = ({
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-2xl max-h-[85vh] bg-[#141414] rounded-xl border border-gray-800 overflow-hidden flex flex-col"
+        className="relative w-full max-w-2xl max-h-[85vh] bg-surface-1 rounded-xl border border-gray-800 overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between gap-3 px-4 py-2.5 border-b border-gray-800 shrink-0">
-          <span className="text-white text-sm font-medium font-manrope truncate">
+          <span className="text-ink text-sm font-medium truncate">
             {data.title}: Design Decisions
           </span>
           <button
             onClick={onClose}
             aria-label="Close decisions"
-            className="text-gray-400 hover:text-white transition-colors text-lg leading-none shrink-0"
+            className="text-gray-400 hover:text-ink transition-colors text-lg leading-none shrink-0"
           >
             ✕
           </button>
@@ -313,7 +313,7 @@ const DecisionsModal = ({
           <p className="text-gray-500 text-xs sm:text-sm leading-relaxed mb-4">
             How I think. Architecture decisions from {data.title}, a private in-development project.
             Self-reported, with no public code to check. These also drive the{' '}
-            <span className="text-indigo-300">explain_decision</span> tool in my MCP server.
+            <span className="text-accent-300">explain_decision</span> tool in my MCP server.
           </p>
           <div className="divide-y divide-gray-800/60">
             <div className="flex items-center gap-2 pb-3 flex-wrap">
@@ -322,7 +322,7 @@ const DecisionsModal = ({
             </div>
             {featured.map((d) => <DecisionRow key={d.id} d={d} />)}
             {others.length > 0 && (
-              <p className="text-gray-500 text-[11px] uppercase tracking-wide pt-3 pb-1">Also designed</p>
+              <p className="text-gray-500 text-[11px] font-medium uppercase tracking-wide pt-3 pb-1">Also designed</p>
             )}
             {others.map((d) => <DecisionRow key={d.id} d={d} />)}
           </div>
@@ -343,7 +343,7 @@ const Projects = () => {
       {profile.now.length > 0 && (
         <div className="mb-8">
           <div className="mb-6">
-            <h2 className="text-xl font-semibold text-white mb-3 text-center font-manrope flex items-center justify-center gap-2">
+            <h2 className="text-xl font-semibold text-ink mb-3 text-center flex items-center justify-center gap-2">
               <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
               Now
             </h2>
@@ -353,11 +353,11 @@ const Projects = () => {
             {profile.now.map((n, i) => (
               <div
                 key={i}
-                className="relative overflow-hidden bg-[#1a1a1a] rounded-lg p-4 border border-gray-800 group hover:ring-2 hover:ring-indigo-500/20 transition-all"
+                className="relative overflow-hidden bg-surface-2 rounded-lg p-4 border border-gray-800 group hover:ring-2 hover:ring-accent-500/20 transition-all"
               >
                 <div className="absolute inset-0 pointer-events-none">
-                  <div className="absolute top-0 left-0 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl transform -translate-x-1/2 -translate-y-1/2" />
-                  <div className="absolute bottom-0 right-0 w-64 h-64 bg-indigo-500/3 rounded-full blur-2xl transform translate-x-1/2 translate-y-1/2" />
+                  <div className="absolute top-0 left-0 w-96 h-96 bg-accent-500/5 rounded-full blur-3xl transform -translate-x-1/2 -translate-y-1/2" />
+                  <div className="absolute bottom-0 right-0 w-64 h-64 bg-accent-500/3 rounded-full blur-2xl transform translate-x-1/2 translate-y-1/2" />
                 </div>
                 {n.url && (
                   <>
@@ -369,7 +369,7 @@ const Projects = () => {
                       className="absolute inset-0 z-10"
                     />
                     <svg
-                      className="absolute top-3 right-3 w-4 h-4 text-gray-600 group-hover:text-indigo-300 transition-colors pointer-events-none"
+                      className="absolute top-3 right-3 w-4 h-4 text-gray-600 group-hover:text-accent-300 transition-colors pointer-events-none"
                       fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"
                     >
                       <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
@@ -378,9 +378,9 @@ const Projects = () => {
                 )}
                 <div className="relative flex flex-col gap-1.5">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h4 className="text-base font-medium text-indigo-400 leading-tight">{n.title}</h4>
+                    <h4 className="text-base font-medium text-accent-400 leading-tight">{n.title}</h4>
                     {n.badge && (
-                      <Badge className={nowBadgeClass[n.badge] ?? 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20'}>
+                      <Badge className={nowBadgeClass[n.badge] ?? 'bg-accent-500/10 text-accent-300 border-accent-500/20'}>
                         {n.badge}
                       </Badge>
                     )}
@@ -395,7 +395,7 @@ const Projects = () => {
       )}
 
       <div className="mb-6">
-        <h2 className="text-xl font-semibold text-white mb-3 text-center font-manrope">Projects</h2>
+        <h2 className="text-xl font-semibold text-ink mb-3 text-center">Projects</h2>
         <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-gray-800 to-transparent" />
       </div>
       <div className="grid grid-cols-1 min-[745px]:grid-cols-2 min-[1240px]:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">

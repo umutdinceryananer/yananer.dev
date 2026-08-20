@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react'
 import { profile } from '../../data/profile'
 
+const VIEWS = [
+  { id: 'skills', label: 'Skills' },
+  { id: 'growth', label: 'Not Yet' },
+] as const
+
 const TechStack = () => {
   const technologies = profile.tech
   const growth = profile.growth
@@ -24,18 +29,29 @@ const TechStack = () => {
     if (topBlur) topBlur.style.opacity = element.scrollTop <= 5 ? '0' : '1';
   };
 
-  const seg = (active: boolean) =>
-    `px-4 py-1 rounded-full text-sm font-manrope transition-colors ${
-      active ? 'bg-indigo-500 text-white' : 'text-gray-400 hover:text-white'
-    }`
-
   return (
     <div className="h-full flex flex-col">
       <div className="mb-6">
         <div className="flex justify-center mb-3">
-          <div className="inline-flex items-center gap-1 bg-[#1a1a1a] border border-gray-800 rounded-full p-0.5">
-            <button onClick={() => setView('skills')} className={seg(view === 'skills')}>Skills</button>
-            <button onClick={() => setView('growth')} className={seg(view === 'growth')}>Not Yet</button>
+          <div className="relative inline-grid grid-cols-2 bg-surface-2 border border-gray-800 rounded-full p-0.5">
+            {/* Same sliding highlight as the top nav: equal grid columns mean a
+                whole-width translate always lands on the other segment. */}
+            <span
+              aria-hidden
+              className="absolute top-0.5 bottom-0.5 left-0.5 w-[calc(50%-0.125rem)] rounded-full bg-accent-500 transition-transform duration-300 ease-out motion-reduce:transition-none"
+              style={{ transform: `translateX(${VIEWS.findIndex((v) => v.id === view) * 100}%)` }}
+            />
+            {VIEWS.map((v) => (
+              <button
+                key={v.id}
+                onClick={() => setView(v.id)}
+                className={`relative z-10 inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-medium leading-none transition-colors duration-300 ${
+                  view === v.id ? 'text-accent-fg' : 'text-gray-400 hover:text-ink'
+                }`}
+              >
+                {v.label}
+              </button>
+            ))}
           </div>
         </div>
         <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-gray-800 to-transparent" />
@@ -48,15 +64,15 @@ const TechStack = () => {
               {technologies.map((tech, index) => (
                 <div
                   key={index}
-                  className="bg-[#141414] p-3 rounded-lg flex items-center border border-gray-800 hover:border-indigo-500/50 transition-colors relative group"
+                  className="bg-surface-1 p-3 rounded-lg flex items-center border border-gray-800 hover:border-accent-500/50 transition-colors relative group"
                 >
                   <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-indigo-300 text-sm">{tech.name}</span>
+                      <span className="text-accent-300 text-sm">{tech.name}</span>
                       {tech.hasTooltip && (
                         <>
                           <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                          <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-[#1a1a1a] text-xs text-gray-300 px-3 py-2 rounded-lg border border-gray-800 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                          <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-surface-2 text-xs text-gray-300 px-3 py-2 rounded-lg border border-gray-800 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
                             Used in this portfolio
                           </div>
                         </>
@@ -79,17 +95,17 @@ const TechStack = () => {
               {growth.map((g, index) => (
                 <div
                   key={index}
-                  className="bg-[#141414] p-3 rounded-lg border border-gray-800 hover:border-indigo-500/50 transition-colors"
+                  className="bg-surface-1 p-3 rounded-lg border border-gray-800 hover:border-accent-500/50 transition-colors"
                 >
-                  <span className="text-indigo-300 text-sm">{g.area}</span>
+                  <span className="text-accent-300 text-sm">{g.area}</span>
                   <p className="text-gray-500 text-xs mt-1 leading-relaxed">{g.note}</p>
                 </div>
               ))}
             </div>
           </div>
         )}
-        <div id="tech-stack-blur-top" className="absolute top-0 left-0 right-2 h-12 bg-gradient-to-b from-[#141414] to-transparent pointer-events-none transition-opacity duration-500 opacity-0" />
-        <div id="tech-stack-blur-bottom" className="absolute bottom-0 left-0 right-2 h-12 bg-gradient-to-t from-[#141414] to-transparent pointer-events-none transition-opacity duration-500" />
+        <div id="tech-stack-blur-top" className="absolute top-0 left-0 right-2 h-12 bg-gradient-to-b from-surface-1 to-transparent pointer-events-none transition-opacity duration-500 opacity-0" />
+        <div id="tech-stack-blur-bottom" className="absolute bottom-0 left-0 right-2 h-12 bg-gradient-to-t from-surface-1 to-transparent pointer-events-none transition-opacity duration-500" />
       </div>
     </div>
   )

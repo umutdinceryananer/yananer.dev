@@ -17,7 +17,7 @@ function App() {
   }, [])
 
   return (
-    <div className="fixed inset-0 bg-[#0F0F0F] overflow-auto">
+    <div className="fixed inset-0 bg-surface-0 overflow-auto">
       <div className="min-h-screen w-full flex flex-col items-center overflow-x-hidden">
         <TopNav route={route} />
         <main className="w-full max-w-[1400px] px-2 sm:px-4 lg:px-8 pb-6 sm:pb-8 flex-1">
