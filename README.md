@@ -1,8 +1,9 @@
 # yananer.dev
 
-My personal portfolio — a single-page, bento-grid site with a dark theme, live GitHub
-contributions graph, and an EmailJS-powered contact form. Built with React, TypeScript,
-Vite, and Tailwind CSS v4, and deployed to Cloudflare Pages.
+My personal portfolio — a two-view, bento-grid site in a monochrome dark palette, with a
+live GitHub contributions graph, an EmailJS-powered contact form, and a machine-readable
+surface for AI agents. Built with React, TypeScript, Vite, and Tailwind CSS v4, and
+deployed to Cloudflare Pages.
 
 🔗 **Live:** [yananer.dev](https://yananer.dev)
 
@@ -10,13 +11,64 @@ Vite, and Tailwind CSS v4, and deployed to Cloudflare Pages.
 
 - **Framework:** React 18 + TypeScript
 - **Build tool:** Vite 6
-- **Styling:** Tailwind CSS v4 (`@tailwindcss/vite`)
-- **GitHub graph:** [`react-github-calendar`](https://github.com/grubersjoe/react-github-calendar)
+- **Styling:** Tailwind CSS v4 (`@tailwindcss/vite`) — no `tailwind.config.js`; the theme
+  lives in `@theme` inside `src/index.css`
+- **Type:** DM Sans (Google Fonts, variable)
+- **GitHub graph:** [`react-activity-calendar`](https://github.com/grubersjoe/react-activity-calendar),
+  fed by our own fetch (`src/lib/useContributions.ts`)
 - **Contact form:** [EmailJS](https://www.emailjs.com/) (`@emailjs/browser`)
-- **Icons:** Heroicons + inline SVG
+- **Icons:** inline SVG only
 - **Hosting:** Cloudflare Pages (Git integration — auto-builds on push to `main`)
 
-There is no router and no blog — the whole site renders as one page composed of grid cards.
+There is no router and no blog. Two views — About Me and Work — swap on a hash change
+(`#about` / `#work`), each composed of grid cards.
+
+## Content lives in `src/data`
+
+`src/data/{profile,projects,decisions}.ts` is the single source of truth. Nothing about
+me is typed into a component, and three separate outputs are derived from it:
+
+- the **site itself** — every grid card reads from it;
+- the **`<head>`** — `vite.config.ts` has an `htmlHeadMeta` plugin that generates the
+  SEO, Open Graph and JSON-LD tags at build time and substitutes them into the
+  `<!--app-head-meta-->` placeholder in `index.html`. Do not hand-edit those tags;
+- the **agent files** — see below.
+
+## Agent-facing surface
+
+The site is meant to be legible to an AI agent, not just a person. `npm run gen`
+(wired as `prebuild`, so any build refreshes it) reads `src/data` and writes:
+
+| File | What it is |
+| --- | --- |
+| [`public/SKILL.md`](public/SKILL.md) | Tasks and grounding for a visitor's agent — deliberately tells it to verify claims against the real code rather than trust the summaries |
+| [`public/llms.txt`](public/llms.txt) | Machine-readable index of the site and its projects |
+| [`public/resume.json`](public/resume.json) | [JSON Resume](https://jsonresume.org/schema) |
+
+Output is deterministic — no timestamps — so the committed files only change when
+`src/data` does.
+
+Beyond the static files there is a **remote MCP server** in [`mcp/`](mcp/), deployed
+separately as a Cloudflare Worker. Visitors point their own Claude or ChatGPT at it and
+call read-only tools (`get_profile`, `list_projects`, `explain_decision`,
+`run_tournament`, and others) grounded in the same data. The **MCP** button on the About
+card explains how to connect.
+
+## Design tokens
+
+Everything the site paints reads a token declared in `@theme` in `src/index.css`, so the
+whole look changes from one block:
+
+| Token | Role |
+| --- | --- |
+| `surface-0` … `surface-4` | Stacked backgrounds, page through hover |
+| `ink` | Brightest text |
+| `accent-200` … `accent-700` | The accent scale (a neutral grey; the site has no hue) |
+| `accent-fg` | Text sitting on a solid accent fill |
+| `gray-*` | Tailwind's own scale, redefined pure-neutral and a shade deeper |
+
+Status colours (green for live, red for private, amber for in-progress) and GitHub's own
+contribution greens are the deliberate exceptions.
 
 ## Project Structure
 
@@ -24,36 +76,55 @@ There is no router and no blog — the whole site renders as one page composed o
 yananer.dev/
 ├── public/
 │   ├── robots.txt
-│   └── 404.html                    # Served by Cloudflare Pages for unknown paths
+│   ├── _headers                    # Cloudflare Pages response headers (incl. CSP)
+│   ├── 404.html                    # Served for unknown paths
+│   ├── SKILL.md                    # GENERATED — see `npm run gen`
+│   ├── llms.txt                    # GENERATED
+│   └── resume.json                 # GENERATED
+├── scripts/
+│   └── generate-agent-files.ts     # Codegen for the three files above
+├── mcp/                            # Remote MCP server (separate Cloudflare Worker)
 ├── src/
 │   ├── main.tsx                    # Entry point (mounts <App/> in StrictMode)
-│   ├── App.tsx                     # Full-screen dark shell, renders <Home/>
-│   ├── index.css                   # Global resets + Tailwind import
+│   ├── App.tsx                     # Shell: hash routing, nav, footer, route cross-fade
+│   ├── index.css                   # Design tokens (@theme), global resets, keyframes
+│   ├── data/
+│   │   ├── profile.ts              # Bio, work, education, skills, socials
+│   │   ├── projects.ts             # Public repos, OSS work, private projects
+│   │   └── decisions.ts            # Architecture decisions behind the private work
+│   ├── lib/
+│   │   ├── useContributions.ts     # GitHub contribution data
+│   │   ├── useLatestRelease.ts     # Live release tag for actively-released repos
+│   │   ├── useDialogTransition.ts  # Dialog enter/exit + shared dialog chrome
+│   │   ├── useSwapTransition.ts    # View cross-fade + shared classes
+│   │   └── usePrefersReducedMotion.ts
 │   ├── pages/
-│   │   └── Home.tsx                # Responsive bento grid layout
+│   │   ├── Home.tsx                # About Me — responsive bento grid
+│   │   └── Projects.tsx            # Work — projects, demo overlay, decisions overlay
 │   ├── components/
+│   │   ├── TopNav.tsx              # Two tabs with a sliding highlight
 │   │   ├── EmailPopup.tsx          # Contact form modal (EmailJS)
+│   │   ├── McpModal.tsx            # How to connect an AI to this site
 │   │   ├── Footer.tsx
 │   │   └── grids/
 │   │       ├── AboutMe.tsx         # Photo, animated status badge, social links
 │   │       ├── Education.tsx
 │   │       ├── WorkExperience.tsx  # Timeline of roles with scroll-fade edges
-│   │       ├── TechStack.tsx       # Skill cards
-│   │       └── GitHubContributions.tsx  # Contribution calendar + page-peel link
-│   └── assets/                     # Profile photo, résumé PDF
-├── index.html                      # HTML shell + SEO/Open Graph meta tags
-├── vite.config.ts
-└── tailwind.config.js
+│   │       ├── TechStack.tsx       # Skills / Not Yet, cross-faded
+│   │       └── GitHubContributions.tsx
+│   └── assets/                     # Profile photo
+├── index.html                      # HTML shell; <head> meta is generated at build time
+└── vite.config.ts
 ```
 
-Site content (work experience, education, skills, links) is hard-coded directly in the
-grid components — there is no CMS or content layer.
+Every modal is portalled to `<body>`, so no ancestor transform can shrink an overlay to
+its own box.
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 18+ (Vite 6 requires `^18 || ^20 || >=22`)
 - npm
 
 ### Install & run
@@ -80,7 +151,8 @@ settings (Production + Preview), so the build injects them at deploy time.
 
 ```bash
 npm run dev          # Start the dev server (port 3000)
-npm run build        # Type-check (tsc -b) and build to dist/
+npm run gen          # Regenerate public/SKILL.md, llms.txt, resume.json from src/data
+npm run build        # prebuild (gen) → type-check (tsc -b) → build to dist/
 npm run preview      # Preview the production build
 npm run lint         # Run ESLint
 ```

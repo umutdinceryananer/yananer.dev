@@ -2,7 +2,7 @@
  * Build-time codegen for the agent-facing files.
  *
  * Reads the single source of truth in src/data/ and writes three static files
- * into public/ (served verbatim by GitHub Pages at yananer.dev/<file>):
+ * into public/ (served verbatim by Cloudflare Pages at yananer.dev/<file>):
  *   - public/SKILL.md     — tasks + grounding for a visitor's AI agent
  *   - public/llms.txt     — machine-readable index of the site + projects
  *   - public/resume.json  — JSON Resume (https://jsonresume.org/schema)
