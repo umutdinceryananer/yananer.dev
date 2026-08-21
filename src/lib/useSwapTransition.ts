@@ -47,3 +47,19 @@ export function useSwapTransition<T>(value: T, exitMs = 150) {
 
   return { rendered, shown }
 }
+
+/**
+ * The fade a swapped-out view plays. Shared so the route change and the smaller
+ * in-card toggles read as the same gesture.
+ *
+ * Opacity only, deliberately: a translate or transform here -- even a zero one --
+ * makes the element a containing block for fixed-position descendants and gives
+ * it a stacking context, which traps any dialog rendered inside it.
+ *
+ * The exit duration must match the exitMs given to useSwapTransition.
+ */
+export function swapClasses(shown: boolean) {
+  return `transition-opacity ease-out motion-reduce:transition-none ${
+    shown ? 'opacity-100 duration-200' : 'opacity-0 duration-150'
+  }`
+}

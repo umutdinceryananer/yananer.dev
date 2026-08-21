@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { profile } from '../../data/profile'
+import { useSwapTransition, swapClasses } from '../../lib/useSwapTransition'
 
 const VIEWS = [
   { id: 'skills', label: 'Skills' },
@@ -11,14 +12,18 @@ const TechStack = () => {
   const growth = profile.growth
   const [view, setView] = useState<'skills' | 'growth'>('skills')
 
-  // Reset the scroll-fade overlays whenever the view switches (each view starts
-  // scrolled to the top): top hidden, bottom shown.
+  // The pill answers the click straight away while the list underneath fades,
+  // so `view` drives the toggle and `rendered` drives the content.
+  const { rendered, shown } = useSwapTransition(view)
+
+  // Reset the scroll-fade overlays when the new list actually mounts (each view
+  // starts scrolled to the top): top hidden, bottom shown.
   useEffect(() => {
     const top = document.getElementById('tech-stack-blur-top')
     const bottom = document.getElementById('tech-stack-blur-bottom')
     if (top) top.style.opacity = '0'
     if (bottom) bottom.style.opacity = '1'
-  }, [view])
+  }, [rendered])
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const element = e.currentTarget;
@@ -58,8 +63,12 @@ const TechStack = () => {
       </div>
 
       <div className="flex-1 relative min-h-[400px] md:min-h-[600px] lg:min-h-0">
-        {view === 'skills' ? (
-          <div className="absolute inset-0 overflow-y-auto no-scrollbar scroll-smooth" onScroll={handleScroll}>
+        <div
+          key={rendered}
+          className={`absolute inset-0 overflow-y-auto no-scrollbar scroll-smooth ${swapClasses(shown)}`}
+          onScroll={handleScroll}
+        >
+          {rendered === 'skills' ? (
             <div className="grid grid-cols-2 gap-3 pb-3 pr-2">
               {technologies.map((tech, index) => (
                 <div
@@ -88,9 +97,7 @@ const TechStack = () => {
                 </div>
               ))}
             </div>
-          </div>
-        ) : (
-          <div className="absolute inset-0 overflow-y-auto no-scrollbar scroll-smooth" onScroll={handleScroll}>
+          ) : (
             <div className="space-y-2 pb-3 pr-2">
               {growth.map((g, index) => (
                 <div
@@ -102,8 +109,8 @@ const TechStack = () => {
                 </div>
               ))}
             </div>
-          </div>
-        )}
+          )}
+        </div>
         <div id="tech-stack-blur-top" className="absolute top-0 left-0 right-2 h-12 bg-gradient-to-b from-surface-1 to-transparent pointer-events-none transition-opacity duration-500 opacity-0" />
         <div id="tech-stack-blur-bottom" className="absolute bottom-0 left-0 right-2 h-12 bg-gradient-to-t from-surface-1 to-transparent pointer-events-none transition-opacity duration-500" />
       </div>
