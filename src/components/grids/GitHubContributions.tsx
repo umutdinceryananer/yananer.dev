@@ -1,5 +1,5 @@
 import { ActivityCalendar, type Activity } from 'react-activity-calendar'
-import { cloneElement, useState, useRef } from 'react'
+import { cloneElement, useMemo, useState, useRef } from 'react'
 import { profile } from '../../data/profile'
 import { useContributions } from '../../lib/useContributions'
 
@@ -12,6 +12,15 @@ const GitHubContributions = () => {
   const [tooltip, setTooltip] = useState<{ text: string; x: number; y: number } | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const { activities, loaded } = useContributions(profile.githubHandle)
+
+  // Per-cell stagger. The grid starts on a week boundary and runs one day per
+  // entry, so an entry's index gives its column and row directly. renderBlock is
+  // only handed the activity, never its position, hence the lookup by date.
+  const delays = useMemo(() => {
+    const byDate = new Map<string, number>()
+    activities.forEach((a, i) => byDate.set(a.date, Math.floor(i / 7) * 14 + (i % 7) * 5))
+    return byDate
+  }, [activities])
 
   return (
     <div className="h-full flex flex-col relative overflow-visible" ref={containerRef}>
@@ -33,11 +42,16 @@ const GitHubContributions = () => {
           }}
           // Never pass `loading`: the library discards the data it is given and
           // substitutes a full calendar year, which is the oversized skeleton
-          // this hook exists to avoid. The grid below is already the right size
-          // in both states, so dimming it is enough to say "not real yet".
-          style={{ opacity: loaded ? 1 : 0.45, transition: 'opacity 200ms ease-out' }}
+          // useContributions exists to avoid. Until the numbers land the grid
+          // stands in as a faint scaffold; then the cells wave in over it.
+          className={loaded ? 'gh-reveal' : undefined}
+          style={{ opacity: loaded ? 1 : 0.35 }}
           renderBlock={(block, activity: Activity) =>
             cloneElement(block, {
+              style: {
+                ...(block.props as { style?: React.CSSProperties }).style,
+                animationDelay: `${delays.get(activity.date) ?? 0}ms`,
+              },
               onMouseEnter: (e: React.MouseEvent<SVGRectElement>) => {
                 if (!containerRef.current) return
                 const rect = containerRef.current.getBoundingClientRect()

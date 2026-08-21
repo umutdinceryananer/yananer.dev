@@ -107,6 +107,26 @@ a, button, [role="button"], input[type="submit"] {
   }
 }
 
+/* Contribution cells arriving. Each cell carries its own animation-delay,
+   set inline from its position in the grid, so the wave runs left to right --
+   oldest week to this one. `backwards` holds a cell invisible through its delay
+   instead of letting it show early. Scaling from the cell's own centre needs
+   transform-box, since an SVG rect's transform origin is the viewport corner. */
+@keyframes gh-cell-in {
+  from { opacity: 0; transform: scale(0.35); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.gh-reveal rect {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: gh-cell-in 300ms cubic-bezier(0.2, 0.8, 0.3, 1) backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gh-reveal rect { animation: none; }
+}
+
 /* Flowing sweep for the demo "Play" button. Reads the accent scale so it
    follows whatever palette is set above. */
 @keyframes play-gradient {
