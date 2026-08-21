@@ -1,7 +1,7 @@
-import { GitHubCalendar } from 'react-github-calendar'
-import type { Activity } from 'react-activity-calendar'
+import { ActivityCalendar, type Activity } from 'react-activity-calendar'
 import { cloneElement, useState, useRef } from 'react'
 import { profile } from '../../data/profile'
+import { useContributions } from '../../lib/useContributions'
 
 // GitHub's own contribution greens — the calendar keeps its native colour while
 // the rest of the site runs on the neutral accent scale. Empty cells are pitched
@@ -11,25 +11,31 @@ const GH_SCALE = ['#151515', '#0e4429', '#006d32', '#26a641', '#39d353']
 const GitHubContributions = () => {
   const [tooltip, setTooltip] = useState<{ text: string; x: number; y: number } | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+  const { activities, loaded } = useContributions(profile.githubHandle)
 
   return (
     <div className="h-full flex flex-col relative overflow-visible" ref={containerRef}>
       <h3 className="text-xl font-semibold text-ink mb-3 text-center">GitHub Contributions</h3>
       <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-gray-800 to-transparent mb-4" />
       <div className="flex-1 flex items-center justify-center min-w-0" style={{ overflow: 'clip' }}>
-        <GitHubCalendar
-          username={profile.githubHandle}
+        <ActivityCalendar
+          data={activities}
           colorScheme="dark"
           blockSize={12}
           blockMargin={3}
           fontSize={12}
+          maxLevel={4}
           showMonthLabels={false}
           showColorLegend={false}
           labels={{ totalCount: ' ' }}
-          errorMessage=""
           theme={{
             dark: GH_SCALE
           }}
+          // Never pass `loading`: the library discards the data it is given and
+          // substitutes a full calendar year, which is the oversized skeleton
+          // this hook exists to avoid. The grid below is already the right size
+          // in both states, so dimming it is enough to say "not real yet".
+          style={{ opacity: loaded ? 1 : 0.45, transition: 'opacity 200ms ease-out' }}
           renderBlock={(block, activity: Activity) =>
             cloneElement(block, {
               onMouseEnter: (e: React.MouseEvent<SVGRectElement>) => {
@@ -45,11 +51,6 @@ const GitHubContributions = () => {
               onMouseLeave: () => setTooltip(null),
             })
           }
-          transformData={(data) => {
-            const cutoff = new Date()
-            cutoff.setDate(cutoff.getDate() - 21 * 7)
-            return data.filter((day) => new Date(day.date) >= cutoff)
-          }}
         />
       </div>
       {tooltip && (
