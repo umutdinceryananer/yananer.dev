@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState, FormEvent } from 'react';   
+import { useEffect, useId, useRef, useState, FormEvent } from 'react';   
 import { createPortal } from 'react-dom';
 import emailjs from '@emailjs/browser';
 import { profile } from '../data/profile';
 import { useDialogTransition, dialogChrome } from '../lib/useDialogTransition';
+import { useDialogFocus } from '../lib/useDialogFocus';
 
 // Initialize EmailJS with your public key
 emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
@@ -23,6 +24,10 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
   const { render, shown } = useDialogTransition(isOpen);
   const chrome = dialogChrome(shown);
   const autoCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const titleId = useId();
+
+  useDialogFocus(render, panelRef);
 
   // The dialog is mounted for the life of the page and only hides itself, so
   // without this it reopens wearing whatever it wore when it was last closed:
@@ -46,6 +51,17 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
     },
     [],
   );
+
+  // Escape is the expected way out of a dialog. Safe to add now that the draft
+  // survives a close: reopening restores everything but the transient state.
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isOpen, onClose]);
 
   if (!render) return null;
 
@@ -139,14 +155,21 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
   return createPortal(
     <div className={`${chrome.root} p-3 sm:p-4`}>
       <div aria-hidden className={`${chrome.backdrop} bg-black/60`} />
-      <div className={`${chrome.panel} bg-surface-1 w-full max-w-[700px] max-h-[90vh] overflow-y-auto rounded-xl p-[2px] shadow-[0_0_15px_rgba(0,0,0,0.6)]`}>
+      <div
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
+        className={`${chrome.panel} bg-surface-1 w-full max-w-[700px] max-h-[90vh] overflow-y-auto rounded-xl p-[2px] shadow-[0_0_15px_rgba(0,0,0,0.6)]`}
+      >
         <div className="bg-surface-1 rounded-[10px] p-5 sm:p-8">
           <div className="flex justify-between items-center mb-8">
-            <h3 className="text-2xl font-semibold text-ink">Mail to Umut</h3>
-            <button 
+            <h3 id={titleId} className="text-2xl font-semibold text-ink">Mail to Umut</h3>
+            <button
               onClick={onClose}
+              aria-label="Close"
               className="text-gray-400 hover:text-ink transition-colors"
-              disabled={isSending}
             >
               ✕
             </button>
@@ -216,8 +239,7 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
               <button
                 type="button"
                 onClick={onClose}
-                className="px-5 py-2.5 font-medium text-gray-300 hover:text-ink transition-colors disabled:opacity-50"
-                disabled={isSending}
+                className="px-5 py-2.5 font-medium text-gray-300 hover:text-ink transition-colors"
               >
                 Cancel
               </button>

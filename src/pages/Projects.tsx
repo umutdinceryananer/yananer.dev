@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { projects, type Project } from '../data/projects'
 import { hisarDecisions, type Decision } from '../data/decisions'
 import { profile } from '../data/profile'
 import { useLatestRelease } from '../lib/useLatestRelease'
 import { useDialogTransition, dialogChrome } from '../lib/useDialogTransition'
+import { useDialogFocus } from '../lib/useDialogFocus'
 
 const Tag = ({ children }: { children: React.ReactNode }) => (
   <span className="px-2 py-1 bg-surface-2 rounded-md text-gray-400 text-xs border border-gray-800">
@@ -75,6 +76,10 @@ const DecisionsIcon = () => (
 const DemoModal = ({ demo, onClose }: { demo: { url: string; title: string } | null; onClose: () => void }) => {
   const { render, shown } = useDialogTransition(!!demo)
   const chrome = dialogChrome(shown)
+  const panelRef = useRef<HTMLDivElement>(null)
+  const titleId = useId()
+
+  useDialogFocus(render, panelRef)
   // Hold on to the last payload. By the time the overlay animates out `demo` is
   // already null, and there would be nothing left to draw.
   const [current, setCurrent] = useState(demo)
@@ -105,11 +110,16 @@ const DemoModal = ({ demo, onClose }: { demo: { url: string; title: string } | n
     >
       <div aria-hidden className={`${chrome.backdrop} bg-black/70`} />
       <div
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
         className={`${chrome.panel} w-full max-w-6xl h-[85vh] bg-surface-1 rounded-xl border border-gray-800 overflow-hidden flex flex-col`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between gap-3 px-4 py-2.5 border-b border-gray-800 shrink-0">
-          <span className="text-ink text-sm font-medium truncate">{current.title}</span>
+          <span id={titleId} className="text-ink text-sm font-medium truncate">{current.title}</span>
           <div className="flex items-center gap-4 shrink-0">
             <a href={current.url} target="_blank" rel="noopener noreferrer" className="text-accent-400 hover:text-accent-300 text-xs">
               Open in new tab ↗
@@ -293,6 +303,10 @@ const DecisionsModal = ({
 }) => {
   const { render, shown } = useDialogTransition(!!data)
   const chrome = dialogChrome(shown)
+  const panelRef = useRef<HTMLDivElement>(null)
+  const titleId = useId()
+
+  useDialogFocus(render, panelRef)
   // Same trick as DemoModal: keep the last set of decisions around so the
   // overlay has content to render while it fades away.
   const [current, setCurrent] = useState(data)
@@ -325,11 +339,16 @@ const DecisionsModal = ({
     >
       <div aria-hidden className={`${chrome.backdrop} bg-black/70`} />
       <div
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
         className={`${chrome.panel} w-full max-w-2xl max-h-[85vh] bg-surface-1 rounded-xl border border-gray-800 overflow-hidden flex flex-col`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between gap-3 px-4 py-2.5 border-b border-gray-800 shrink-0">
-          <span className="text-ink text-sm font-medium truncate">
+          <span id={titleId} className="text-ink text-sm font-medium truncate">
             {current.title}: Design Decisions
           </span>
           <button

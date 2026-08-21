@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { profile } from '../data/profile'
 import { useDialogTransition, dialogChrome } from '../lib/useDialogTransition'
+import { useDialogFocus } from '../lib/useDialogFocus'
 
 const MCP_URL = 'https://mcp.yananer.dev/mcp'
 const SKILL_URL = `${profile.siteUrl}/SKILL.md`
@@ -16,6 +17,10 @@ const McpModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => 
   const [copied, setCopied] = useState<'skill' | 'mcp' | null>(null)
   const { render, shown } = useDialogTransition(open)
   const chrome = dialogChrome(shown)
+  const panelRef = useRef<HTMLDivElement>(null)
+  const titleId = useId()
+
+  useDialogFocus(render, panelRef)
 
   useEffect(() => {
     if (!open) return
@@ -46,6 +51,11 @@ const McpModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => 
     >
       <div aria-hidden className={`${chrome.backdrop} bg-black/60`} />
       <div
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
         className={`${chrome.panel} w-full max-w-lg max-h-[85vh] overflow-y-auto bg-surface-1 border border-gray-800 rounded-xl shadow-2xl`}
         onClick={(e) => e.stopPropagation()}
       >
@@ -55,7 +65,7 @@ const McpModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => 
             <svg className="w-4 h-4 text-accent-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z" />
             </svg>
-            <h2 className="text-ink text-sm font-semibold truncate">
+            <h2 id={titleId} className="text-ink text-sm font-semibold truncate">
               Point your AI at my work
             </h2>
           </div>
