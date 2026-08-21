@@ -100,7 +100,7 @@ const DemoModal = ({ demo, onClose }: { demo: { url: string; title: string } | n
   // filter or contain), which would shrink it to that ancestor's box.
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6"
+      className={`${chrome.root} p-3 sm:p-6`}
       onClick={onClose}
     >
       <div aria-hidden className={`${chrome.backdrop} bg-black/70`} />
@@ -320,7 +320,7 @@ const DecisionsModal = ({
   // filter or contain), which would shrink it to that ancestor's box.
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6"
+      className={`${chrome.root} p-3 sm:p-6`}
       onClick={onClose}
     >
       <div aria-hidden className={`${chrome.backdrop} bg-black/70`} />

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { usePrefersReducedMotion } from './usePrefersReducedMotion'
 
 /**
  * Delays swapping a value so the outgoing content can animate away first.
@@ -12,15 +13,22 @@ import { useEffect, useState } from 'react'
  * and the change becomes visible.
  */
 export function useSwapTransition<T>(value: T, exitMs = 150) {
+  const reduced = usePrefersReducedMotion()
   const [rendered, setRendered] = useState(value)
   const [shown, setShown] = useState(true)
 
   useEffect(() => {
     if (value === rendered) return
+    // With motion off there is no fade to wait for, and holding the old value
+    // at opacity 0 would just blank the page for the duration.
+    if (reduced) {
+      setRendered(value)
+      return
+    }
     setShown(false)
     const timer = setTimeout(() => setRendered(value), exitMs)
     return () => clearTimeout(timer)
-  }, [value, rendered, exitMs])
+  }, [value, rendered, exitMs, reduced])
 
   useEffect(() => {
     if (shown || value !== rendered) return

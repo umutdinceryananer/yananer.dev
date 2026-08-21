@@ -110,7 +110,7 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
   // that creates a containing block for fixed positioning (a transform,
   // filter or contain), which would shrink it to that ancestor's box.
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
+    <div className={`${chrome.root} p-3 sm:p-4`}>
       <div aria-hidden className={`${chrome.backdrop} bg-black/60`} />
       <div className={`${chrome.panel} bg-surface-1 w-[700px] rounded-xl p-[2px] shadow-[0_0_15px_rgba(0,0,0,0.6)]`}>
         <div className="bg-surface-1 rounded-[10px] p-8">

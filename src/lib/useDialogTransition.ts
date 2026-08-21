@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { usePrefersReducedMotion } from './usePrefersReducedMotion'
 
 /**
  * Keeps a dialog in the DOM long enough to play its closing animation.
@@ -12,12 +13,19 @@ import { useEffect, useState } from 'react'
  * either vanishes mid-animation or lingers invisibly.
  */
 export function useDialogTransition(open: boolean, durationMs = 200) {
+  const reduced = usePrefersReducedMotion()
   const [render, setRender] = useState(open)
   const [shown, setShown] = useState(false)
 
   useEffect(() => {
     if (open) {
       setRender(true)
+      // Nothing is going to animate, so skip the hidden frames entirely rather
+      // than flash an invisible dialog on the way in.
+      if (reduced) {
+        setShown(true)
+        return
+      }
       // Two frames: the first lets the browser paint the closed state, the
       // second flips to open. Without a painted starting point there is nothing
       // to transition from and the dialog still snaps into place.
@@ -32,9 +40,15 @@ export function useDialogTransition(open: boolean, durationMs = 200) {
     }
 
     setShown(false)
+    // Likewise on the way out: holding an invisible overlay in the DOM only
+    // earns its keep while something is actually animating.
+    if (reduced) {
+      setRender(false)
+      return
+    }
     const timer = setTimeout(() => setRender(false), durationMs)
     return () => clearTimeout(timer)
-  }, [open, durationMs])
+  }, [open, durationMs, reduced])
 
   return { render, shown }
 }
@@ -51,6 +65,12 @@ export function useDialogTransition(open: boolean, durationMs = 200) {
  */
 export function dialogChrome(shown: boolean) {
   return {
+    // opacity:0 does not remove an element from hit testing, so while the
+    // dialog animates out this full-viewport container would keep eating every
+    // click. Callers add their own padding.
+    root: `fixed inset-0 z-50 flex items-center justify-center ${
+      shown ? '' : 'pointer-events-none'
+    }`,
     backdrop: `absolute inset-0 backdrop-blur-sm pointer-events-none transition-opacity duration-200 motion-reduce:transition-none ${
       shown ? 'opacity-100' : 'opacity-0'
     }`,

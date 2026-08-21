@@ -41,7 +41,7 @@ const McpModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => 
   // filter or contain), which would shrink it to that ancestor's box.
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4"
+      className={`${chrome.root} p-3 sm:p-4`}
       onClick={onClose}
     >
       <div aria-hidden className={`${chrome.backdrop} bg-black/60`} />
