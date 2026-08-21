@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react';   
+import { useEffect, useRef, useState, FormEvent } from 'react';   
 import { createPortal } from 'react-dom';
 import emailjs from '@emailjs/browser';
 import { profile } from '../data/profile';
@@ -22,6 +22,30 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
   const [sendStatus, setSendStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const { render, shown } = useDialogTransition(isOpen);
   const chrome = dialogChrome(shown);
+  const autoCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // The dialog is mounted for the life of the page and only hides itself, so
+  // without this it reopens wearing whatever it wore when it was last closed:
+  // a red "Failed to Send" button, stale validation errors, a To field still
+  // reading "Copied!". The draft is deliberately kept — a failed send is
+  // exactly when you do not want the message thrown away.
+  useEffect(() => {
+    if (!isOpen) return;
+    if (autoCloseTimer.current) {
+      clearTimeout(autoCloseTimer.current);
+      autoCloseTimer.current = null;
+    }
+    setErrors({});
+    setSendStatus('idle');
+    setShowCopied(false);
+  }, [isOpen]);
+
+  useEffect(
+    () => () => {
+      if (autoCloseTimer.current) clearTimeout(autoCloseTimer.current);
+    },
+    [],
+  );
 
   if (!render) return null;
 
@@ -92,7 +116,10 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
           setSubject('');
           setMessage('');
           // Close popup after 2 seconds
-          setTimeout(() => {
+          // Held in a ref so closing by hand before it fires cannot slam a
+          // freshly reopened dialog shut two seconds later.
+          autoCloseTimer.current = setTimeout(() => {
+            autoCloseTimer.current = null;
             onClose();
             setSendStatus('idle');
           }, 2000);
@@ -112,8 +139,8 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
   return createPortal(
     <div className={`${chrome.root} p-3 sm:p-4`}>
       <div aria-hidden className={`${chrome.backdrop} bg-black/60`} />
-      <div className={`${chrome.panel} bg-surface-1 w-[700px] rounded-xl p-[2px] shadow-[0_0_15px_rgba(0,0,0,0.6)]`}>
-        <div className="bg-surface-1 rounded-[10px] p-8">
+      <div className={`${chrome.panel} bg-surface-1 w-full max-w-[700px] max-h-[90vh] overflow-y-auto rounded-xl p-[2px] shadow-[0_0_15px_rgba(0,0,0,0.6)]`}>
+        <div className="bg-surface-1 rounded-[10px] p-5 sm:p-8">
           <div className="flex justify-between items-center mb-8">
             <h3 className="text-2xl font-semibold text-ink">Mail to Umut</h3>
             <button 
@@ -126,7 +153,7 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
           </div>
           
           <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-gray-300 text-sm font-medium mb-2">From:</label>
                 <input 
@@ -177,7 +204,7 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
               <textarea 
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                className="w-full bg-surface-2 text-ink rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-accent-500 h-48 resize-none"
+                className="w-full bg-surface-2 text-ink rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-accent-500 h-32 sm:h-48 resize-none"
                 placeholder="Type your message here..."
               />
               {errors.message && (
