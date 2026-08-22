@@ -111,7 +111,10 @@ const AboutMe = () => {
               >{SPINNER_VERBS[verbIndex]}&nbsp;</span>
             </div>
           </div>
-          <h2 className="text-2xl font-semibold text-ink">{profile.name}</h2>
+          {/* The page had no h1 at all, so every heading hung off nothing. On
+              this view the subject of the page is already on screen and already
+              the largest thing on the card -- it just needed the right tag. */}
+          <h1 className="text-2xl font-semibold text-ink">{profile.name}</h1>
           <p className="text-accent-400 text-lg">{profile.role}</p>
         </div>
       </div>

@@ -159,3 +159,26 @@ a, button, [role="button"], input[type="submit"] {
 @media (prefers-reduced-motion: reduce) {
   .play-gradient { animation: none; }
 }
+
+/* One focus ring for the whole site.
+   
+   Nothing outside the contact form had a designed focus style, so keyboard
+   users were left with whatever ring the browser draws by default -- which
+   varies per engine and was never picked against a #050505 page. This is a
+   single high-contrast ring instead: accent-200 clears 6:1 against the darkest
+   surface, well past the 3:1 WCAG wants of a focus indicator, and `outline`
+   follows each control's own border-radius, so the nav pills stay round.
+
+   In @layer base deliberately. Tailwind's utilities sort after it, so any
+   component that has already designed its own treatment -- the form inputs
+   pair `focus:outline-none` with a ring -- still wins and does not end up
+   wearing two indicators at once.
+
+   :focus-visible, not :focus: a mouse click should not leave a ring behind on
+   every button it touches. */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--color-accent-200);
+    outline-offset: 2px;
+  }
+}

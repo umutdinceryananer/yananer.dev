@@ -390,6 +390,11 @@ const Projects = () => {
 
   return (
     <div className="pt-2">
+      {/* This view has no visible page title -- the nav tab is the title, and
+          it is a link, not a heading. So the h1 is spoken only: Now and
+          Projects below are its sections, and without it they would sit under
+          nothing. */}
+      <h1 className="sr-only">Work — {profile.name}</h1>
       {profile.now.length > 0 && (
         <div className="mb-8">
           <div className="mb-6">
