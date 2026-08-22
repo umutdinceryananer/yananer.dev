@@ -88,11 +88,13 @@ const TechStack = () => {
         <div className="h-0.5 w-8 mx-auto rounded-full bg-accent-500" />
       </div>
 
-      <div className="flex-1 relative min-h-[400px] md:min-h-[600px] lg:min-h-0">
+      {/* Same as Work Experience: below 745px the card is the width of the
+          screen, so the list stops being a scroller and all 21 stand open. */}
+      <div className="flex-1 relative min-[745px]:min-h-[400px] md:min-h-[600px] lg:min-h-0">
         <div
           key={rendered}
           ref={scrollerRef}
-          className={`absolute inset-0 overflow-y-auto card-scroll scroll-smooth ${swapClasses(shown)}`}
+          className={`min-[745px]:absolute min-[745px]:inset-0 min-[745px]:overflow-y-auto card-scroll scroll-smooth ${swapClasses(shown)}`}
           onScroll={handleScroll}
         >
           {rendered === 'skills' ? (
@@ -157,8 +159,8 @@ const TechStack = () => {
             </div>
           )}
         </div>
-        <div ref={topFadeRef} className="absolute top-0 left-0 right-2 h-12 bg-gradient-to-b from-surface-1 to-transparent pointer-events-none transition-opacity duration-500 opacity-0" />
-        <div ref={bottomFadeRef} className="absolute bottom-0 left-0 right-2 h-12 bg-gradient-to-t from-surface-1 to-transparent pointer-events-none transition-opacity duration-500" />
+        <div ref={topFadeRef} className="hidden min-[745px]:block absolute top-0 left-0 right-2 h-12 bg-gradient-to-b from-surface-1 to-transparent pointer-events-none transition-opacity duration-500 opacity-0" />
+        <div ref={bottomFadeRef} className="hidden min-[745px]:block absolute bottom-0 left-0 right-2 h-12 bg-gradient-to-t from-surface-1 to-transparent pointer-events-none transition-opacity duration-500" />
       </div>
     </div>
   )

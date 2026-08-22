@@ -30,14 +30,16 @@ const Home = () => {
 
       {/* Middle Column - Work Experience (Full Height) */}
       <div className="min-[745px]:col-span-2 min-[1240px]:col-span-1 min-[1240px]:col-start-2 min-[1240px]:row-start-1 min-[1240px]:row-span-3 min-[745px]:order-4 min-[1240px]:order-none bg-surface-1 rounded-lg sm:rounded-xl p-[2px] shadow-[0_0_15px_rgba(0,0,0,0.6)] hover:shadow-[0_0_20px_rgba(0,0,0,0.7)] transition-shadow">
-        <div className="h-full w-full bg-surface-1 rounded-[10px] p-4 sm:p-6 lg:p-7 min-h-[600px] min-[1240px]:min-h-0">
+        {/* The floor only applies once the grid goes multi-column. On a phone
+            the card takes the height its content needs. */}
+        <div className="h-full w-full bg-surface-1 rounded-[10px] p-4 sm:p-6 lg:p-7 min-[745px]:min-h-[600px] min-[1240px]:min-h-0">
           <WorkExperience />
         </div>
       </div>
 
       {/* Tech Stack */}
       <div className="min-[745px]:col-span-2 min-[1240px]:col-span-1 min-[1240px]:col-start-3 min-[1240px]:row-start-2 min-[1240px]:row-span-2 min-[745px]:order-5 min-[1240px]:order-none bg-surface-1 rounded-lg sm:rounded-xl p-[2px] shadow-[0_0_15px_rgba(0,0,0,0.6)] hover:shadow-[0_0_20px_rgba(0,0,0,0.7)] transition-shadow">
-        <div className="h-full w-full bg-surface-1 rounded-[10px] p-4 sm:p-6 lg:p-7 min-h-[400px] min-[1240px]:min-h-0">
+        <div className="h-full w-full bg-surface-1 rounded-[10px] p-4 sm:p-6 lg:p-7 min-[745px]:min-h-[400px] min-[1240px]:min-h-0">
           <TechStack />
         </div>
       </div>

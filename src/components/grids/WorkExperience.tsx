@@ -40,8 +40,19 @@ const WorkExperience = () => {
         <h3 className="text-xl font-semibold text-ink mb-3 text-center">Work Experience</h3>
         <div className="h-0.5 w-8 mx-auto rounded-full bg-accent-500" />
       </div>
-      <div className="flex-1 relative min-h-[400px] md:min-h-[600px] lg:min-h-0">
-        <div ref={scrollerRef} className="absolute inset-0 overflow-y-auto card-scroll scroll-smooth" onScroll={handleScroll}>
+      {/* Every size class here starts at 745px, the grid's own first
+          breakpoint. Below it the page is one column and this card is the full
+          width of the screen -- so it gets no height of its own, the list is
+          not a scroller, and all eight entries simply stand open. A 500px
+          window scrolling inside a page that also scrolls is a fight the finger
+          keeps losing, and on a phone there is nothing to gain by it: the page
+          scrolls anyway. */}
+      <div className="flex-1 relative min-[745px]:min-h-[400px] md:min-h-[600px] lg:min-h-0">
+        <div
+          ref={scrollerRef}
+          className="min-[745px]:absolute min-[745px]:inset-0 min-[745px]:overflow-y-auto card-scroll scroll-smooth"
+          onScroll={handleScroll}
+        >
           <div className="space-y-8 relative pl-6 pr-2 pb-3">
             {/* Vertical Progress Line */}
             <div className="absolute left-[15px] top-[28px] h-[calc(100%-56px)] w-[2px] bg-gradient-to-b from-transparent via-gray-800 to-transparent">
@@ -79,8 +90,10 @@ const WorkExperience = () => {
             ))}
           </div>
         </div>
-        <div ref={topFadeRef} className="absolute top-0 left-0 right-2 h-12 bg-gradient-to-b from-surface-1 to-transparent pointer-events-none transition-opacity duration-500 opacity-0" />
-        <div ref={bottomFadeRef} className="absolute bottom-0 left-0 right-2 h-12 bg-gradient-to-t from-surface-1 to-transparent pointer-events-none transition-opacity duration-500" />
+        {/* Nothing scrolls below 745px, so there is no edge to fade -- and
+            left in, these would lay two gradient strips over open content. */}
+        <div ref={topFadeRef} className="hidden min-[745px]:block absolute top-0 left-0 right-2 h-12 bg-gradient-to-b from-surface-1 to-transparent pointer-events-none transition-opacity duration-500 opacity-0" />
+        <div ref={bottomFadeRef} className="hidden min-[745px]:block absolute bottom-0 left-0 right-2 h-12 bg-gradient-to-t from-surface-1 to-transparent pointer-events-none transition-opacity duration-500" />
       </div>
     </div>
   )
