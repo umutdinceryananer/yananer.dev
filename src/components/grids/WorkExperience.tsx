@@ -109,8 +109,14 @@ const WorkExperience = () => {
 
             {/* Experience Items */}
             <div className="space-y-8">{shown.map(entry)}</div>
+            {/* The dots hang 22px left of each entry to straddle the line,
+                which put them outside the tail's clip box -- they came back
+                sheared in half. -ml-6/pl-6 is the container's own pl-6 read
+                back: it pushes the clip edge out to where the padding already
+                reserved room for them, and pads the content back to where it
+                was. */}
             {isPhone && (
-              <CollapsedTail open={expanded}>
+              <CollapsedTail open={expanded} bleed="-ml-6 pl-6">
                 {/* pt-8 stands in for the space-y-8 that no longer reaches
                     across the seam between the two lists. */}
                 <div className="space-y-8 pt-8">{rest.map(entry)}</div>

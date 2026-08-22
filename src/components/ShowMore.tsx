@@ -11,7 +11,19 @@ import { useEffect, useRef } from 'react'
  * have, so eight roles and thirteen skills both take the same 300ms.
  *
  * `overflow-hidden` on the inner box is what makes the outer row height bite;
- * without it the content just overflows its own zero-height track.
+ * without it the content just overflows its own zero-height track. `min-h-0`
+ * goes with it: a grid item's automatic minimum size is content-based, so
+ * without this the item refuses to shrink under its own content and the 0fr
+ * track never wins.
+ *
+ * It clips on both axes, which is a problem for anything that hangs outside its
+ * box — Work Experience puts its numbered dots 22px to the left so they
+ * straddle the timeline, and they came back sheared in half. `bleed` is for
+ * that: a negative margin plus matching padding on this box, which moves the
+ * clip edge outwards without moving the content. Clipping only the vertical
+ * axis would read better, but `overflow-y: clip` is unsupported before iOS 16
+ * and the declaration would simply drop — turning a shaved dot into a list that
+ * does not collapse at all.
  *
  * While shut the tail is `inert`, so Tab cannot land inside something clipped
  * to nothing — three of the Skills markers are focusable and live down here.
@@ -20,9 +32,13 @@ import { useEffect, useRef } from 'react'
  */
 export const CollapsedTail = ({
   open,
+  bleed = '',
   children,
 }: {
   open: boolean
+  /** Paired negative-margin and padding classes, for content that sits outside
+      its own box and would otherwise be clipped. See the note above. */
+  bleed?: string
   children: React.ReactNode
 }) => {
   const inner = useRef<HTMLDivElement>(null)
@@ -37,7 +53,7 @@ export const CollapsedTail = ({
         open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
       }`}
     >
-      <div ref={inner} className="overflow-hidden">
+      <div ref={inner} className={`min-h-0 overflow-hidden ${bleed}`}>
         {children}
       </div>
     </div>
