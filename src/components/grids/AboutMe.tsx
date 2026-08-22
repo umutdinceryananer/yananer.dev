@@ -82,6 +82,9 @@ const AboutMe = () => {
           <img
             src={profilePhoto}
             alt={profile.name}
+            width={384}
+            height={506}
+            decoding="async"
             className="w-full h-full object-cover"
           />
         </div>
