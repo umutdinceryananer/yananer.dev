@@ -178,24 +178,34 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-gray-300 text-sm font-medium mb-2">From:</label>
-                <input 
+                <label htmlFor={`${titleId}-from`} className="block text-gray-300 text-sm font-medium mb-2">From:</label>
+                <input
+                  id={`${titleId}-from`}
                   type="email"
+                  aria-invalid={!!errors.fromEmail}
+                  aria-describedby={errors.fromEmail ? `${titleId}-from-error` : undefined}
                   value={fromEmail}
                   onChange={(e) => setFromEmail(e.target.value)}
-                  className="w-full bg-surface-2 text-ink rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-accent-500"
+                  className="w-full bg-surface-2 text-ink rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
                   placeholder="Enter your email"
                 />
                 {errors.fromEmail && (
-                  <p className="text-red-500 text-xs mt-1">{errors.fromEmail}</p>
+                  <p id={`${titleId}-from-error`} role="alert" className="text-red-500 text-xs mt-1">{errors.fromEmail}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-gray-300 text-sm font-medium mb-2">To:</label>
+                <label htmlFor={`${titleId}-to`} className="block text-gray-300 text-sm font-medium mb-2">To:</label>
                 <div className="relative group">
-                  <input 
+                  <input
+                    id={`${titleId}-to`}
                     type="text"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleCopyEmail();
+                      }
+                    }}
                     value={showCopied ? "Copied!" : profile.email}
                     readOnly
                     onClick={handleCopyEmail}
@@ -209,29 +219,35 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
             </div>
 
             <div>
-              <label className="block text-gray-300 text-sm font-medium mb-2">Subject</label>
-              <input 
+              <label htmlFor={`${titleId}-subject`} className="block text-gray-300 text-sm font-medium mb-2">Subject</label>
+              <input
+                id={`${titleId}-subject`}
                 type="text"
+                aria-invalid={!!errors.subject}
+                aria-describedby={errors.subject ? `${titleId}-subject-error` : undefined}
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
-                className="w-full bg-surface-2 text-ink rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-accent-500"
+                className="w-full bg-surface-2 text-ink rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
                 placeholder="Enter subject"
               />
               {errors.subject && (
-                <p className="text-red-500 text-xs mt-1">{errors.subject}</p>
+                <p id={`${titleId}-subject-error`} role="alert" className="text-red-500 text-xs mt-1">{errors.subject}</p>
               )}
             </div>
             
             <div>
-              <label className="block text-gray-300 text-sm font-medium mb-2">Message</label>
-              <textarea 
+              <label htmlFor={`${titleId}-message`} className="block text-gray-300 text-sm font-medium mb-2">Message</label>
+              <textarea
+                id={`${titleId}-message`}
+                aria-invalid={!!errors.message}
+                aria-describedby={errors.message ? `${titleId}-message-error` : undefined}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                className="w-full bg-surface-2 text-ink rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-accent-500 h-32 sm:h-48 resize-none"
+                className="w-full bg-surface-2 text-ink rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-200 h-32 sm:h-48 resize-none"
                 placeholder="Type your message here..."
               />
               {errors.message && (
-                <p className="text-red-500 text-xs mt-1">{errors.message}</p>
+                <p id={`${titleId}-message-error`} role="alert" className="text-red-500 text-xs mt-1">{errors.message}</p>
               )}
             </div>
             

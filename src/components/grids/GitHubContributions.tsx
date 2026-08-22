@@ -2,7 +2,7 @@ import { ActivityCalendar, type Activity } from 'react-activity-calendar'
 import { cloneElement, useMemo, useState, useRef } from 'react'
 import type { CSSProperties } from 'react'
 import { profile } from '../../data/profile'
-import { useContributions } from '../../lib/useContributions'
+import { useContributions, WEEKS } from '../../lib/useContributions'
 
 // GitHub's own contribution greens — the calendar keeps its native colour while
 // the rest of the site runs on the neutral accent scale. Empty cells are pitched
@@ -45,6 +45,7 @@ const GitHubContributions = () => {
   const { activities, loaded } = useContributions(profile.githubHandle)
 
   const timing = useMemo(() => flapTimings(activities), [activities])
+  const total = useMemo(() => activities.reduce((n, a) => n + a.count, 0), [activities])
 
   // The flap keyframes step through fixed greens and land on the cell's real
   // colour, which has to be handed in per cell.
@@ -59,7 +60,21 @@ const GitHubContributions = () => {
     <div className="h-full flex flex-col relative overflow-visible" ref={containerRef}>
       <h3 className="text-xl font-semibold text-ink mb-3 text-center">GitHub Contributions</h3>
       <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-gray-800 to-transparent mb-4" />
-      <div className="flex-1 flex items-center justify-center min-w-0" style={{ overflow: 'clip' }}>
+      {/* One labelled image rather than 147 unlabelled rects. A heatmap is a
+          picture of data: naming the whole thing gives a screen reader the
+          headline figure, where per-cell labels would only offer 147 tab stops
+          and no shape. The hover tooltip stays a sighted-pointer nicety. */}
+      <div
+        role="img"
+        aria-busy={!loaded}
+        aria-label={
+          loaded
+            ? `${total} GitHub contributions over the last ${WEEKS} weeks`
+            : 'Loading GitHub contributions'
+        }
+        className="flex-1 flex items-center justify-center min-w-0"
+        style={{ overflow: 'clip' }}
+      >
         <ActivityCalendar
           data={activities}
           colorScheme="dark"
