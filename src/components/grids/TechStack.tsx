@@ -71,7 +71,7 @@ const TechStack = () => {
       <div className="flex-1 relative min-h-[400px] md:min-h-[600px] lg:min-h-0">
         <div
           key={rendered}
-          className={`absolute inset-0 overflow-y-auto no-scrollbar scroll-smooth ${swapClasses(shown)}`}
+          className={`absolute inset-0 overflow-y-auto card-scroll scroll-smooth ${swapClasses(shown)}`}
           onScroll={handleScroll}
         >
           {rendered === 'skills' ? (

@@ -82,13 +82,48 @@ a, button, [role="button"], input[type="submit"] {
   overflow: hidden;
 }
 
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
+/* The inner scroll area of a bento card -- Work Experience, Skills.
+
+   From the two-column layout up, the bar is hidden: the card is tall, it sits
+   beside its neighbours, and the fade at each edge already says there is more.
+   Below that the page is one column, the card fills the width, and card and
+   page look alike -- so the bar stays, and says which of the two is moving.
+
+   745px is the grid's own first breakpoint, not a round number picked here.
+
+   Phones draw overlay scrollbars, which appear during the gesture and fade
+   again; that is the platform's answer and it is the right one. The styling
+   below is for the browsers that draw a classic bar, so it does not land as a
+   pale strip on a near-black card. */
+@media (min-width: 745px) {
+  .card-scroll {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .card-scroll::-webkit-scrollbar {
+    display: none;
+  }
 }
 
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+@media (max-width: 744.98px) {
+  .card-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-gray-700) transparent;
+  }
+
+  .card-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .card-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .card-scroll::-webkit-scrollbar-thumb {
+    background: var(--color-gray-700);
+    border-radius: 3px;
+  }
 }
 
 /* The one scroll container reserves its scrollbar gutter permanently.
