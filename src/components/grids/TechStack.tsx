@@ -11,6 +11,9 @@ const TechStack = () => {
   const technologies = profile.tech
   const growth = profile.growth
   const [view, setView] = useState<'skills' | 'growth'>('skills')
+  // Which marker has been tapped open. Hover still works on its own; this is
+  // the path for anyone without a pointer to hover with.
+  const [openTip, setOpenTip] = useState<number | null>(null)
 
   // The pill answers the click straight away while the list underneath fades,
   // so `view` drives the toggle and `rendered` drives the content.
@@ -23,6 +26,9 @@ const TechStack = () => {
     const bottom = document.getElementById('tech-stack-blur-bottom')
     if (top) top.style.opacity = '0'
     if (bottom) bottom.style.opacity = '1'
+    // The indices belong to the list that just left; carrying one over would
+    // open a tooltip on whatever happens to sit in that slot now.
+    setOpenTip(null)
   }, [rendered])
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
@@ -80,8 +86,27 @@ const TechStack = () => {
                       <span className="text-accent-300 text-sm">{tech.name}</span>
                       {tech.hasTooltip && (
                         <>
-                          <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse motion-reduce:animate-none" />
-                          <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-surface-2 text-xs text-gray-300 px-3 py-2 rounded-lg border border-gray-800 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                          {/* The dot was an 8px mystery: what it meant lived in
+                              a hover tooltip, so on a phone it meant nothing at
+                              all and to a screen reader it was not there. As a
+                              button it carries its own name, answers a tap, and
+                              takes focus -- with a 32px hit area pulled back in
+                              by a negative margin so the row does not shift. */}
+                          <button
+                            type="button"
+                            aria-label="Used in this portfolio"
+                            aria-expanded={openTip === index}
+                            onClick={() => setOpenTip((cur) => (cur === index ? null : index))}
+                            className="-m-2.5 grid h-8 w-8 place-items-center rounded-full"
+                          >
+                            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse motion-reduce:animate-none" />
+                          </button>
+                          <div
+                            aria-hidden
+                            className={`absolute -top-6 left-1/2 -translate-x-1/2 bg-surface-2 text-xs text-gray-300 px-3 py-2 rounded-lg border border-gray-800 transition-opacity whitespace-nowrap z-10 pointer-events-none ${
+                              openTip === index ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                            }`}
+                          >
                             Used in this portfolio
                           </div>
                         </>

@@ -1,5 +1,5 @@
 import { ActivityCalendar, type Activity } from 'react-activity-calendar'
-import { cloneElement, useMemo, useState, useRef } from 'react'
+import { cloneElement, useEffect, useMemo, useState, useRef } from 'react'
 import type { CSSProperties } from 'react'
 import { profile } from '../../data/profile'
 import { useContributions, WEEKS } from '../../lib/useContributions'
@@ -37,12 +37,33 @@ function formatDay(iso: string): string {
   return d.toLocaleDateString('en-US', opts)
 }
 
-type Tip = { count: number; date: string; x: number; y: number }
+type Tip = { count: number; date: string; x: number; y: number; sticky: boolean }
 
 const GitHubContributions = () => {
   const [tooltip, setTooltip] = useState<Tip | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const { activities, loaded } = useContributions(profile.githubHandle)
+
+  // A touch has no hover to hold a tooltip open, so on a phone this grid used
+  // to be 147 silent squares -- the count and the date were unreachable. A tap
+  // now opens the tooltip and it stays until a tap lands outside the card.
+  //
+  // Taps *inside* are ignored on purpose: moving from one cell to the next
+  // fires pointerenter before pointerdown, so a blanket dismiss would wipe the
+  // tooltip the neighbouring cell had just set.
+  useEffect(() => {
+    if (!tooltip?.sticky) return
+    const dismiss = (e: PointerEvent) => {
+      if (containerRef.current?.contains(e.target as Node)) return
+      setTooltip(null)
+    }
+    // A beat late, or the very tap that opened it would close it again.
+    const t = setTimeout(() => document.addEventListener('pointerdown', dismiss), 0)
+    return () => {
+      clearTimeout(t)
+      document.removeEventListener('pointerdown', dismiss)
+    }
+  }, [tooltip?.sticky, tooltip?.date])
 
   const timing = useMemo(() => flapTimings(activities), [activities])
   const total = useMemo(() => activities.reduce((n, a) => n + a.count, 0), [activities])
@@ -103,7 +124,9 @@ const GitHubContributions = () => {
 
             return cloneElement(block, {
               style,
-              onMouseEnter: (e: React.MouseEvent<SVGRectElement>) => {
+              // Pointer events rather than mouse events: one pair of handlers
+              // covers hover and tap, and pointerType says which one happened.
+              onPointerEnter: (e: React.PointerEvent<SVGRectElement>) => {
                 if (!containerRef.current) return
                 const rect = containerRef.current.getBoundingClientRect()
                 const target = e.currentTarget.getBoundingClientRect()
@@ -112,9 +135,15 @@ const GitHubContributions = () => {
                   date: activity.date,
                   x: target.left - rect.left + target.width / 2,
                   y: target.top - rect.top - 6,
+                  // The tooltip sits above the cell, so a finger on the cell
+                  // never covers it -- it just needs to survive the touchend
+                  // that pointerleave would otherwise treat as leaving.
+                  sticky: e.pointerType !== 'mouse',
                 })
               },
-              onMouseLeave: () => setTooltip(null),
+              onPointerLeave: (e: React.PointerEvent<SVGRectElement>) => {
+                if (e.pointerType === 'mouse') setTooltip(null)
+              },
             })
           }}
         />

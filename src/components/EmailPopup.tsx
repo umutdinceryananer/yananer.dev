@@ -211,9 +211,14 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
                     value={showCopied ? "Copied!" : profile.email}
                     readOnly
                     onClick={handleCopyEmail}
-                    className={`w-full bg-surface-2 text-gray-400 rounded-lg px-4 py-3 cursor-pointer hover:bg-surface-4 transition-all duration-300 relative ${!showCopied && 'group-hover:text-transparent'}`}
+                    // focus-within alongside hover: this field is a copy button
+                    // wearing an input's clothes, and a keyboard user who lands
+                    // on it was never told that. Same swap, same feedback.
+                    // (Ternary, not &&: a false branch renders the string
+                    // "false" straight into the class list.)
+                    className={`w-full bg-surface-2 text-gray-400 rounded-lg px-4 py-3 cursor-pointer hover:bg-surface-4 transition-all duration-300 relative ${!showCopied ? 'group-hover:text-transparent group-focus-within:text-transparent' : ''}`}
                   />
-                  <div className={`absolute inset-0 flex items-center px-4 py-3 opacity-0 transition-all duration-300 pointer-events-none ${!showCopied && 'group-hover:opacity-100'}`}>
+                  <div className={`absolute inset-0 flex items-center px-4 py-3 opacity-0 transition-all duration-300 pointer-events-none ${!showCopied ? 'group-hover:opacity-100 group-focus-within:opacity-100' : ''}`}>
                     <span className="text-gray-400">Click to Copy</span>
                   </div>
                 </div>
