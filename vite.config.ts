@@ -39,9 +39,18 @@ function htmlHeadMeta(): Plugin {
     `<meta property="og:type" content="website" />`,
     `<meta property="og:url" content="${esc(url)}" />`,
     `<meta property="og:site_name" content="yananer.dev" />`,
+    // Square on purpose: the card type below is `summary`, which crops to a
+    // small square thumbnail. Without an image every shared link — LinkedIn,
+    // Slack, iMessage — renders as a blank card.
+    `<meta property="og:image" content="${url}/og.jpg" />`,
+    `<meta property="og:image:width" content="600" />`,
+    `<meta property="og:image:height" content="600" />`,
+    `<meta property="og:image:alt" content="${esc(profile.name)}" />`,
     `<meta name="twitter:card" content="summary" />`,
     `<meta name="twitter:title" content="${esc(title)}" />`,
     `<meta name="twitter:description" content="${esc(description)}" />`,
+    `<meta name="twitter:image" content="${url}/og.jpg" />`,
+    `<meta name="twitter:image:alt" content="${esc(profile.name)}" />`,
     `<link rel="canonical" href="${esc(url)}" />`,
     `<script type="application/ld+json">\n${JSON.stringify(jsonLd, null, 2)}\n    </script>`,
   ].join('\n    ')

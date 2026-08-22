@@ -5,3 +5,5 @@
 
 User-agent: *
 Allow: /
+
+Sitemap: https://yananer.dev/sitemap.xml

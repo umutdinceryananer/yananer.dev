@@ -227,11 +227,28 @@ const resume = {
 }
 
 // ---------------------------------------------------------------------------
+// sitemap.xml
+//
+// One entry, and that is the honest answer: routing is hash-based, and a
+// fragment is not a separate URL to a crawler. No <lastmod> either — it would
+// have to come from a clock, and the point of this script is that its output
+// only changes when src/data does.
+// ---------------------------------------------------------------------------
+const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${profile.siteUrl}/</loc>
+  </url>
+</urlset>
+`
+
+// ---------------------------------------------------------------------------
 // Write
 // ---------------------------------------------------------------------------
 mkdirSync(PUBLIC_DIR, { recursive: true })
 writeFileSync(path.join(PUBLIC_DIR, 'SKILL.md'), skillMd)
 writeFileSync(path.join(PUBLIC_DIR, 'llms.txt'), llmsTxt)
 writeFileSync(path.join(PUBLIC_DIR, 'resume.json'), JSON.stringify(resume, null, 2) + '\n')
+writeFileSync(path.join(PUBLIC_DIR, 'sitemap.xml'), sitemapXml)
 
-console.log('Generated public/SKILL.md, public/llms.txt, public/resume.json')
+console.log('Generated public/SKILL.md, public/llms.txt, public/resume.json, public/sitemap.xml')
