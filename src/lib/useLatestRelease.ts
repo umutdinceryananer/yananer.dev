@@ -21,7 +21,9 @@ function fetchLatest(repo: string): Promise<string | null> {
     headers: { Accept: 'application/vnd.github+json' },
   })
     .then((r) => (r.ok ? r.json() : null))
-    .then((d: { tag_name?: string } | null) => d?.tag_name ?? null)
+    .then((d: { tag_name?: unknown } | null) =>
+      typeof d?.tag_name === 'string' ? d.tag_name : null,
+    )
     .catch(() => null)
 
   inflight.set(repo, p)

@@ -28,7 +28,11 @@ function fetchContributions(username: string): Promise<Activity[] | null> {
 
   const p = fetch(`${API}/${username}?y=last`)
     .then((r) => (r.ok ? r.json() : null))
-    .then((d: { contributions?: Activity[] } | null) => d?.contributions ?? null)
+    // Shape-check rather than trust: a payload with `contributions` as
+    // anything but an array would sail through to render and throw there.
+    .then((d: { contributions?: unknown } | null) =>
+      Array.isArray(d?.contributions) ? (d.contributions as Activity[]) : null,
+    )
     .catch(() => null)
 
   inflight.set(username, p)
