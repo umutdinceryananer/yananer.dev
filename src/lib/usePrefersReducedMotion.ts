@@ -1,12 +1,4 @@
-import { useSyncExternalStore } from 'react'
-
-const QUERY = '(prefers-reduced-motion: reduce)'
-
-const subscribe = (onChange: () => void) => {
-  const mq = window.matchMedia(QUERY)
-  mq.addEventListener('change', onChange)
-  return () => mq.removeEventListener('change', onChange)
-}
+import { useMediaQuery } from './useMediaQuery'
 
 /**
  * Whether the viewer has asked for reduced motion, tracked live so flipping the
@@ -18,9 +10,5 @@ const subscribe = (onChange: () => void) => {
  * that justified it.
  */
 export function usePrefersReducedMotion() {
-  return useSyncExternalStore(
-    subscribe,
-    () => window.matchMedia(QUERY).matches,
-    () => false,
-  )
+  return useMediaQuery('(prefers-reduced-motion: reduce)')
 }
