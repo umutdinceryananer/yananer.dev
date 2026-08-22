@@ -65,7 +65,7 @@ const TechStack = () => {
             ))}
           </div>
         </div>
-        <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-gray-800 to-transparent" />
+        <div className="h-0.5 w-8 mx-auto rounded-full bg-accent-500" />
       </div>
 
       <div className="flex-1 relative min-h-[400px] md:min-h-[600px] lg:min-h-0">

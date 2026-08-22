@@ -131,7 +131,7 @@ const DemoModal = ({ demo, onClose }: { demo: { url: string; title: string } | n
         </div>
         {/* Sandboxed. CSP frame-src already limits *which* origins may be
             framed, but once one is, an unsandboxed iframe keeps every default
-            privilege -- including navigating the page that framed it. The three
+            privilege -- including navigating the page that framed it. The four
             grants here are what a demo actually needs; top-level navigation is
             deliberately not among them. */}
         <iframe
@@ -412,7 +412,7 @@ const Projects = () => {
               <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse motion-reduce:animate-none" />
               Now
             </h2>
-            <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-gray-800 to-transparent" />
+            <div className="h-0.5 w-8 mx-auto rounded-full bg-accent-500" />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             {profile.now.map((n, i) => (
@@ -461,7 +461,7 @@ const Projects = () => {
 
       <div className="mb-6">
         <h2 className="text-xl font-semibold text-ink mb-3 text-center">Projects</h2>
-        <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-gray-800 to-transparent" />
+        <div className="h-0.5 w-8 mx-auto rounded-full bg-accent-500" />
       </div>
       <div className="grid grid-cols-1 min-[745px]:grid-cols-2 min-[1240px]:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
         {repos.map((p) => (

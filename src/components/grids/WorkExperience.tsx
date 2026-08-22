@@ -29,7 +29,7 @@ const WorkExperience = () => {
     <div className="h-full flex flex-col">
       <div className="mb-6">
         <h3 className="text-xl font-semibold text-ink mb-3 text-center">Work Experience</h3>
-        <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-gray-800 to-transparent" />
+        <div className="h-0.5 w-8 mx-auto rounded-full bg-accent-500" />
       </div>
       <div className="flex-1 relative min-h-[400px] md:min-h-[600px] lg:min-h-0">
         <div className="absolute inset-0 overflow-y-auto card-scroll scroll-smooth" onScroll={handleScroll}>

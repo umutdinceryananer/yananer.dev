@@ -80,7 +80,7 @@ const GitHubContributions = () => {
   return (
     <div className="h-full flex flex-col relative overflow-visible" ref={containerRef}>
       <h3 className="text-xl font-semibold text-ink mb-3 text-center">GitHub Contributions</h3>
-      <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-gray-800 to-transparent mb-4" />
+      <div className="h-0.5 w-8 mx-auto rounded-full bg-accent-500 mb-4" />
       {/* One labelled image rather than 147 unlabelled rects. A heatmap is a
           picture of data: naming the whole thing gives a screen reader the
           headline figure, where per-cell labels would only offer 147 tab stops

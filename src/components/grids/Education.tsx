@@ -5,7 +5,7 @@ const Education = () => {
     <div className="h-full flex flex-col">
       <div className="mb-6">
         <h3 className="text-xl font-semibold text-ink mb-3 text-center">Education</h3>
-        <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-gray-800 to-transparent" />
+        <div className="h-0.5 w-8 mx-auto rounded-full bg-accent-500" />
       </div>
 
       <div className="flex-1 flex flex-col gap-3">
