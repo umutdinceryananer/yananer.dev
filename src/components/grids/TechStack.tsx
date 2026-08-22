@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { profile } from '../../data/profile'
 import { useSwapTransition, swapClasses } from '../../lib/useSwapTransition'
 
@@ -19,26 +19,46 @@ const TechStack = () => {
   // so `view` drives the toggle and `rendered` drives the content.
   const { rendered, shown } = useSwapTransition(view)
 
-  // Reset the scroll-fade overlays when the new list actually mounts (each view
-  // starts scrolled to the top): top hidden, bottom shown.
+  const scrollerRef = useRef<HTMLDivElement>(null)
+  const topFadeRef = useRef<HTMLDivElement>(null)
+  const bottomFadeRef = useRef<HTMLDivElement>(null)
+  const fadeFrame = useRef<number | null>(null)
+
+  /** Paint the scroll-fade overlays from where the list is sitting right now. */
+  const syncFades = useCallback(() => {
+    fadeFrame.current = null
+    const el = scrollerRef.current
+    if (!el) return
+    const atTop = el.scrollTop <= 5
+    const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 5
+    if (topFadeRef.current) topFadeRef.current.style.opacity = atTop ? '0' : '1'
+    if (bottomFadeRef.current) bottomFadeRef.current.style.opacity = atBottom ? '0' : '1'
+  }, [])
+
+  // A finger drag fires scroll far more often than the screen refreshes, and
+  // the old handler answered every single one with two document-wide id
+  // lookups and a fresh read of scrollHeight. Coalescing to one update per
+  // frame does the same work at the only rate it can actually be seen at --
+  // and inside rAF the reads land before the browser's own layout pass rather
+  // than in the middle of the gesture.
+  const handleScroll = useCallback(() => {
+    if (fadeFrame.current === null) fadeFrame.current = requestAnimationFrame(syncFades)
+  }, [syncFades])
+
+  useEffect(() => () => {
+    if (fadeFrame.current !== null) cancelAnimationFrame(fadeFrame.current)
+  }, [])
+
+  // The list remounts on a view swap and comes back scrolled to the top, so the
+  // overlays have to be told. Measuring beats assuming: a short list that does
+  // not scroll at all should show neither fade, and the old code hardcoded the
+  // bottom one on.
   useEffect(() => {
-    const top = document.getElementById('tech-stack-blur-top')
-    const bottom = document.getElementById('tech-stack-blur-bottom')
-    if (top) top.style.opacity = '0'
-    if (bottom) bottom.style.opacity = '1'
+    syncFades()
     // The indices belong to the list that just left; carrying one over would
     // open a tooltip on whatever happens to sit in that slot now.
     setOpenTip(null)
-  }, [rendered])
-
-  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    const element = e.currentTarget;
-    const scrollPercentage = (element.scrollTop + element.clientHeight) / element.scrollHeight;
-    const bottomBlur = document.getElementById('tech-stack-blur-bottom');
-    const topBlur = document.getElementById('tech-stack-blur-top');
-    if (bottomBlur) bottomBlur.style.opacity = scrollPercentage >= 0.95 ? '0' : '1';
-    if (topBlur) topBlur.style.opacity = element.scrollTop <= 5 ? '0' : '1';
-  };
+  }, [rendered, syncFades])
 
   return (
     <div className="h-full flex flex-col">
@@ -71,6 +91,7 @@ const TechStack = () => {
       <div className="flex-1 relative min-h-[400px] md:min-h-[600px] lg:min-h-0">
         <div
           key={rendered}
+          ref={scrollerRef}
           className={`absolute inset-0 overflow-y-auto card-scroll scroll-smooth ${swapClasses(shown)}`}
           onScroll={handleScroll}
         >
@@ -136,8 +157,8 @@ const TechStack = () => {
             </div>
           )}
         </div>
-        <div id="tech-stack-blur-top" className="absolute top-0 left-0 right-2 h-12 bg-gradient-to-b from-surface-1 to-transparent pointer-events-none transition-opacity duration-500 opacity-0" />
-        <div id="tech-stack-blur-bottom" className="absolute bottom-0 left-0 right-2 h-12 bg-gradient-to-t from-surface-1 to-transparent pointer-events-none transition-opacity duration-500" />
+        <div ref={topFadeRef} className="absolute top-0 left-0 right-2 h-12 bg-gradient-to-b from-surface-1 to-transparent pointer-events-none transition-opacity duration-500 opacity-0" />
+        <div ref={bottomFadeRef} className="absolute bottom-0 left-0 right-2 h-12 bg-gradient-to-t from-surface-1 to-transparent pointer-events-none transition-opacity duration-500" />
       </div>
     </div>
   )
