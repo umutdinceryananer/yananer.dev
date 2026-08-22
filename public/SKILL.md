@@ -150,7 +150,7 @@ A zero-config screen colour-temperature daemon for X11, in Rust: it reads your t
   - cli/src/state.rs — the only state shared between the poll loop and the D-Bus handlers; the loop stays sole owner of screen access
   - tray/src/main.rs — StatusNotifierItem tray icon (ksni), talks to the daemon over D-Bus
   - panel/src/curve.rs — f.lux-style panel: the temperature-curve UI (egui / eframe)
-  - tui/src/today.rs — ratatui dashboard: the day's schedule view
+  - tui/src/main.rs — ratatui dashboard: one glanceable screen, tinted to match the filter the display is actually wearing
   - dist/ — systemd units, .desktop entry, Debian packaging
   - docs/HOW-IT-WORKS.md — architecture writeup
 - NOTE: Shipped but early, and under active development — releases land often, so check the repo's releases page for the current version rather than trusting any number quoted elsewhere. Installable (.deb, AUR, static musl) and the daemon plus all three front-ends work, but it's young software with one machine's worth of dogfooding, so expect rough edges. X11 only (no Wayland). GPL-3.0. Also my first real Rust project.

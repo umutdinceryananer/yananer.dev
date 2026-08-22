@@ -4,7 +4,7 @@
 #   api.emailjs.com                     contact form submissions
 #   github-contributions-api.jogruber.de  contributions calendar data
 #   api.github.com                      latest-release lookup (LatestRelease.tsx)
-#   fonts.googleapis.com / fonts.gstatic.com   Manrope webfont
+#   fonts.googleapis.com / fonts.gstatic.com   DM Sans webfont
 #   cdn.jsdelivr.net                    devicon stylesheet + its icon font
 #   umutdinceryananer.github.io / public.tableau.com   embedded project demos
 #   static.cloudflareinsights.com / cloudflareinsights.com
@@ -21,3 +21,31 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=(), usb=(), interest-cohort=()
   Cross-Origin-Opener-Policy: same-origin
+
+# Caching.
+#
+# Pages' default for everything here is `max-age=14400, must-revalidate`: four
+# hours, then a conditional request back to the edge. For the bundles that is
+# four hours of needless round-trips, because their filenames already carry a
+# content hash -- change the file and the name changes with it, so the old name
+# can never serve stale content and never needs revalidating.
+#
+# index.html keeps Pages' `max-age=0, must-revalidate` and is deliberately not
+# listed: it is the one file whose name never changes, so it has to be asked
+# for every time or a visitor would keep loading last week's bundle names. The
+# generated agent files (SKILL.md, llms.txt, resume.json) stay on the default
+# for the same reason -- an agent reading them should get today's answer.
+#
+# Vite writes CSS and images under /assets/ but leaves the JS chunks at the
+# root, so this takes two rules rather than one.
+
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.js
+  Cache-Control: public, max-age=31536000, immutable
+
+# Not hashed -- it is referenced by a fixed URL in the og:image tag, so it can
+# only be cached for as long as we are willing to wait to replace it.
+/og.jpg
+  Cache-Control: public, max-age=604800

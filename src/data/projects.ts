@@ -25,6 +25,16 @@ export interface Project {
   /** Verified file/dir paths an agent should read first, "path — why". */
   keyEntryPoints?: string[]
   liveDemoUrl?: string
+  /**
+   * What the liveDemoUrl button should say. Defaults to "Live", which is only
+   * true when the thing on the other end is the running product.
+   *
+   * HISAR is why this exists: its card correctly badges Private and
+   * Unverifiable, then offered a button labelled Live pointing at a marketing
+   * site — the card contradicting itself in the space of one row, and in the
+   * one direction its own note forbids ("never present it as live").
+   */
+  liveDemoLabel?: string
   /** True when liveDemoUrl can be embedded in an in-page demo modal (iframe-able). */
   embedDemo?: boolean
   isPrivate: boolean
@@ -133,6 +143,7 @@ export const projects: Project[] = [
       'reports/executive_summary.md — written summary',
     ],
     liveDemoUrl: 'https://public.tableau.com/views/MobileGameUAStory/TableauStory',
+    liveDemoLabel: 'Tableau',
     isPrivate: false,
     isVerifiable: true,
     syntheticData: true,
@@ -211,7 +222,7 @@ export const projects: Project[] = [
       'cli/src/state.rs — the only state shared between the poll loop and the D-Bus handlers; the loop stays sole owner of screen access',
       'tray/src/main.rs — StatusNotifierItem tray icon (ksni), talks to the daemon over D-Bus',
       'panel/src/curve.rs — f.lux-style panel: the temperature-curve UI (egui / eframe)',
-      'tui/src/today.rs — ratatui dashboard: the day\'s schedule view',
+      'tui/src/main.rs — ratatui dashboard: one glanceable screen, tinted to match the filter the display is actually wearing',
       'dist/ — systemd units, .desktop entry, Debian packaging',
       'docs/HOW-IT-WORKS.md — architecture writeup',
     ],
@@ -252,6 +263,7 @@ export const projects: Project[] = [
     signal: 'AI startup / applied LLM / backend systems',
     tech: ['Python', 'FastAPI', 'PostgreSQL', 'RabbitMQ', 'Redis', 'Docker'],
     liveDemoUrl: 'https://hisar.app/',
+    liveDemoLabel: 'Website',
     isPrivate: true,
     isVerifiable: false,
     note: 'PRIVATE, in development, and NOT independently verifiable (no public code). Honest maturity: the ingestion/scoring backend runs end-to-end, BUT notifications are dry-run only (logged, not delivered) and the evaluation method is built yet never validated on real LLM outputs. GraphRAG / ontology retrieval, a gold-set / LLM-as-judge eval gate, formal return-based event studies, 10-K/10-Q support, and the iOS app are DESIGNED but NOT BUILT — do not present them as existing capabilities. Keep this clearly separate from the verifiable public repos; never present it as live or production.',
@@ -264,6 +276,7 @@ export const projects: Project[] = [
     signal: 'shipped full-stack solo product / offline-first iOS + sync',
     tech: ['Swift / SwiftUI', 'StoreKit', 'NestJS', 'Prisma + PostgreSQL', 'React', 'GRDB', 'TypeScript'],
     liveDemoUrl: 'https://apps.apple.com/app/id6777488979',
+    liveDemoLabel: 'App Store',
     isPrivate: true,
     isVerifiable: true,
     note: "Closed-source (private repo), so the code can't be inspected, but the app is live and public on the App Store, so it is independently verifiable as a shipped product. Solo-built: SwiftUI client plus a NestJS / Prisma backend (Render + Neon).",
