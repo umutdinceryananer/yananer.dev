@@ -4,6 +4,7 @@ import emailjs from '@emailjs/browser';
 import { profile } from '../data/profile';
 import { useDialogTransition, dialogChrome } from '../lib/useDialogTransition';
 import { useDialogFocus } from '../lib/useDialogFocus';
+import { useScrollLock } from '../lib/useScrollLock';
 
 // Initialize EmailJS with your public key
 emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
@@ -28,6 +29,7 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
   const titleId = useId();
 
   useDialogFocus(render, panelRef);
+  useScrollLock(render);
 
   // The dialog is mounted for the life of the page and only hides itself, so
   // without this it reopens wearing whatever it wore when it was last closed:

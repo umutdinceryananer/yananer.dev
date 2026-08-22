@@ -6,6 +6,7 @@ import { profile } from '../data/profile'
 import { useLatestRelease } from '../lib/useLatestRelease'
 import { useDialogTransition, dialogChrome } from '../lib/useDialogTransition'
 import { useDialogFocus } from '../lib/useDialogFocus'
+import { useScrollLock } from '../lib/useScrollLock'
 
 const Tag = ({ children }: { children: React.ReactNode }) => (
   <span className="px-2 py-1 bg-surface-2 rounded-md text-gray-400 text-xs border border-gray-800">
@@ -80,6 +81,7 @@ const DemoModal = ({ demo, onClose }: { demo: { url: string; title: string } | n
   const titleId = useId()
 
   useDialogFocus(render, panelRef)
+  useScrollLock(render)
   // Hold on to the last payload. By the time the overlay animates out `demo` is
   // already null, and there would be nothing left to draw.
   const [current, setCurrent] = useState(demo)
@@ -92,10 +94,8 @@ const DemoModal = ({ demo, onClose }: { demo: { url: string; title: string } | n
     if (!demo) return
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
     document.addEventListener('keydown', onKey)
-    document.body.style.overflow = 'hidden'
     return () => {
       document.removeEventListener('keydown', onKey)
-      document.body.style.overflow = ''
     }
   }, [demo, onClose])
 
@@ -307,6 +307,7 @@ const DecisionsModal = ({
   const titleId = useId()
 
   useDialogFocus(render, panelRef)
+  useScrollLock(render)
   // Same trick as DemoModal: keep the last set of decisions around so the
   // overlay has content to render while it fades away.
   const [current, setCurrent] = useState(data)
@@ -319,10 +320,8 @@ const DecisionsModal = ({
     if (!data) return
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
     document.addEventListener('keydown', onKey)
-    document.body.style.overflow = 'hidden'
     return () => {
       document.removeEventListener('keydown', onKey)
-      document.body.style.overflow = ''
     }
   }, [data, onClose])
 

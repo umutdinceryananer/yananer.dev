@@ -107,6 +107,12 @@ a, button, [role="button"], input[type="submit"] {
   }
 }
 
+/* Held by useScrollLock while a dialog is open. Higher specificity than the
+   fallback above, so it wins there too. */
+.app-scroll.is-locked {
+  overflow: hidden;
+}
+
 /* Contribution cells arriving — the split-flap board's actual trick: whirr
    through wrong values and land on the right one. Colour rather than geometry,
    so a 12px cell is no obstacle where a rotating flap would be invisible.

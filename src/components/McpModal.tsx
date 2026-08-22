@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { profile } from '../data/profile'
 import { useDialogTransition, dialogChrome } from '../lib/useDialogTransition'
 import { useDialogFocus } from '../lib/useDialogFocus'
+import { useScrollLock } from '../lib/useScrollLock'
 
 const MCP_URL = 'https://mcp.yananer.dev/mcp'
 const SKILL_URL = `${profile.siteUrl}/SKILL.md`
@@ -21,6 +22,7 @@ const McpModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => 
   const titleId = useId()
 
   useDialogFocus(render, panelRef)
+  useScrollLock(render)
 
   useEffect(() => {
     if (!open) return
