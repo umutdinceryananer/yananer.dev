@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { profile } from '../data/profile'
-import { useDialogTransition, dialogChrome } from '../lib/useDialogTransition'
+import { useDialogTransition, dialogChrome, dialogCloseButton } from '../lib/useDialogTransition'
 import { useDialogFocus } from '../lib/useDialogFocus'
 import { useScrollLock } from '../lib/useScrollLock'
 
@@ -74,7 +74,7 @@ const McpModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => 
           <button
             onClick={onClose}
             aria-label="Close"
-            className="text-gray-400 hover:text-ink transition-colors text-lg leading-none shrink-0"
+            className={dialogCloseButton}
           >
             ✕
           </button>

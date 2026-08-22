@@ -30,7 +30,15 @@ function App() {
           overflows it -- a transform, a stray pixel -- raises a scrollbar,
           narrows the content box and shunts every centred item sideways.
           `clip` clips the same way without ever scrolling. */}
-      <div className="min-h-screen w-full flex flex-col items-center overflow-x-clip">
+      {/* Percentage height, not the viewport unit. The `screen` scale resolves
+          to 100vh, which the spec pins to the viewport with the browser chrome
+          *hidden*. On a phone that is taller than what is actually on screen,
+          so the page hands back a few dozen pixels of scroll even when the
+          content fits. The parent is `fixed inset-0`, so its height is already
+          exactly the visible viewport -- 100% of it is the honest number.
+          (Naming the other utility here would be enough for Tailwind's scanner
+          to emit it, so it stays unspelled.) */}
+      <div className="min-h-full w-full flex flex-col items-center overflow-x-clip">
         {/* The nav answers the click straight away -- its highlight starts
             sliding while the page underneath is still fading out. */}
         <TopNav route={route} />

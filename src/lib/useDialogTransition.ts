@@ -79,3 +79,17 @@ export function dialogChrome(shown: boolean) {
     }`,
   }
 }
+
+/**
+ * The shared close affordance, so the four dialogs cannot drift apart here
+ * either.
+ *
+ * A bare ✕ glyph is only about 18px square — under the 24px WCAG 2.2 asks for
+ * and nowhere near a thumb. The fix is a 36px box pulled back in by a negative
+ * margin: because negative margins grow the border box outward symmetrically,
+ * the glyph stays exactly where it was and the row keeps its height, while the
+ * area that answers a tap triples.
+ */
+export const dialogCloseButton =
+  'shrink-0 -m-2 grid h-9 w-9 place-items-center rounded-md text-lg leading-none ' +
+  'text-gray-400 hover:text-ink hover:bg-surface-3 transition-colors'

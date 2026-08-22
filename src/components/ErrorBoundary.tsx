@@ -32,7 +32,11 @@ class ErrorBoundary extends Component<Props, State> {
     return (
       <div
         style={{
-          minHeight: '100vh',
+          // dvh, not vh: this one has no fixed-position parent to measure
+          // against. If a browser is old enough not to know dvh it drops the
+          // declaration and the message sits at the top instead of centred,
+          // which is a fine way for an error screen to degrade.
+          minHeight: '100dvh',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',

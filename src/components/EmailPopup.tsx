@@ -2,7 +2,7 @@ import { useEffect, useId, useRef, useState, FormEvent } from 'react';
 import { createPortal } from 'react-dom';
 import emailjs from '@emailjs/browser';
 import { profile } from '../data/profile';
-import { useDialogTransition, dialogChrome } from '../lib/useDialogTransition';
+import { useDialogTransition, dialogChrome, dialogCloseButton } from '../lib/useDialogTransition';
 import { useDialogFocus } from '../lib/useDialogFocus';
 import { useScrollLock } from '../lib/useScrollLock';
 
@@ -171,7 +171,7 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
             <button
               onClick={onClose}
               aria-label="Close"
-              className="text-gray-400 hover:text-ink transition-colors"
+              className={dialogCloseButton}
             >
               ✕
             </button>

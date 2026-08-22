@@ -4,7 +4,7 @@ import { projects, type Project } from '../data/projects'
 import { hisarDecisions, type Decision } from '../data/decisions'
 import { profile } from '../data/profile'
 import { useLatestRelease } from '../lib/useLatestRelease'
-import { useDialogTransition, dialogChrome } from '../lib/useDialogTransition'
+import { useDialogTransition, dialogChrome, dialogCloseButton } from '../lib/useDialogTransition'
 import { useDialogFocus } from '../lib/useDialogFocus'
 import { useScrollLock } from '../lib/useScrollLock'
 
@@ -124,7 +124,7 @@ const DemoModal = ({ demo, onClose }: { demo: { url: string; title: string } | n
             <a href={current.url} target="_blank" rel="noopener noreferrer" className="text-accent-400 hover:text-accent-300 text-xs">
               Open in new tab ↗
             </a>
-            <button onClick={onClose} aria-label="Close demo" className="text-gray-400 hover:text-ink transition-colors text-lg leading-none">
+            <button onClick={onClose} aria-label="Close demo" className={dialogCloseButton}>
               ✕
             </button>
           </div>
@@ -353,7 +353,7 @@ const DecisionsModal = ({
           <button
             onClick={onClose}
             aria-label="Close decisions"
-            className="text-gray-400 hover:text-ink transition-colors text-lg leading-none shrink-0"
+            className={dialogCloseButton}
           >
             ✕
           </button>
@@ -394,7 +394,7 @@ const Projects = () => {
         <div className="mb-8">
           <div className="mb-6">
             <h2 className="text-xl font-semibold text-ink mb-3 text-center flex items-center justify-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse motion-reduce:animate-none" />
               Now
             </h2>
             <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-gray-800 to-transparent" />

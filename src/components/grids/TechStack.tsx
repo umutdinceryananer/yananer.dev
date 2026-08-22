@@ -80,7 +80,7 @@ const TechStack = () => {
                       <span className="text-accent-300 text-sm">{tech.name}</span>
                       {tech.hasTooltip && (
                         <>
-                          <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                          <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse motion-reduce:animate-none" />
                           <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-surface-2 text-xs text-gray-300 px-3 py-2 rounded-lg border border-gray-800 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
                             Used in this portfolio
                           </div>

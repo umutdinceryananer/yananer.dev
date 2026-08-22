@@ -3,6 +3,7 @@ import EmailPopup from '../EmailPopup'
 import McpModal from '../McpModal'
 import profilePhoto from '../../assets/umut-foto.jpg'
 import { profile } from '../../data/profile'
+import { usePrefersReducedMotion } from '../../lib/usePrefersReducedMotion'
 
 const SPINNER_VERBS = [
   'Accomplishing', 'Actioning', 'Actualizing', 'Architecting', 'Baking',
@@ -55,6 +56,7 @@ const AboutMe = () => {
   const linkedinUrl = profile.socials.find((s) => s.label === 'LinkedIn')?.url
   const githubUrl = profile.socials.find((s) => s.label === 'GitHub')?.url
   const [mcpOpen, setMcpOpen] = useState(false)
+  const reduced = usePrefersReducedMotion()
 
   useEffect(() => {
     if (measureRef.current) {
@@ -62,7 +64,13 @@ const AboutMe = () => {
     }
   }, [verbIndex])
 
+  // The badge is the one thing on the page that never stops moving: a word that
+  // cross-fades every two seconds, for as long as the tab is open. `motion-reduce:`
+  // would only take the fade off and leave the text snapping between words, which
+  // is worse. So the timer itself is what gets switched off -- the badge keeps
+  // whichever verb it is holding and simply stops.
   useEffect(() => {
+    if (reduced) return
     intervalRef.current = setInterval(() => {
       setFade(false)
       setTimeout(() => {
@@ -73,7 +81,7 @@ const AboutMe = () => {
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current)
     }
-  }, [])
+  }, [reduced])
 
   return (
     <div className="h-full flex flex-col gap-6">
@@ -91,7 +99,7 @@ const AboutMe = () => {
         <div className="flex-1 relative">
           <div className="flex items-center gap-2 mb-2">
             <div className="flex items-center gap-2 px-2 py-1 bg-red-500/5 rounded-full border border-red-500/15">
-              <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+              <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse motion-reduce:animate-none" />
               <span
                 ref={measureRef}
                 className="text-sm absolute invisible whitespace-nowrap"
