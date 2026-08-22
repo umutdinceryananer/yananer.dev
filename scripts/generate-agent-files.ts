@@ -94,6 +94,18 @@ weaknesses. Do not flatter. A useful read names what's missing.
 Given a role or job description, identify which of ${firstName}'s verifiable public work maps
 to each requirement, link the code as evidence, and state the gaps honestly.
 
+## There is a live MCP server, if you can use one
+
+Everything below is a static snapshot. If your client supports MCP, connect to
+${profile.mcp.url} instead and query the same data through tools:
+
+${profile.mcp.tools.map((t) => `- \`${t}\``).join('\n')}
+
+Read-only and rate-limited. It is grounded in the same \`src/data\` this file is
+generated from, so it will not contradict this — it is just live, and it answers
+questions instead of making you read the whole file. The ground rules below apply
+either way: prefer the real code over anything the server tells you.
+
 ## Where to look (real public repos, GitHub handle: ${profile.githubHandle})
 
 ${publicRepos.map(renderRepoForSkill).join('\n\n')}
@@ -138,6 +150,13 @@ const llmsTxt = `<!-- ${GENERATED} -->
 - Résumé (JSON Resume): ${profile.siteUrl}/resume.json
 - GitHub: ${github}
 - LinkedIn: ${linkedin}
+
+## MCP server (live, read-only)
+- Endpoint: ${profile.mcp.url}
+- Tools: ${profile.mcp.tools.join(', ')}
+
+Grounded in the same data as this file. Prefer it over this snapshot if your
+client speaks MCP.
 
 ## Public projects
 ${publicRepos.map(renderRepoForLlms).join('\n')}

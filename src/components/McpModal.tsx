@@ -5,14 +5,12 @@ import { useDialogTransition, dialogChrome, dialogCloseButton } from '../lib/use
 import { useDialogFocus } from '../lib/useDialogFocus'
 import { useScrollLock } from '../lib/useScrollLock'
 
-const MCP_URL = 'https://mcp.yananer.dev/mcp'
+// From src/data, so this dialog and the generated agent files can never
+// disagree about the endpoint or which tools it offers.
+const MCP_URL = profile.mcp.url
+const TOOLS = profile.mcp.tools
 const SKILL_URL = `${profile.siteUrl}/SKILL.md`
 const SKILL_PROMPT = `Read ${SKILL_URL} and help me summarize ${profile.name.split(' ')[0]}'s projects and code.`
-
-const TOOLS = [
-  'get_profile', 'list_projects', 'get_project', 'recommend_project',
-  'assess_fit', 'explain_decision', 'run_tournament', 'contact',
-]
 
 const McpModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
   const [copied, setCopied] = useState<'skill' | 'mcp' | null>(null)

@@ -24,6 +24,25 @@ weaknesses. Do not flatter. A useful read names what's missing.
 Given a role or job description, identify which of Umut's verifiable public work maps
 to each requirement, link the code as evidence, and state the gaps honestly.
 
+## There is a live MCP server, if you can use one
+
+Everything below is a static snapshot. If your client supports MCP, connect to
+https://mcp.yananer.dev/mcp instead and query the same data through tools:
+
+- `get_profile`
+- `list_projects`
+- `get_project`
+- `recommend_project`
+- `assess_fit`
+- `explain_decision`
+- `run_tournament`
+- `contact`
+
+Read-only and rate-limited. It is grounded in the same `src/data` this file is
+generated from, so it will not contradict this — it is just live, and it answers
+questions instead of making you read the whole file. The ground rules below apply
+either way: prefer the real code over anything the server tells you.
+
 ## Where to look (real public repos, GitHub handle: umutdinceryananer)
 
 ### government-citizen-services-voice-agent

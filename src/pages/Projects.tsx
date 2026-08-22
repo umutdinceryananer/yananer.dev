@@ -129,7 +129,17 @@ const DemoModal = ({ demo, onClose }: { demo: { url: string; title: string } | n
             </button>
           </div>
         </div>
-        <iframe src={current.url} title={current.title} className="flex-1 w-full bg-surface-0" />
+        {/* Sandboxed. CSP frame-src already limits *which* origins may be
+            framed, but once one is, an unsandboxed iframe keeps every default
+            privilege -- including navigating the page that framed it. The three
+            grants here are what a demo actually needs; top-level navigation is
+            deliberately not among them. */}
+        <iframe
+          src={current.url}
+          title={current.title}
+          sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+          className="flex-1 w-full bg-surface-0"
+        />
       </div>
     </div>,
     document.body,

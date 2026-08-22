@@ -18,6 +18,15 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- The contributions grid and the release tags are fetched as soon as the
+         app mounts, and both paid for a cold DNS + TLS handshake first. Warming
+         the connections here overlaps that with parsing the bundle. dns-prefetch
+         rather than preconnect: these are fetched a moment after paint, not
+         during it, so a full handshake would compete with the font for the
+         browser's early-connection budget. -->
+    <link rel="dns-prefetch" href="https://github-contributions-api.jogruber.de">
+    <link rel="dns-prefetch" href="https://api.github.com">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&display=swap" rel="stylesheet">
   </head>
   <body>

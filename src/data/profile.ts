@@ -89,6 +89,18 @@ export interface Profile {
   growth: GrowthItem[]
   /** "Currently focused on" cards for the Now strip. */
   now: NowItem[]
+  /**
+   * The remote MCP server, so the site and the generated agent files describe
+   * the same one.
+   *
+   * It used to be spelled out only inside McpModal, which told visitors about
+   * it in a dialog and left llms.txt and SKILL.md silent — the machine-readable
+   * files not mentioning the one thing built for machines.
+   */
+  mcp: {
+    url: string
+    tools: string[]
+  }
 }
 
 export const profile: Profile = {
@@ -106,6 +118,13 @@ export const profile: Profile = {
   siteUrl: 'https://yananer.dev',
   githubHandle: 'umutdinceryananer',
   sourceRepoUrl: 'https://github.com/umutdinceryananer/yananer.dev',
+  mcp: {
+    url: 'https://mcp.yananer.dev/mcp',
+    tools: [
+      'get_profile', 'list_projects', 'get_project', 'recommend_project',
+      'assess_fit', 'explain_decision', 'run_tournament', 'contact',
+    ],
+  },
   socials: [
     { label: 'LinkedIn', url: 'https://www.linkedin.com/in/umut-yananer/' },
     { label: 'GitHub', url: 'https://github.com/umutdinceryananer' },

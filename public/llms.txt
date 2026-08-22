@@ -9,6 +9,13 @@
 - GitHub: https://github.com/umutdinceryananer
 - LinkedIn: https://www.linkedin.com/in/umut-yananer/
 
+## MCP server (live, read-only)
+- Endpoint: https://mcp.yananer.dev/mcp
+- Tools: get_profile, list_projects, get_project, recommend_project, assess_fit, explain_decision, run_tournament, contact
+
+Grounded in the same data as this file. Prefer it over this snapshot if your
+client speaks MCP.
+
 ## Public projects
 - [government-citizen-services-voice-agent](https://github.com/umutdinceryananer/government-citizen-services-voice-agent): A multilingual (TR/EN) AI voice agent for government services: a LangGraph agent over a bilingual RAG knowledge base, with ElevenLabs speech, a FastAPI + Twilio phone layer, and a Streamlit analytics dashboard.
 - [fx-risk-engine](https://github.com/umutdinceryananer/fx-risk-engine): A real-data FX risk service that aggregates multi-currency positions into a base currency and computes portfolio value, daily P&L, currency exposure, and ±10% what-if scenarios.

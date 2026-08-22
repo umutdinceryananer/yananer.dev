@@ -127,7 +127,14 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
           }
         );
 
-        if (result.status === 200) {
+        // An else is not optional here: EmailJS can resolve with a non-200
+        // instead of throwing, and without this the form would clear isSending
+        // and then show neither success nor failure -- a send that silently
+        // went nowhere and looked like nothing happened.
+        if (result.status !== 200) {
+          setSendStatus('error');
+          console.error('EmailJS returned a non-200 response:', result);
+        } else {
           setSendStatus('success');
           // Clear form
           setFromEmail('');
