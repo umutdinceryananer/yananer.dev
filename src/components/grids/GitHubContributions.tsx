@@ -3,11 +3,20 @@ import { cloneElement, useEffect, useMemo, useState, useRef } from 'react'
 import type { CSSProperties } from 'react'
 import { profile } from '../../data/profile'
 import { useContributions, WEEKS } from '../../lib/useContributions'
+import { useTheme } from '../../lib/useTheme'
 
 // GitHub's own contribution greens — the calendar keeps its native colour while
-// the rest of the site runs on the neutral accent scale. Empty cells are pitched
-// against this card's background rather than GitHub's.
-const GH_SCALE = ['#151515', '#0e4429', '#006d32', '#26a641', '#39d353']
+// the rest of the site runs on the neutral accent scale. Both are GitHub's real
+// published scales rather than one recoloured for the other: a heatmap everyone
+// already knows how to read should look like the one they know.
+//
+// Only the empty cell is ours. GitHub pitches theirs against GitHub's own
+// background; these are pitched against this card, which is a shade darker on
+// dark and plain white on light.
+const GH_SCALES = {
+  dark: ['#151515', '#0e4429', '#006d32', '#26a641', '#39d353'],
+  light: ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'],
+} as const
 
 /**
  * Per-cell timing for the flap reveal.
@@ -65,16 +74,21 @@ const GitHubContributions = () => {
     }
   }, [tooltip?.sticky, tooltip?.date])
 
+  // The calendar library keys its palette off this, and the flap keyframes
+  // read the same array, so one lookup drives both.
+  const { resolved } = useTheme()
+  const scale = GH_SCALES[resolved]
+
   const timing = useMemo(() => flapTimings(activities), [activities])
   const total = useMemo(() => activities.reduce((n, a) => n + a.count, 0), [activities])
 
   // The flap keyframes step through fixed greens and land on the cell's real
   // colour, which has to be handed in per cell.
   const scaleVars = {
-    '--gh-1': GH_SCALE[1],
-    '--gh-2': GH_SCALE[2],
-    '--gh-3': GH_SCALE[3],
-    '--gh-4': GH_SCALE[4],
+    '--gh-1': scale[1],
+    '--gh-2': scale[2],
+    '--gh-3': scale[3],
+    '--gh-4': scale[4],
   } as CSSProperties
 
   return (
@@ -98,7 +112,7 @@ const GitHubContributions = () => {
       >
         <ActivityCalendar
           data={activities}
-          colorScheme="dark"
+          colorScheme={resolved}
           blockSize={12}
           blockMargin={3}
           fontSize={12}
@@ -106,7 +120,7 @@ const GitHubContributions = () => {
           showMonthLabels={false}
           showColorLegend={false}
           labels={{ totalCount: ' ' }}
-          theme={{ dark: GH_SCALE }}
+          theme={{ dark: [...GH_SCALES.dark], light: [...GH_SCALES.light] }}
           // Never pass `loading`: the library discards the data it is given and
           // substitutes a full calendar year, which is the oversized skeleton
           // useContributions exists to avoid. Until the numbers land the grid
@@ -119,7 +133,7 @@ const GitHubContributions = () => {
               ...(block.props as { style?: CSSProperties }).style,
               animationDelay: `${t?.delay ?? 0}ms`,
               animationDuration: `${t?.duration ?? 300}ms`,
-              '--gh-final': GH_SCALE[activity.level] ?? GH_SCALE[0],
+              '--gh-final': scale[activity.level] ?? scale[0],
             } as CSSProperties
 
             return cloneElement(block, {

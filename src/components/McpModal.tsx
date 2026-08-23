@@ -49,7 +49,7 @@ const McpModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => 
       className={`${chrome.root} p-3 sm:p-4`}
       onClick={onClose}
     >
-      <div aria-hidden className={`${chrome.backdrop} bg-black/60`} />
+      <div aria-hidden className={`${chrome.backdrop} bg-scrim`} />
       <div
         ref={panelRef}
         role="dialog"

@@ -163,14 +163,14 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
   // filter or contain), which would shrink it to that ancestor's box.
   return createPortal(
     <div className={`${chrome.root} p-3 sm:p-4`}>
-      <div aria-hidden className={`${chrome.backdrop} bg-black/60`} />
+      <div aria-hidden className={`${chrome.backdrop} bg-scrim`} />
       <div
         ref={panelRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
         tabIndex={-1}
-        className={`${chrome.panel} bg-surface-1 w-full max-w-[700px] max-h-[90vh] overflow-y-auto rounded-xl p-[2px] shadow-[0_0_15px_rgba(0,0,0,0.6)]`}
+        className={`${chrome.panel} bg-surface-1 w-full max-w-[700px] max-h-[90vh] overflow-y-auto rounded-xl p-[2px] card-shadow`}
       >
         <div className="bg-surface-1 rounded-[10px] p-5 sm:p-8">
           <div className="flex justify-between items-center mb-8">
@@ -276,8 +276,12 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
               <button
                 type="submit"
                 className={`px-7 py-2.5 font-medium bg-accent-500 hover:bg-accent-600 text-accent-fg rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50 ${
-                  sendStatus === 'success' ? 'bg-green-500 hover:bg-green-600 text-ink' :
-                  sendStatus === 'error' ? 'bg-red-500 hover:bg-red-600 text-ink' : ''
+                  // accent-fg, not ink: ink is the page's brightest text, which
+                  // means it flips with the theme and lands near-black on a red
+                  // fill in light mode (3.89:1). accent-fg is white in both,
+                  // which is what a saturated fill wants either way.
+                  sendStatus === 'success' ? 'bg-green-500 hover:bg-green-600 text-accent-fg' :
+                  sendStatus === 'error' ? 'bg-red-500 hover:bg-red-600 text-accent-fg' : ''
                 }`}
                 disabled={isSending}
               >

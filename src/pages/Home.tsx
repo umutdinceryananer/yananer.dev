@@ -8,28 +8,28 @@ const Home = () => {
   return (
     <div className="grid grid-cols-1 min-[745px]:grid-cols-2 min-[1240px]:grid-cols-[1.2fr_1.4fr_1.2fr] gap-3 sm:gap-4 lg:gap-6">
       {/* Left Column - AboutMe */}
-      <div className="min-w-0 min-[745px]:row-span-2 bg-surface-1 rounded-lg sm:rounded-xl p-[2px] shadow-[0_0_15px_rgba(0,0,0,0.6)] hover:shadow-[0_0_20px_rgba(0,0,0,0.7)] transition-shadow">
+      <div className="min-w-0 min-[745px]:row-span-2 bg-surface-1 rounded-lg sm:rounded-xl p-[2px] card-shadow card-shadow-hover transition-shadow">
         <div className="h-full w-full bg-surface-1 rounded-[10px] p-4 sm:p-6 lg:p-7">
           <AboutMe />
         </div>
       </div>
 
       {/* Education - right of AboutMe */}
-      <div className="bg-surface-1 rounded-lg sm:rounded-xl p-[2px] shadow-[0_0_15px_rgba(0,0,0,0.6)] hover:shadow-[0_0_20px_rgba(0,0,0,0.7)] transition-shadow">
+      <div className="bg-surface-1 rounded-lg sm:rounded-xl p-[2px] card-shadow card-shadow-hover transition-shadow">
         <div className="h-full w-full bg-surface-1 rounded-[10px] p-4 sm:p-6 lg:p-7">
           <Education />
         </div>
       </div>
 
       {/* GitHub Contributions */}
-      <div className="min-[1240px]:col-start-3 min-[1240px]:row-start-1 min-[745px]:order-3 min-[1240px]:order-none bg-surface-1 rounded-lg sm:rounded-xl p-[2px] shadow-[0_0_15px_rgba(0,0,0,0.6)] hover:shadow-[0_0_20px_rgba(0,0,0,0.7)] transition-shadow min-w-0">
+      <div className="min-[1240px]:col-start-3 min-[1240px]:row-start-1 min-[745px]:order-3 min-[1240px]:order-none bg-surface-1 rounded-lg sm:rounded-xl p-[2px] card-shadow card-shadow-hover transition-shadow min-w-0">
         <div className="h-full w-full bg-surface-1 rounded-[10px] p-4 sm:p-6 lg:p-7">
           <GitHubContributions />
         </div>
       </div>
 
       {/* Middle Column - Work Experience (Full Height) */}
-      <div className="min-[745px]:col-span-2 min-[1240px]:col-span-1 min-[1240px]:col-start-2 min-[1240px]:row-start-1 min-[1240px]:row-span-3 min-[745px]:order-4 min-[1240px]:order-none bg-surface-1 rounded-lg sm:rounded-xl p-[2px] shadow-[0_0_15px_rgba(0,0,0,0.6)] hover:shadow-[0_0_20px_rgba(0,0,0,0.7)] transition-shadow">
+      <div className="min-[745px]:col-span-2 min-[1240px]:col-span-1 min-[1240px]:col-start-2 min-[1240px]:row-start-1 min-[1240px]:row-span-3 min-[745px]:order-4 min-[1240px]:order-none bg-surface-1 rounded-lg sm:rounded-xl p-[2px] card-shadow card-shadow-hover transition-shadow">
         {/* The floor only applies once the grid goes multi-column. On a phone
             the card takes the height its content needs. */}
         <div className="h-full w-full bg-surface-1 rounded-[10px] p-4 sm:p-6 lg:p-7 min-[745px]:min-h-[600px] min-[1240px]:min-h-0">
@@ -38,7 +38,7 @@ const Home = () => {
       </div>
 
       {/* Tech Stack */}
-      <div className="min-[745px]:col-span-2 min-[1240px]:col-span-1 min-[1240px]:col-start-3 min-[1240px]:row-start-2 min-[1240px]:row-span-2 min-[745px]:order-5 min-[1240px]:order-none bg-surface-1 rounded-lg sm:rounded-xl p-[2px] shadow-[0_0_15px_rgba(0,0,0,0.6)] hover:shadow-[0_0_20px_rgba(0,0,0,0.7)] transition-shadow">
+      <div className="min-[745px]:col-span-2 min-[1240px]:col-span-1 min-[1240px]:col-start-3 min-[1240px]:row-start-2 min-[1240px]:row-span-2 min-[745px]:order-5 min-[1240px]:order-none bg-surface-1 rounded-lg sm:rounded-xl p-[2px] card-shadow card-shadow-hover transition-shadow">
         <div className="h-full w-full bg-surface-1 rounded-[10px] p-4 sm:p-6 lg:p-7 min-[745px]:min-h-[400px] min-[1240px]:min-h-0">
           <TechStack />
         </div>

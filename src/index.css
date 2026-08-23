@@ -37,6 +37,16 @@
   --color-accent-600: #393939;
   --color-accent-700: #2e2e2e;
   --color-accent-fg: #ffffff;
+
+  /* A glow rather than a drop shadow: on a near-black page there is nothing
+     below a card to cast onto, so depth comes from the card being surrounded by
+     a little more darkness. The light theme cannot borrow that trick and
+     replaces these outright. */
+  --shadow-card: 0 0 15px rgba(0, 0, 0, 0.6);
+  --shadow-card-hover: 0 0 20px rgba(0, 0, 0, 0.7);
+
+  /* The dim behind an open dialog. */
+  --color-scrim: rgba(0, 0, 0, 0.65);
 }
 
 /* ---------------------------------------------------------------------------
@@ -86,6 +96,36 @@
   --color-accent-600: #23272c;
   --color-accent-700: #191c20;
   --color-accent-fg: #ffffff;
+
+  /* A real drop shadow, because here there is a lit surface to cast onto. Two
+     layers — a tight one for the edge and a wide soft one for the lift — and
+     both tinted with the page's own blue-grey rather than pure black, which
+     reads as dirt on white. Carrying the dark theme's 60%-black glow across
+     would have put a smudge under every card. */
+  --shadow-card: 0 1px 2px rgba(16, 18, 22, 0.05), 0 4px 12px rgba(16, 18, 22, 0.07);
+  --shadow-card-hover: 0 2px 4px rgba(16, 18, 22, 0.06), 0 8px 20px rgba(16, 18, 22, 0.1);
+
+  /* Lighter than the dark theme's dim: 65% black over a white page is closer to
+     switching the lights off than to pushing it back. */
+  --color-scrim: rgba(15, 18, 22, 0.4);
+
+  /* Status colours. The dark theme keeps Tailwind's own scale untouched — these
+     exist because that scale is pitched to be legible on black. The 300s carry
+     text and are re-picked to clear 4.5:1 on white; the 500s only ever appear
+     as a 10% wash or a 30% hairline, so they are deepened enough for the tint
+     to register rather than to be read. */
+  --color-green-300: #15803d;
+  --color-red-300: #b91c1c;
+  --color-amber-300: #b45309;
+  --color-emerald-300: #047857;
+
+  --color-green-400: #16a34a;
+  --color-green-500: #16a34a;
+  --color-red-500: #dc2626;
+  --color-red-600: #b91c1c;
+  --color-amber-500: #d97706;
+  --color-emerald-500: #059669;
+  --color-blue-500: #2563eb;
 
   color-scheme: light;
 }
@@ -271,4 +311,21 @@ a, button, [role="button"], input[type="submit"] {
   .theme-switching * {
     transition: none !important;
   }
+}
+
+/* Card lift.
+
+   Deliberately not a Tailwind shadow utility. Those bake the value into the
+   class at build time — `shadow-card` compiles to `--tw-shadow: 0 0 15px #0009`
+   with the colour spelled out, because the utility has to leave room for the
+   shadow-color modifier. A per-theme custom property would be declared and
+   never read: the light theme would silently keep the dark theme's smudge.
+
+   Reading the property here instead means the swap actually happens. */
+.card-shadow {
+  box-shadow: var(--shadow-card);
+}
+
+.card-shadow-hover:hover {
+  box-shadow: var(--shadow-card-hover);
 }

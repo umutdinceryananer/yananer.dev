@@ -108,7 +108,7 @@ const DemoModal = ({ demo, onClose }: { demo: { url: string; title: string } | n
       className={`${chrome.root} p-3 sm:p-6`}
       onClick={onClose}
     >
-      <div aria-hidden className={`${chrome.backdrop} bg-black/70`} />
+      <div aria-hidden className={`${chrome.backdrop} bg-scrim`} />
       <div
         ref={panelRef}
         role="dialog"
@@ -346,7 +346,7 @@ const DecisionsModal = ({
       className={`${chrome.root} p-3 sm:p-6`}
       onClick={onClose}
     >
-      <div aria-hidden className={`${chrome.backdrop} bg-black/70`} />
+      <div aria-hidden className={`${chrome.backdrop} bg-scrim`} />
       <div
         ref={panelRef}
         role="dialog"

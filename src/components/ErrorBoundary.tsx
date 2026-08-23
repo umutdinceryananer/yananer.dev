@@ -11,9 +11,20 @@ import { Component, type ErrorInfo, type ReactNode } from 'react'
  * Deliberately plain: no tokens, no Tailwind, no imports beyond React. If the
  * app is broken enough to land here, the less this depends on the less there is
  * to take it down with it.
+ *
+ * It still follows the theme, without breaking that rule. The resolved theme is
+ * already written on <html> by the inline script in index.html, before any of
+ * this exists — reading an attribute off the document is not a dependency on
+ * anything that can crash. A light-mode visitor should not be handed a black
+ * screen as their first sign that something went wrong.
  */
 type Props = { children: ReactNode }
 type State = { failed: boolean }
+
+const PALETTES = {
+  dark: { page: '#050505', body: '#8c8c8c', head: '#c6c6c6', btn: 'rgba(255,255,255,0.06)', line: 'rgba(255,255,255,0.18)', link: '#9c9c9c' },
+  light: { page: '#f3f4f6', body: '#4a5058', head: '#0f1216', btn: 'rgba(15,18,22,0.05)', line: 'rgba(15,18,22,0.16)', link: '#41474e' },
+} as const
 
 class ErrorBoundary extends Component<Props, State> {
   state: State = { failed: false }
@@ -29,6 +40,9 @@ class ErrorBoundary extends Component<Props, State> {
   render() {
     if (!this.state.failed) return this.props.children
 
+    const c =
+      document.documentElement.dataset.theme === 'light' ? PALETTES.light : PALETTES.dark
+
     return (
       <div
         style={{
@@ -41,14 +55,14 @@ class ErrorBoundary extends Component<Props, State> {
           alignItems: 'center',
           justifyContent: 'center',
           padding: '1.5rem',
-          background: '#050505',
-          color: '#8c8c8c',
+          background: c.page,
+          color: c.body,
           fontFamily: "'DM Sans', ui-sans-serif, system-ui, sans-serif",
           textAlign: 'center',
         }}
       >
         <div>
-          <p style={{ color: '#c6c6c6', fontSize: '1.125rem', fontWeight: 600, margin: '0 0 0.5rem' }}>
+          <p style={{ color: c.head, fontSize: '1.125rem', fontWeight: 600, margin: '0 0 0.5rem' }}>
             Something broke on this page.
           </p>
           <p style={{ fontSize: '0.875rem', lineHeight: 1.6, margin: '0 0 1.25rem' }}>
@@ -60,9 +74,9 @@ class ErrorBoundary extends Component<Props, State> {
               display: 'inline-block',
               padding: '0.55rem 1.1rem',
               borderRadius: '0.5rem',
-              background: 'rgba(255, 255, 255, 0.06)',
-              border: '1px solid rgba(255, 255, 255, 0.18)',
-              color: '#9c9c9c',
+              background: c.btn,
+              border: `1px solid ${c.line}`,
+              color: c.link,
               fontSize: '0.875rem',
               fontWeight: 500,
               textDecoration: 'none',
