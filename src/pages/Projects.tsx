@@ -207,11 +207,9 @@ const ProjectCard = ({
           {p.embedDemo && p.liveDemoUrl ? (
             <button
               onClick={() => onPlay?.(p)}
-              className="play-gradient group inline-flex rounded-lg p-[1px]"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-surface-1 text-gray-300 hover:text-ink border border-accent-500/30 hover:border-accent-500/50 hover:bg-surface-3 transition-colors"
             >
-              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-[7px] bg-surface-1 text-gray-200 group-hover:bg-surface-3 group-hover:text-ink text-xs font-medium transition-colors">
-                <PlayIcon /> Enter Lab
-              </span>
+              <PlayIcon /> Enter Lab
             </button>
           ) : p.liveDemoUrl ? (
             <a
