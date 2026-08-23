@@ -216,8 +216,8 @@ const TechStack = () => {
             />
           )}
         </div>
-        <div ref={topFadeRef} className="hidden min-[745px]:block absolute top-0 left-0 right-2 h-12 bg-gradient-to-b from-surface-1 to-transparent pointer-events-none transition-opacity duration-500 opacity-0" />
-        <div ref={bottomFadeRef} className="hidden min-[745px]:block absolute bottom-0 left-0 right-2 h-12 bg-gradient-to-t from-surface-1 to-transparent pointer-events-none transition-opacity duration-500" />
+        <div ref={topFadeRef} className="hidden min-[745px]:block absolute top-0 left-0 right-2 h-12 bg-surface-1 edge-fade-top pointer-events-none transition-opacity duration-500 opacity-0" />
+        <div ref={bottomFadeRef} className="hidden min-[745px]:block absolute bottom-0 left-0 right-2 h-12 bg-surface-1 edge-fade-bottom pointer-events-none transition-opacity duration-500" />
       </div>
     </div>
   )

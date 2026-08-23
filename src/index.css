@@ -300,7 +300,14 @@ a, button, [role="button"], input[type="submit"] {
    350ms, on the same ease-out curve as the nav pill. At 180ms a change this
    broad read as a flash rather than a fade: when every surface on the page
    moves at once there is no partway state for the eye to catch, so it needs
-   longer than a single control would. */
+   longer than a single control would.
+
+   background-image is in the list for the handful of gradients left — the mail
+   button, the timeline rule, the MCP panel. Whether two gradients actually
+   interpolate is uneven across engines; where they do not the browser falls
+   back to a discrete swap halfway through, which is still later than the
+   instant snap they do today. Anything that must not snap gets the mask
+   treatment below instead. */
 .theme-switching,
 .theme-switching * {
   transition:
@@ -309,7 +316,8 @@ a, button, [role="button"], input[type="submit"] {
     color 350ms cubic-bezier(0, 0, 0.2, 1),
     fill 350ms cubic-bezier(0, 0, 0.2, 1),
     box-shadow 350ms cubic-bezier(0, 0, 0.2, 1),
-    outline-color 350ms cubic-bezier(0, 0, 0.2, 1) !important;
+    outline-color 350ms cubic-bezier(0, 0, 0.2, 1),
+    background-image 350ms cubic-bezier(0, 0, 0.2, 1) !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -334,4 +342,28 @@ a, button, [role="button"], input[type="submit"] {
 
 .card-shadow-hover:hover {
   box-shadow: var(--shadow-card-hover);
+}
+
+/* The veil at each end of a card's scroll area.
+
+   The shape is a mask and the colour is an ordinary background-color, rather
+   than one gradient carrying both. A gradient rides on `background-image`,
+   which the theme cross-fade cannot carry: interpolating between two gradients
+   is uneven across engines, so these two strips snapped straight to the new
+   theme while the whole page behind them was still fading. Two hard edges
+   moving early against several hundred surfaces moving together is exactly
+   where the eye goes.
+
+   Split apart, the colour is a plain colour and fades with everything else,
+   and the mask is a fixed shape no theme ever touches.
+
+   -webkit- first for Safari before 15.4, which only knows the prefixed form. */
+.edge-fade-top {
+  -webkit-mask-image: linear-gradient(to bottom, #000, transparent);
+  mask-image: linear-gradient(to bottom, #000, transparent);
+}
+
+.edge-fade-bottom {
+  -webkit-mask-image: linear-gradient(to top, #000, transparent);
+  mask-image: linear-gradient(to top, #000, transparent);
 }
