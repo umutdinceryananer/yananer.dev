@@ -18,8 +18,8 @@ import { setTheme, useTheme, type ResolvedTheme } from '../lib/useTheme'
  * that is a button doing too much work.
  */
 const LABEL: Record<ResolvedTheme, string> = {
-  light: 'light',
-  dark: 'dark',
+  light: 'Light',
+  dark: 'Dark',
 }
 
 const ICON: Record<ResolvedTheme, React.ReactNode> = {
@@ -46,24 +46,52 @@ const ThemeToggle = () => {
   const next: ResolvedTheme = resolved === 'dark' ? 'light' : 'dark'
 
   return (
-    <button
-      type="button"
-      onClick={() => setTheme(next)}
-      title={`Theme: ${LABEL[resolved]} — switch to ${LABEL[next]}`}
-      aria-label={`Theme: ${LABEL[resolved]}. Switch to ${LABEL[next]}.`}
-      className="grid h-[38px] w-[38px] place-items-center rounded-full bg-surface-1 border border-gray-800 text-gray-400 hover:text-ink hover:border-accent-500 transition-colors"
-    >
-      <svg
-        aria-hidden="true"
-        className="w-4 h-4"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={1.6}
+    <div className="relative group">
+      <button
+        type="button"
+        onClick={() => setTheme(next)}
+        // No `title`. The browser's own tooltip would open alongside the one
+        // below it, in a style nothing else on the site uses and after a delay
+        // nothing else on the site waits for.
+        aria-label={`Theme: ${LABEL[resolved].toLowerCase()}. Switch to ${LABEL[
+          next
+        ].toLowerCase()}.`}
+        className="grid h-[38px] w-[38px] place-items-center rounded-full bg-surface-1 border border-gray-800 text-gray-400 hover:text-ink hover:border-accent-500 transition-colors"
       >
-        {ICON[resolved]}
-      </svg>
-    </button>
+        <svg
+          aria-hidden="true"
+          className="w-4 h-4"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={1.6}
+        >
+          {ICON[resolved]}
+        </svg>
+      </button>
+
+      {/* The same box the contribution grid uses: state on top in ink, what a
+          press will do underneath in grey. It opens downwards because this one
+          sits at the top of the page, where there is nothing above it to open
+          into.
+
+          aria-hidden, because the button's own label already says all of this
+          and a screen reader should not hear it twice.
+
+          has-[:focus-visible] rather than group-focus-within: the group is this
+          wrapper, which cannot take focus itself, and focus-within would also
+          fire on a mouse click and leave the tooltip open under the pointer
+          until you clicked somewhere else. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute top-full left-1/2 z-50 mt-2 -translate-x-1/2 whitespace-nowrap opacity-0 transition-opacity duration-150 motion-reduce:transition-none group-hover:opacity-100 group-has-[:focus-visible]:opacity-100"
+      >
+        <div className="bg-surface-3 border border-gray-700 rounded-md px-2.5 py-1.5 leading-tight shadow-lg">
+          <div className="text-[11px] font-medium text-ink">{LABEL[resolved]}</div>
+          <div className="text-[10px] text-gray-300">Switch to {LABEL[next].toLowerCase()}</div>
+        </div>
+      </div>
+    </div>
   )
 }
 
