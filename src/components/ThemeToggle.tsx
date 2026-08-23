@@ -1,39 +1,28 @@
-import { setTheme, useTheme, type ThemeChoice } from '../lib/useTheme'
+import { setTheme, useTheme, type ResolvedTheme } from '../lib/useTheme'
 
 /**
- * Cycles system → light → dark → system.
+ * Toggles between light and dark.
  *
- * One button rather than a three-segment control: the nav already carries a
+ * One button rather than a segmented control: the nav already carries a
  * segmented pill, and a second one beside it would read as two competing
- * navigations rather than a setting. The cost is that a cycling control does
- * not show its options, so the icon names the state it is *in* and the label
- * says what a press will do.
+ * navigations rather than a setting. The icon names the state it is *in* and
+ * the label says what a press will do.
  *
- * "System" is a real, reachable state, not just the value before you touch
- * anything — otherwise the first click is one-way and the visitor can never
- * hand the decision back to the OS.
+ * There is no "system" position. The OS preference still decides what a first
+ * visit looks like — it is what the inline script falls back to when nothing is
+ * stored — but once someone has pressed this, they have said what they want and
+ * the control has two honest states instead of three.
+ *
+ * It reads `resolved` rather than `choice` for the same reason: before the
+ * first press the stored choice is "system", and a button that has to explain
+ * that is a button doing too much work.
  */
-const NEXT: Record<ThemeChoice, ThemeChoice> = {
-  system: 'light',
-  light: 'dark',
-  dark: 'system',
-}
-
-const LABEL: Record<ThemeChoice, string> = {
-  system: 'system',
+const LABEL: Record<ResolvedTheme, string> = {
   light: 'light',
   dark: 'dark',
 }
 
-const ICON: Record<ThemeChoice, React.ReactNode> = {
-  // Monitor
-  system: (
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25"
-    />
-  ),
+const ICON: Record<ResolvedTheme, React.ReactNode> = {
   // Sun
   light: (
     <path
@@ -53,15 +42,15 @@ const ICON: Record<ThemeChoice, React.ReactNode> = {
 }
 
 const ThemeToggle = () => {
-  const { choice } = useTheme()
-  const next = NEXT[choice]
+  const { resolved } = useTheme()
+  const next: ResolvedTheme = resolved === 'dark' ? 'light' : 'dark'
 
   return (
     <button
       type="button"
       onClick={() => setTheme(next)}
-      title={`Theme: ${LABEL[choice]} — switch to ${LABEL[next]}`}
-      aria-label={`Theme: ${LABEL[choice]}. Switch to ${LABEL[next]}.`}
+      title={`Theme: ${LABEL[resolved]} — switch to ${LABEL[next]}`}
+      aria-label={`Theme: ${LABEL[resolved]}. Switch to ${LABEL[next]}.`}
       className="grid h-[38px] w-[38px] place-items-center rounded-full bg-surface-1 border border-gray-800 text-gray-400 hover:text-ink hover:border-accent-500 transition-colors"
     >
       <svg
@@ -72,7 +61,7 @@ const ThemeToggle = () => {
         stroke="currentColor"
         strokeWidth={1.6}
       >
-        {ICON[choice]}
+        {ICON[resolved]}
       </svg>
     </button>
   )

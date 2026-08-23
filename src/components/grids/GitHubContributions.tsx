@@ -79,6 +79,17 @@ const GitHubContributions = () => {
   const { resolved } = useTheme()
   const scale = GH_SCALES[resolved]
 
+  // The reveal is a first-arrival animation, not a repaint. Without this it
+  // replayed on every theme swap: the grid whirred through greens again while
+  // the rest of the page was quietly cross-fading, which reads as a glitch
+  // rather than a flourish. A ref rather than state — flipping it must not
+  // itself cause the render that cuts the animation short.
+  const flapped = useRef(false)
+  const flapping = loaded && !flapped.current
+  useEffect(() => {
+    if (loaded) flapped.current = true
+  }, [loaded])
+
   const timing = useMemo(() => flapTimings(activities), [activities])
   const total = useMemo(() => activities.reduce((n, a) => n + a.count, 0), [activities])
 
@@ -111,6 +122,14 @@ const GitHubContributions = () => {
         style={{ overflow: 'clip' }}
       >
         <ActivityCalendar
+          // Remount on a theme change rather than trusting the swap to
+          // propagate. The library takes colorScheme as a prop and ought to be
+          // reactive, but in dark mode the grid was coming back in the light
+          // palette and staying there until a reload — bright enough to be the
+          // one thing on the page that had not changed. Rebuilding from
+          // scratch cannot leave anything stale behind, and costs a remount on
+          // a press nobody makes twice a minute.
+          key={resolved}
           data={activities}
           colorScheme={resolved}
           blockSize={12}
@@ -125,7 +144,7 @@ const GitHubContributions = () => {
           // substitutes a full calendar year, which is the oversized skeleton
           // useContributions exists to avoid. Until the numbers land the grid
           // stands in as a faint scaffold; then the cells flap into place over it.
-          className={loaded ? 'gh-flap' : undefined}
+          className={flapping ? 'gh-flap' : undefined}
           style={{ ...scaleVars, opacity: loaded ? 1 : 0.35 }}
           renderBlock={(block, activity: Activity) => {
             const t = timing.get(activity.date)
