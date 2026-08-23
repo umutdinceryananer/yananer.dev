@@ -6,6 +6,14 @@
 #   api.github.com                      latest-release lookup (LatestRelease.tsx)
 #   fonts.googleapis.com / fonts.gstatic.com   DM Sans webfont
 #   umutdinceryananer.github.io / public.tableau.com   embedded project demos
+#   inline scripts                      the sha256 on script-src below is filled in
+#       at build time by cspInlineScriptHashes in vite.config.ts, from the inline
+#       <script> in the built index.html. `script-src 'self'` covers files only, so
+#       without it the theme resolver at the top of index.html is blocked, nothing
+#       ever writes data-theme, and the site loads in the default theme however
+#       many times you switch. Never fill it in by hand: the hash covers the script
+#       character for character, so a single space added to the script would break a
+#       hand-written one and put us straight back here.
 #   static.cloudflareinsights.com / cloudflareinsights.com
 #       Cloudflare Web Analytics. NOTE: this beacon is injected at the edge, not
 #       by our build, so it does not show up in dist/ — it can only be found by
@@ -13,7 +21,7 @@
 # If you add a new external origin, add it here too or the browser will block it.
 
 /*
-  Content-Security-Policy: default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.emailjs.com https://github-contributions-api.jogruber.de https://api.github.com https://cloudflareinsights.com https://static.cloudflareinsights.com; frame-src https://umutdinceryananer.github.io https://public.tableau.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self' {{INLINE_SCRIPT_HASHES}} https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.emailjs.com https://github-contributions-api.jogruber.de https://api.github.com https://cloudflareinsights.com https://static.cloudflareinsights.com; frame-src https://umutdinceryananer.github.io https://public.tableau.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests
   Strict-Transport-Security: max-age=31536000; includeSubDomains
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff

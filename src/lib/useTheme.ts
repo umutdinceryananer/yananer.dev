@@ -46,6 +46,19 @@ const paint = () => {
   document.querySelector('meta[name="theme-color"]')?.setAttribute('content', BAR[r])
 }
 
+/**
+ * Stamp it once on load, even though the inline script in index.html has
+ * normally done exactly this before the first paint.
+ *
+ * When that script runs, this writes the value already on the element and
+ * costs an attribute assignment. It is here for when it does not run -- a CSP
+ * that forgets to allow it, an extension that strips inline scripts -- where
+ * otherwise nobody writes the attribute at all, every stored preference is
+ * ignored, and the site looks like it simply cannot remember the theme.
+ * Arriving late is a far better failure than never arriving.
+ */
+paint()
+
 const refresh = () => {
   const next = `${choice}|${resolve(choice)}`
   if (next === snapshot) return
