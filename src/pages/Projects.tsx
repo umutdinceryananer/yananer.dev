@@ -36,8 +36,8 @@ const nowBadgeClass: Record<string, string> = {
   // Shipped, but early (0.1.x) — deliberately not the green used for mature work.
   'Early release': 'bg-amber-500/10 text-amber-300 border-amber-500/20',
   // Finished and no longer developed. Muted on purpose: it is not a warning.
-  Archived: 'bg-gray-500/10 text-gray-400 border-gray-500/25',
-  Learning: 'bg-gray-500/10 text-gray-400 border-gray-500/25',
+  Archived: 'bg-gray-500/10 text-gray-300 border-gray-500/25',
+  Learning: 'bg-gray-500/10 text-gray-300 border-gray-500/25',
 }
 
 // Honest build-state of a private (hisar) decision. Accent = built, amber = in
@@ -45,7 +45,7 @@ const nowBadgeClass: Record<string, string> = {
 const maturityBadge: Record<NonNullable<Decision['maturity']>, { label: string; cls: string }> = {
   implemented: { label: 'Built', cls: 'bg-accent-500/10 text-accent-300 border-accent-500/20' },
   partial: { label: 'In progress', cls: 'bg-amber-500/10 text-amber-300 border-amber-500/20' },
-  design: { label: 'Designed', cls: 'bg-gray-500/10 text-gray-400 border-gray-500/25' },
+  design: { label: 'Designed', cls: 'bg-gray-500/10 text-gray-300 border-gray-500/25' },
 }
 
 const GitHubIcon = () => (
@@ -180,8 +180,8 @@ const ProjectCard = ({
           </Badge>
         )}
         <ReleaseTag repo={p.releaseRepo} />
-        {!p.isVerifiable && <Badge className="bg-gray-500/10 text-gray-400 border-gray-500/25">Unverifiable</Badge>}
-        {p.syntheticData && <Badge className="bg-gray-500/10 text-gray-400 border-gray-500/25">Synthetic</Badge>}
+        {!p.isVerifiable && <Badge className="bg-gray-500/10 text-gray-300 border-gray-500/25">Unverifiable</Badge>}
+        {p.syntheticData && <Badge className="bg-gray-500/10 text-gray-300 border-gray-500/25">Synthetic</Badge>}
       </div>
 
       <p className="text-gray-300 text-sm">{p.signal}</p>
@@ -377,7 +377,7 @@ const DecisionsModal = ({
           <div className="divide-y divide-gray-800/60">
             <div className="flex items-center gap-2 pb-3 flex-wrap">
               <Badge className="bg-red-500/10 text-red-300 border-red-500/20">Private</Badge>
-              <Badge className="bg-gray-500/10 text-gray-400 border-gray-500/25">Not independently verifiable</Badge>
+              <Badge className="bg-gray-500/10 text-gray-300 border-gray-500/25">Not independently verifiable</Badge>
             </div>
             {featured.map((d) => <DecisionRow key={d.id} d={d} />)}
             {others.length > 0 && (

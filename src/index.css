@@ -120,13 +120,18 @@
 
   /* Status colours. The dark theme keeps Tailwind's own scale untouched — these
      exist because that scale is pitched to be legible on black. The 300s carry
-     text and are re-picked to clear 4.5:1 on white; the 500s only ever appear
-     as a 10% wash or a 30% hairline, so they are deepened enough for the tint
-     to register rather than to be read. */
-  --color-green-300: #15803d;
+     text; the 500s only ever appear as a 10% wash or a 30% hairline, so they
+     are deepened enough for the tint to register rather than to be read.
+
+     The 300s are measured against the badge's own tinted ground, not against
+     the white card behind it. That distinction is the whole point: a 10% wash
+     of the matching 500 darkens the ground just enough to cost roughly a full
+     point of contrast, which is what put green and amber under AA when they
+     were picked against plain white. */
+  --color-green-300: #137337;
   --color-red-300: #b91c1c;
-  --color-amber-300: #b45309;
-  --color-emerald-300: #047857;
+  --color-amber-300: #a24b08;
+  --color-emerald-300: #047454;
 
   --color-green-400: #16a34a;
   --color-green-500: #16a34a;
