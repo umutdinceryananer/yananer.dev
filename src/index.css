@@ -295,15 +295,21 @@ a, button, [role="button"], input[type="submit"] {
 
    !important because it has to beat those component transitions for that
    moment -- `transition-colors` on a card would otherwise run its own duration
-   and arrive out of step with the page behind it. */
+   and arrive out of step with the page behind it.
+
+   350ms, on the same ease-out curve as the nav pill. At 180ms a change this
+   broad read as a flash rather than a fade: when every surface on the page
+   moves at once there is no partway state for the eye to catch, so it needs
+   longer than a single control would. */
 .theme-switching,
 .theme-switching * {
   transition:
-    background-color 180ms ease,
-    border-color 180ms ease,
-    color 180ms ease,
-    fill 180ms ease,
-    box-shadow 180ms ease !important;
+    background-color 350ms cubic-bezier(0, 0, 0.2, 1),
+    border-color 350ms cubic-bezier(0, 0, 0.2, 1),
+    color 350ms cubic-bezier(0, 0, 0.2, 1),
+    fill 350ms cubic-bezier(0, 0, 0.2, 1),
+    box-shadow 350ms cubic-bezier(0, 0, 0.2, 1),
+    outline-color 350ms cubic-bezier(0, 0, 0.2, 1) !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

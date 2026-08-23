@@ -78,13 +78,23 @@ let switchTimer: ReturnType<typeof setTimeout> | null = null
 const armCrossFade = () => {
   const el = document.documentElement
   el.classList.add('theme-switching')
+
+  // Force a style flush before the palette moves.
+  //
+  // Without this the class and the new values land in one task, and a
+  // transition has no committed "before" value to leave from — the page just
+  // arrives in the new theme. Reading a layout property here makes the browser
+  // settle the transition-enabled style first, so the change that follows has
+  // something to animate away from. One forced reflow, on a deliberate press.
+  void el.offsetHeight
+
   if (switchTimer) clearTimeout(switchTimer)
-  // Slightly past the 180ms in the stylesheet, so the class outlives the
-  // transition it exists to enable rather than cutting it off at the end.
+  // Past the 350ms in the stylesheet, so the class outlives the transition it
+  // exists to enable rather than cutting it off at the end.
   switchTimer = setTimeout(() => {
     switchTimer = null
     el.classList.remove('theme-switching')
-  }, 220)
+  }, 420)
 }
 
 export const setTheme = (next: ThemeChoice) => {
