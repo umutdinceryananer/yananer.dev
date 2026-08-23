@@ -21,18 +21,27 @@
 
   --color-ink: #c6c6c6;
 
-  /* Tailwind's gray, redefined: no blue cast, and pitched darker throughout. */
+  /* Tailwind's gray, redefined: no blue cast, and pitched darker throughout.
+
+     400 and 500 sit where they do because they are the only two that failed:
+     against the #0a0a0a card they measured 4.06:1 and 3.45:1, under the 4.5:1
+     WCAG asks of normal text. They carry the job descriptions, the chips and
+     the skill captions — the smallest type on the site, so the least forgiving
+     place to be a shade too quiet. Nothing above them moved. */
   --color-gray-200: #a3a3a3;
   --color-gray-300: #8c8c8c;
-  --color-gray-400: #717171;
-  --color-gray-500: #666666;
+  --color-gray-400: #7d7d7d;
+  --color-gray-500: #797979;
   --color-gray-600: #404040;
   --color-gray-700: #2e2e2e;
   --color-gray-800: #1d1d1d;
 
   --color-accent-200: #969696;
   --color-accent-300: #7e7e7e;
-  --color-accent-400: #646464;
+  /* Was #646464, at 3.35:1 the dimmest thing on the page — and it carries the
+     job titles and the role line under the name, neither of which is small
+     print. 300 and 500 were already fine and are untouched. */
+  --color-accent-400: #7a7a7a;
   --color-accent-500: #4b4b4b;
   --color-accent-600: #393939;
   --color-accent-700: #2e2e2e;
