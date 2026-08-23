@@ -39,12 +39,65 @@
   --color-accent-fg: #ffffff;
 }
 
+/* ---------------------------------------------------------------------------
+   The light theme.
+
+   Only the values change — every one of the 310 token references in the
+   components is untouched, because they all read `var(--color-*)`. There is no
+   `dark:` variant anywhere in this codebase and there does not need to be.
+
+   The greys are re-derived, not inverted. White reflects more light, so the
+   same RGB distance buys less contrast against it: mirroring the dark scale
+   would drop three text tones below WCAG AA. These were picked against #ffffff
+   and every pair the site actually renders clears 4.5:1.
+
+   The surface scale reverses direction, which is the point of naming them by
+   role rather than by lightness. On dark, a card sits one step *up* from the
+   page; here the page is the tinted one and the card is plain white, so cards
+   are told apart by colour rather than by the shadow that did it on black.
+
+   One selector, not two, because the inline script in index.html resolves the
+   system preference to a literal light/dark before first paint. That keeps the
+   palette written down once instead of once per matching strategy.
+   --------------------------------------------------------------------------- */
+:root[data-theme='light'] {
+  --color-surface-0: #f3f4f6;
+  --color-surface-1: #ffffff;
+  --color-surface-2: #eceef1;
+  --color-surface-3: #e3e6ea;
+  --color-surface-4: #d8dce2;
+
+  --color-ink: #0f1216;
+
+  --color-gray-200: #363b42;
+  --color-gray-300: #4a5058;
+  --color-gray-400: #5b626b;
+  --color-gray-500: #6a717a;
+  /* 600 and below are hairlines and dividers, not text — they run light here
+     for the same reason they run dark on black: just visible, never loud. */
+  --color-gray-600: #c5cad1;
+  --color-gray-700: #dcdfe4;
+  --color-gray-800: #e7e9ed;
+
+  --color-accent-200: #565d66;
+  --color-accent-300: #515861;
+  --color-accent-400: #41474e;
+  --color-accent-500: #31363c;
+  --color-accent-600: #23272c;
+  --color-accent-700: #191c20;
+  --color-accent-fg: #ffffff;
+
+  color-scheme: light;
+}
+
 :root {
   font-family: var(--font-sans);
   font-optical-sizing: auto;
   line-height: 1.5;
   font-weight: 400;
 
+  /* Drives the native bits nothing else reaches: form controls, scrollbars,
+     and the canvas the browser paints before our CSS lands. */
   color-scheme: dark;
   color: var(--color-gray-300);
   background-color: var(--color-surface-0);
@@ -189,5 +242,33 @@ a, button, [role="button"], input[type="submit"] {
   :focus-visible {
     outline: 2px solid var(--color-accent-200);
     outline-offset: 2px;
+  }
+}
+
+/* A brief cross-fade while the theme swaps.
+
+   Held on <html> for the length of the switch and then taken off, rather than
+   left on permanently: every component already owns its own transitions, and a
+   standing rule this broad would sit on top of all of them. It is only here for
+   the one moment when several hundred elements change colour at once, which is
+   the one moment nothing else is animating.
+
+   !important because it has to beat those component transitions for that
+   moment -- `transition-colors` on a card would otherwise run its own duration
+   and arrive out of step with the page behind it. */
+.theme-switching,
+.theme-switching * {
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    fill 180ms ease,
+    box-shadow 180ms ease !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-switching,
+  .theme-switching * {
+    transition: none !important;
   }
 }

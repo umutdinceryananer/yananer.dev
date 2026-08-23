@@ -5,6 +5,40 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'><text y='14' font-size='15'>🛰️</text></svg>" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <!-- Theme, resolved before the first paint.
+
+         This has to be inline, synchronous, and above everything that paints.
+         Read the preference from the bundle instead and the page lands in the
+         default theme, paints, and only then flips — the flash every themed
+         site is judged by.
+
+         It writes a literal light/dark rather than leaving "system" implicit,
+         so the stylesheet declares the palette once instead of once for
+         [data-theme] and again for a prefers-color-scheme query. React
+         re-stamps this if the OS preference changes while the tab is open.
+
+         localStorage throws outright in some privacy modes, so the whole thing
+         is wrapped: a visitor who blocks storage still gets a themed page. -->
+    <script>
+      (function () {
+        var el = document.documentElement
+        try {
+          var saved = localStorage.getItem('theme')
+          el.dataset.theme =
+            saved === 'light' || saved === 'dark'
+              ? saved
+              : matchMedia('(prefers-color-scheme: light)').matches
+                ? 'light'
+                : 'dark'
+        } catch (e) {
+          el.dataset.theme = 'dark'
+        }
+      })()
+    </script>
+    <!-- Colours the browser chrome on mobile. Kept in step by the toggle,
+         since a media query here could not follow a manual choice. -->
+    <meta name="theme-color" content="#050505" />
+
     <!-- SEO + social meta + JSON-LD: GENERATED from src/data/profile.ts at build time
          (see vite.config.ts → htmlHeadMeta plugin). Do not edit by hand. -->
     <!--app-head-meta-->

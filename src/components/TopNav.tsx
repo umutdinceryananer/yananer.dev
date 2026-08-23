@@ -1,3 +1,5 @@
+import ThemeToggle from './ThemeToggle'
+
 export type Route = 'about' | 'work'
 
 const TABS: { id: Route; href: string; label: string }[] = [
@@ -9,7 +11,14 @@ const TopNav = ({ route }: { route: Route }) => {
   const activeIndex = Math.max(0, TABS.findIndex((t) => t.id === route))
 
   return (
-    <nav aria-label="Views" className="w-full flex justify-center pt-8 pb-6">
+    // Three columns with equal 1fr shoulders, so the pill stays dead centre on
+    // the page while the toggle sits beside it. A plain flex row would have
+    // shifted the pill left by half the button.
+    <nav
+      aria-label="Views"
+      className="w-full grid grid-cols-[1fr_auto_1fr] items-center gap-3 px-4 pt-8 pb-6"
+    >
+      <div aria-hidden />
       <div className="relative inline-grid grid-cols-2 bg-surface-1 border border-gray-800 rounded-full p-1">
         {/* A single highlight that slides, instead of two backgrounds swapping.
             The grid keeps both columns exactly equal, so translating by whole
@@ -34,6 +43,9 @@ const TopNav = ({ route }: { route: Route }) => {
             {t.label}
           </a>
         ))}
+      </div>
+      <div className="justify-self-start">
+        <ThemeToggle />
       </div>
     </nav>
   )
