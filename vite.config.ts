@@ -136,6 +136,7 @@ function htmlHeadMeta(): Plugin {
           addressCountry: profile.address.country,
         },
         knowsAbout: profile.knowsAbout,
+        award: profile.awards,
         sameAs: [...profile.socials.map((s) => s.url), ...profile.identityUrls],
       },
       {

@@ -128,6 +128,15 @@ export interface Profile {
    * corpus. Not aspirations — see `growth` for the honest gaps.
    */
   knowsAbout: string[]
+  /**
+   * Awards that a source outside this site reported. The bar is deliberately
+   * that last part: an award is only worth asserting to a machine if the
+   * machine can go and find someone else saying the same thing.
+   *
+   * Structured data only — deliberately not surfaced in the UI or the résumé,
+   * which are presentation decisions of their own.
+   */
+  awards: string[]
   email: string
   siteUrl: string
   githubHandle: string
@@ -195,6 +204,10 @@ export const profile: Profile = {
     'TypeScript',
     'Rust',
   ],
+  // Reported by Bilkent News, the university's own publication, which names
+  // the recipients in full:
+  // bilnews.bilkent.edu.tr/bilkent-students-make-their-mark-at-ankara-startup-summit/
+  awards: ['Productive Academy Digital Support Package, Ankara Startup Summit'],
   email: 'umutdncr@gmail.com',
   siteUrl: 'https://yananer.dev',
   githubHandle: 'umutdinceryananer',
