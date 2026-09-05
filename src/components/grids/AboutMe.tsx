@@ -138,10 +138,14 @@ const AboutMe = () => {
               </svg>
             </button>
 
+            {/* rel="me" on both links below claims the profile on the other
+                end as the same person this page is about. It is a separate
+                identity signal from the sameAs list in the JSON-LD -- read by
+                different consumers -- and costs three characters. */}
             <a
               href={linkedinUrl}
               target="_blank"
-              rel="noopener noreferrer"
+              rel="me noopener noreferrer"
               aria-label="LinkedIn profile (opens in a new tab)"
               className="flex items-center justify-center gap-2 px-4 py-2 bg-surface-2 hover:bg-surface-3 text-ink rounded-lg transition-colors border border-accent-500/30 hover:border-accent-500/50"
             >
@@ -153,7 +157,7 @@ const AboutMe = () => {
             <a
               href={githubUrl}
               target="_blank"
-              rel="noopener noreferrer"
+              rel="me noopener noreferrer"
               aria-label="GitHub profile (opens in a new tab)"
               className="flex items-center justify-center gap-2 px-4 py-2 bg-surface-2 hover:bg-surface-3 text-ink rounded-lg transition-colors border border-accent-500/30 hover:border-accent-500/50"
             >
