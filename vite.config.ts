@@ -5,53 +5,156 @@ import { resolve } from 'path'
 import { readFileSync, writeFileSync } from 'fs'
 import { createHash } from 'crypto'
 import { profile } from './src/data/profile'
+import { projects } from './src/data/projects'
 
 // Generate the <head> SEO/social meta + JSON-LD from the single source of truth
-// (src/data/profile.ts) so index.html can never drift from the site's identity.
-// Replaces the <!--app-head-meta--> placeholder in index.html at dev + build time.
+// (src/data/profile.ts + src/data/projects.ts) so index.html can never drift
+// from the site's identity. Replaces the <!--app-head-meta--> placeholder in
+// index.html at dev + build time.
+//
+// Why this plugin has to exist at all: the site is a client-rendered SPA, so
+// anything React writes into <head> is only there after the bundle runs.
+// Emitting it here puts it in the HTML that comes off the wire, which is what
+// a crawler is guaranteed to see.
 function htmlHeadMeta(): Plugin {
   const esc = (s: string) =>
     s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
   const title = `${profile.name} — ${profile.headline}`
-  const description = profile.tagline
   const url = profile.siteUrl
   const keywords = [profile.name, profile.roleTitle, profile.employer, 'Software Engineer', 'Portfolio'].join(', ')
 
+  // Two descriptions on purpose.
+  //
+  // The <meta name="description"> is read by a search engine deciding which
+  // person this page is about, so it leads with the full name. og/twitter
+  // descriptions sit directly under a card title that already says the name,
+  // where repeating it just wastes the line.
+  const metaDescription = `${profile.name} — ${profile.roleTitle} at ${profile.employer}. ${profile.tagline}`
+  const socialDescription = profile.tagline
+
+  // Stable node ids. Separate nodes referring to the same thing have to say so
+  // by @id, or a crawler is entitled to read them as two different people.
+  const PERSON = `${url}/#person`
+  const WEBSITE = `${url}/#website`
+
+  const slug = (name: string) =>
+    name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+
+  // Matched against each project's `tech` entries to fill programmingLanguage.
+  // A whitelist rather than "take tech[0]": that list mixes languages with
+  // frameworks, runtimes and services, and tech[0] is only a language by luck.
+  const LANGUAGES = ['Python', 'TypeScript', 'JavaScript', 'Rust', 'Swift', 'Java', 'SQL', 'Go', 'C++', 'C#']
+
+  // Works, as nodes that point back at the person.
+  //
+  // There are no per-project pages on this site, so each node is anchored to the
+  // artefact you can actually open — the repo, or the App Store listing for the
+  // one that is shipped but closed-source.
+  //
+  // Filtered by the data's own `isVerifiable` flag, which is exactly the right
+  // test here: structured data is an assertion made to a machine that cannot
+  // check it, so anything the site itself declines to vouch for (HISAR) stays
+  // out. OSS contributions are excluded too — a pull request is not a work of
+  // software, and typing it as one would be a small lie in a machine-readable
+  // format.
+  const workNodes = projects
+    .filter((p) => p.kind === 'repo' && p.isVerifiable)
+    .map((p) => {
+      const languages = (p.tech ?? []).flatMap((t) =>
+        LANGUAGES.filter((l) => new RegExp(`(^|[^A-Za-z+#])${l.replace(/[+]/g, '\\+')}([^A-Za-z+#]|$)`).test(t)),
+      )
+      const repo = p.isPrivate ? undefined : p.repoUrl
+      return {
+        // Closed-source but shipped: there is no source code to point at, so
+        // typing it SoftwareSourceCode would describe something that does not
+        // exist publicly.
+        '@type': repo ? 'SoftwareSourceCode' : 'SoftwareApplication',
+        '@id': `${url}/#project-${slug(p.name)}`,
+        name: p.name,
+        description: p.oneLiner,
+        url: repo ?? p.liveDemoUrl,
+        ...(repo ? { codeRepository: repo } : {}),
+        ...(languages.length ? { programmingLanguage: [...new Set(languages)] } : {}),
+        author: { '@id': PERSON },
+      }
+    })
+
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'Person',
-    name: profile.name,
-    url,
-    email: `mailto:${profile.email}`,
-    jobTitle: profile.roleTitle,
-    worksFor: { '@type': 'Organization', name: profile.employer },
-    alumniOf: { '@type': 'CollegeOrUniversity', name: profile.education[0]?.institution },
-    sameAs: profile.socials.map((s) => s.url),
-    description,
+    '@graph': [
+      {
+        '@type': 'Person',
+        '@id': PERSON,
+        name: profile.name,
+        alternateName: profile.alternateNames,
+        url,
+        image: `${url}${profile.photo}`,
+        jobTitle: profile.roleTitle,
+        description: profile.tagline,
+        email: `mailto:${profile.email}`,
+        worksFor: {
+          '@type': 'Organization',
+          name: profile.employerLegalName,
+          url: profile.employerUrl,
+        },
+        alumniOf: {
+          '@type': 'CollegeOrUniversity',
+          name: profile.education[0]?.institution,
+          ...(profile.education[0]?.url ? { url: profile.education[0].url } : {}),
+        },
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: profile.address.locality,
+          addressCountry: profile.address.country,
+        },
+        knowsAbout: profile.knowsAbout,
+        sameAs: profile.socials.map((s) => s.url),
+      },
+      {
+        '@type': 'WebSite',
+        '@id': WEBSITE,
+        url,
+        name: profile.name,
+        publisher: { '@id': PERSON },
+      },
+      {
+        '@type': 'ProfilePage',
+        url,
+        isPartOf: { '@id': WEBSITE },
+        mainEntity: { '@id': PERSON },
+      },
+      ...workNodes,
+    ],
   }
 
   const block = [
     `<title>${esc(title)}</title>`,
-    `<meta name="description" content="${esc(description)}" />`,
+    `<meta name="description" content="${esc(metaDescription)}" />`,
     `<meta name="keywords" content="${esc(keywords)}" />`,
     `<meta name="author" content="${esc(profile.name)}" />`,
     `<meta property="og:title" content="${esc(title)}" />`,
-    `<meta property="og:description" content="${esc(description)}" />`,
-    `<meta property="og:type" content="website" />`,
+    `<meta property="og:description" content="${esc(socialDescription)}" />`,
+    // The page is one person's profile, and saying so is the whole point of the
+    // exercise. There is only one route, so this never needs to vary.
+    `<meta property="og:type" content="profile" />`,
     `<meta property="og:url" content="${esc(url)}" />`,
     `<meta property="og:site_name" content="yananer.dev" />`,
     // Square on purpose: the card type below is `summary`, which crops to a
     // small square thumbnail. Without an image every shared link — LinkedIn,
     // Slack, iMessage — renders as a blank card.
-    `<meta property="og:image" content="${url}/og.jpg" />`,
+    //
+    // Deliberately NOT summary_large_image: that card is 1.91:1 and would crop
+    // this 600x600 headshot to a band across the eyes. Switching it needs a
+    // 1200x630 image first, not just a different tag.
+    `<meta property="og:image" content="${url}${profile.photo}" />`,
     `<meta property="og:image:width" content="600" />`,
     `<meta property="og:image:height" content="600" />`,
     `<meta property="og:image:alt" content="${esc(profile.name)}" />`,
     `<meta name="twitter:card" content="summary" />`,
     `<meta name="twitter:title" content="${esc(title)}" />`,
-    `<meta name="twitter:description" content="${esc(description)}" />`,
-    `<meta name="twitter:image" content="${url}/og.jpg" />`,
+    `<meta name="twitter:description" content="${esc(socialDescription)}" />`,
+    `<meta name="twitter:image" content="${url}${profile.photo}" />`,
     `<meta name="twitter:image:alt" content="${esc(profile.name)}" />`,
     `<link rel="canonical" href="${esc(url)}" />`,
     `<script type="application/ld+json">\n${JSON.stringify(jsonLd, null, 2)}\n    </script>`,

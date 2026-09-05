@@ -16,6 +16,8 @@ export interface EducationEntry {
   field: string
   startYear: string
   endYear: string
+  /** Institution homepage. Only used to give JSON-LD's alumniOf a resolvable node. */
+  url?: string
   /** When true, the degree hasn't started/finished yet — UI shows "Incoming" instead of a graduation year. */
   incoming?: boolean
 }
@@ -65,18 +67,48 @@ export interface NowItem {
 
 export interface Profile {
   name: string
+  /**
+   * Every spelling of the name that a third party might use.
+   *
+   * Search engines tokenise "Dinçer" and "Dincer" as different words, so a page
+   * that only ever spells it one way competes with itself. Listing the variants
+   * as alternateName is what lets them resolve to one person.
+   */
+  alternateNames: string[]
   /** Display role, e.g. "Associate Solutions Consultant @ SAS". */
   role: string
   /** Bare job title for JSON-LD / resume.json, e.g. "Associate Solutions Consultant". */
   roleTitle: string
+  /** Short form, used in prose and in the display role. */
   employer: string
+  /** Full legal name, used where the organisation is named as an entity. */
+  employerLegalName: string
+  employerUrl: string
   /** Self-positioning headline for the page <title> / OG title, e.g. "Software Engineer & Founder". */
   headline: string
   /** Short one-liner for llms.txt / JSON-LD description. */
   tagline: string
   bio: string
-  /** Optional; omitted from JSON-LD / resume when absent. */
+  /** Human-readable, for display. Optional; omitted from JSON-LD / resume when absent. */
   location?: string
+  /**
+   * The same place, split up. schema.org wants PostalAddress parts, and parsing
+   * them back out of `location` would break the moment that string is reworded.
+   */
+  address: { locality: string; country: string }
+  /**
+   * Site-relative path to a photo of the person, for JSON-LD's `image`.
+   *
+   * Deliberately a file under public/ rather than the bundled headshot in
+   * src/assets: that one is emitted with a content hash in its filename, so its
+   * URL changes on any rebuild and every previously-crawled reference 404s.
+   */
+  photo: string
+  /**
+   * Subjects this person has actually worked in, grounded in the projects
+   * corpus. Not aspirations — see `growth` for the honest gaps.
+   */
+  knowsAbout: string[]
   email: string
   siteUrl: string
   githubHandle: string
@@ -105,15 +137,31 @@ export interface Profile {
 
 export const profile: Profile = {
   name: 'Umut Dinçer Yananer',
+  alternateNames: ['Umut Yananer', 'Umut Dincer Yananer'],
   role: 'Associate Solutions Consultant @ SAS',
   roleTitle: 'Associate Solutions Consultant',
   employer: 'SAS',
+  employerLegalName: 'SAS Institute',
+  employerUrl: 'https://www.sas.com',
   headline: 'Software Engineer & Founder',
   tagline:
     'Software engineer who builds across backend and data/ML.',
   bio:
     'Software Engineer & Founder, turning business needs into GenAI and agentic solutions. AWS Cloud Practitioner.',
   location: 'Ankara, Türkiye',
+  address: { locality: 'Ankara', country: 'TR' },
+  photo: '/og.jpg',
+  knowsAbout: [
+    'Large language model applications',
+    'Retrieval-augmented generation',
+    'Machine learning engineering',
+    'Backend engineering',
+    'Data engineering',
+    'Model Context Protocol',
+    'Python',
+    'TypeScript',
+    'Rust',
+  ],
   email: 'umutdncr@gmail.com',
   siteUrl: 'https://yananer.dev',
   githubHandle: 'umutdinceryananer',
@@ -136,6 +184,7 @@ export const profile: Profile = {
       field: 'Information Systems and Technologies',
       startYear: '2020',
       endYear: '2025',
+      url: 'https://bilkent.edu.tr',
     },
   ],
   work: [
