@@ -5,8 +5,13 @@ import TopNav, { type Route } from './components/TopNav'
 import Footer from './components/Footer'
 import { useSwapTransition, swapClasses } from './lib/useSwapTransition'
 
+// 'about' when there is no window, which is the case during the build-time
+// prerender (src/entry-server.tsx). That is the same answer an empty hash
+// gives, so the prerendered page is the one every visitor lands on first.
 const routeFromHash = (): Route =>
-  window.location.hash.replace('#', '') === 'work' ? 'work' : 'about'
+  typeof window !== 'undefined' && window.location.hash.replace('#', '') === 'work'
+    ? 'work'
+    : 'about'
 
 // Must match the exit duration on the page classes below.
 const PAGE_EXIT_MS = 150

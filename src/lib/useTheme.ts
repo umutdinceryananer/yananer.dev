@@ -22,7 +22,15 @@ const readChoice = (): ThemeChoice => {
 }
 
 const systemTheme = (): ResolvedTheme =>
-  window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
+  // There is no window during the build-time prerender (src/entry-server.tsx).
+  // Dark is the same answer the server snapshot at the bottom of this file and
+  // the inline script's own catch in index.html already give, so all three
+  // agree on what a page with no preference to read should look like.
+  typeof window === 'undefined'
+    ? 'dark'
+    : window.matchMedia('(prefers-color-scheme: light)').matches
+      ? 'light'
+      : 'dark'
 
 const resolve = (c: ThemeChoice): ResolvedTheme => (c === 'system' ? systemTheme() : c)
 
@@ -41,6 +49,7 @@ let snapshot = `${choice}|${resolve(choice)}`
 /** Push the resolved theme onto the document. The inline script does this once
     before first paint; from here on it is this. */
 const paint = () => {
+  if (typeof document === 'undefined') return
   const r = resolve(choice)
   document.documentElement.dataset.theme = r
   document.querySelector('meta[name="theme-color"]')?.setAttribute('content', BAR[r])

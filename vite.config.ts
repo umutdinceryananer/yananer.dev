@@ -219,14 +219,19 @@ function cspInlineScriptHashes(): Plugin {
   const TOKEN = '{{INLINE_SCRIPT_HASHES}}'
 
   let outDir = 'dist'
+  // The SSR pass writes a JS bundle for the prerenderer and no HTML or headers
+  // at all, so this has nothing to do there -- and would die looking for them.
+  let ssr = false
 
   return {
     name: 'csp-inline-script-hashes',
     apply: 'build',
     configResolved(config) {
       outDir = config.build.outDir
+      ssr = !!config.build.ssr
     },
     closeBundle() {
+      if (ssr) return
       const headers = resolve(outDir, '_headers')
       const html = readFileSync(resolve(outDir, 'index.html'), 'utf8')
 
@@ -260,20 +265,32 @@ function cspInlineScriptHashes(): Plugin {
 }
 
 // https://vite.dev/config/
-export default defineConfig({
+// Two builds come out of this config.
+//
+// The default one is the site. The second, `vite build --ssr`, renders the same
+// components under Node so scripts/prerender.ts can put real markup inside
+// <div id="root"> — see src/entry-server.tsx for why that matters. It shares
+// everything above so the prerender can never be built from different code than
+// the bundle, and differs only where a server build has to: a fixed entry
+// filename, since the prerenderer imports it by name, and no public/ copy,
+// since nothing serves out of dist-ssr.
+export default defineConfig(({ isSsrBuild }) => ({
   plugins: [react(), tailwindcss(), htmlHeadMeta(), cspInlineScriptHashes()],
   base: '/',
   build: {
-    outDir: 'dist',
+    outDir: isSsrBuild ? 'dist-ssr' : 'dist',
     assetsDir: '.',
     emptyOutDir: true,
     sourcemap: false,
     rollupOptions: {
-      input: {
-        main: resolve(__dirname, 'index.html'),
-      },
+      // The SSR entry is named on the command line, not here: `build.ssr` in
+      // this file is read too late to keep Vite from resolving index.html as
+      // the input first, and it then refuses an HTML input for an SSR build.
+      // Spread rather than a ternary to undefined -- the key must be absent,
+      // not merely empty.
+      ...(isSsrBuild ? {} : { input: { main: resolve(__dirname, 'index.html') } }),
       output: {
-        entryFileNames: '[name].[hash].js',
+        entryFileNames: isSsrBuild ? 'entry-server.js' : '[name].[hash].js',
         chunkFileNames: '[name].[hash].js',
         assetFileNames: (assetInfo) => {
           const name = assetInfo.name || '';
@@ -292,7 +309,7 @@ export default defineConfig({
       },
     },
   },
-  publicDir: 'public',
+  publicDir: isSsrBuild ? false : 'public',
   server: {
     port: 3000,
     strictPort: true,
@@ -308,4 +325,4 @@ export default defineConfig({
       '@': resolve(__dirname, './src'),
     },
   },
-})
+}))

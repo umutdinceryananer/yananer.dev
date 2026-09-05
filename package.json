@@ -8,7 +8,7 @@
     "dev": "vite",
     "gen": "tsx scripts/generate-agent-files.ts",
     "prebuild": "tsx scripts/generate-agent-files.ts",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && vite build --ssr src/entry-server.tsx && tsx scripts/prerender.ts",
     "lint": "eslint .",
     "preview": "vite preview"
   },
