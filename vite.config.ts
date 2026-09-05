@@ -37,6 +37,7 @@ function htmlHeadMeta(): Plugin {
   // by @id, or a crawler is entitled to read them as two different people.
   const PERSON = `${url}/#person`
   const WEBSITE = `${url}/#website`
+  const PROFILEPAGE = `${url}/#profilepage`
 
   const slug = (name: string) =>
     name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
@@ -80,6 +81,23 @@ function htmlHeadMeta(): Plugin {
       }
     })
 
+  // Companies, as nodes that name the person as their founder.
+  //
+  // Note this asserts something different from the project nodes above, which
+  // is why HISAR appears here after being filtered out of those. Those describe
+  // what a piece of software does, and HISAR's own data says that cannot be
+  // checked from outside. This says only that the company exists and who
+  // founded it — exactly what the visible work history already states.
+  const orgNodes = profile.work
+    .filter((w) => w.founded)
+    .map((w) => ({
+      '@type': 'Organization',
+      '@id': `${url}/#org-${slug(w.company)}`,
+      name: w.company,
+      ...(w.companyUrl ? { url: w.companyUrl } : {}),
+      founder: { '@id': PERSON },
+    }))
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -91,17 +109,26 @@ function htmlHeadMeta(): Plugin {
         url,
         image: `${url}${profile.photo}`,
         jobTitle: profile.roleTitle,
+        // The occupation, as opposed to the current job title. One is what this
+        // person is; the other is what they are called this year.
+        hasOccupation: { '@type': 'Occupation', name: profile.occupation },
         description: profile.tagline,
         email: `mailto:${profile.email}`,
+        // The reciprocal of ProfilePage.mainEntity below. Naming the page from
+        // both ends says which page is canonical *for the entity*, not merely
+        // which URL this markup happens to sit on.
+        mainEntityOfPage: { '@id': PROFILEPAGE },
         worksFor: {
           '@type': 'Organization',
           name: profile.employerLegalName,
           url: profile.employerUrl,
+          sameAs: profile.employerSameAs,
         },
         alumniOf: {
           '@type': 'CollegeOrUniversity',
           name: profile.education[0]?.institution,
           ...(profile.education[0]?.url ? { url: profile.education[0].url } : {}),
+          ...(profile.education[0]?.sameAs ? { sameAs: profile.education[0].sameAs } : {}),
         },
         address: {
           '@type': 'PostalAddress',
@@ -109,7 +136,7 @@ function htmlHeadMeta(): Plugin {
           addressCountry: profile.address.country,
         },
         knowsAbout: profile.knowsAbout,
-        sameAs: profile.socials.map((s) => s.url),
+        sameAs: [...profile.socials.map((s) => s.url), ...profile.identityUrls],
       },
       {
         '@type': 'WebSite',
@@ -120,10 +147,12 @@ function htmlHeadMeta(): Plugin {
       },
       {
         '@type': 'ProfilePage',
+        '@id': PROFILEPAGE,
         url,
         isPartOf: { '@id': WEBSITE },
         mainEntity: { '@id': PERSON },
       },
+      ...orgNodes,
       ...workNodes,
     ],
   }

@@ -18,6 +18,8 @@ export interface EducationEntry {
   endYear: string
   /** Institution homepage. Only used to give JSON-LD's alumniOf a resolvable node. */
   url?: string
+  /** Authoritative pages for the institution itself, e.g. its Wikidata item. */
+  sameAs?: string[]
   /** When true, the degree hasn't started/finished yet — UI shows "Incoming" instead of a graduation year. */
   incoming?: boolean
 }
@@ -31,6 +33,15 @@ export interface WorkEntry {
   /** Optional status pill shown next to company/period, e.g. "In Development". */
   status?: string
   description: string
+  /**
+   * Set on the entries this person founded. Structured data gets an
+   * Organization node with a founder edge back to them, which is a far stronger
+   * identity claim than authoring a repo: it says the person and the company
+   * are connected facts, not just that a name appears on some code.
+   */
+  founded?: boolean
+  /** Homepage of the company. Only needed alongside `founded`. */
+  companyUrl?: string
 }
 
 export interface TechItem {
@@ -84,6 +95,14 @@ export interface Profile {
   /** Full legal name, used where the organisation is named as an entity. */
   employerLegalName: string
   employerUrl: string
+  /**
+   * Authoritative pages for the employer. Naming the organisation is a string;
+   * pointing at its Wikidata item resolves it to an entity a search engine
+   * already knows, which is what gives the edge into this person any weight.
+   */
+  employerSameAs: string[]
+  /** The occupation itself, as distinct from the current job title. */
+  occupation: string
   /** Self-positioning headline for the page <title> / OG title, e.g. "Software Engineer & Founder". */
   headline: string
   /** Short one-liner for llms.txt / JSON-LD description. */
@@ -115,6 +134,18 @@ export interface Profile {
   /** This portfolio's own source repo (shown in the footer). */
   sourceRepoUrl: string
   socials: SocialLink[]
+  /**
+   * Pages elsewhere that unambiguously identify this same person, for JSON-LD's
+   * sameAs. Deliberately separate from `socials`, which is a UI list: these are
+   * not links anyone wants a button for, and one of them is the strongest
+   * identity evidence the site has — a page on a domain nobody here controls,
+   * publishing the full name against a shipped product.
+   *
+   * The bar is that the page has to be ABOUT the person. A package listing that
+   * merely names them as maintainer corroborates by mentioning them; it is not
+   * a sameAs, and putting it here would be a category error.
+   */
+  identityUrls: string[]
   education: EducationEntry[]
   work: WorkEntry[]
   tech: TechItem[]
@@ -143,6 +174,8 @@ export const profile: Profile = {
   employer: 'SAS',
   employerLegalName: 'SAS Institute',
   employerUrl: 'https://www.sas.com',
+  employerSameAs: ['https://www.wikidata.org/wiki/Q1473820'],
+  occupation: 'Software Engineer',
   headline: 'Software Engineer & Founder',
   tagline:
     'Software engineer who builds across backend and data/ML.',
@@ -177,6 +210,9 @@ export const profile: Profile = {
     { label: 'LinkedIn', url: 'https://www.linkedin.com/in/umut-yananer/' },
     { label: 'GitHub', url: 'https://github.com/umutdinceryananer' },
   ],
+  // Apple's developer page for the App Store account behind themis. Region-
+  // scoped on purpose: the region-neutral form answers 301 and this one 200.
+  identityUrls: ['https://apps.apple.com/tr/developer/umut-dincer-yananer/id6777488982'],
   education: [
     {
       institution: 'Ihsan Dogramaci Bilkent University',
@@ -185,6 +221,7 @@ export const profile: Profile = {
       startYear: '2020',
       endYear: '2025',
       url: 'https://bilkent.edu.tr',
+      sameAs: ['https://www.wikidata.org/wiki/Q861904'],
     },
   ],
   work: [
@@ -210,6 +247,8 @@ export const profile: Profile = {
       company: 'Hisar',
       period: 'Nov 2025 - Present',
       status: 'In Development',
+      founded: true,
+      companyUrl: 'https://hisar.app/',
       description:
         'Co-founded Hisar: an LLM system that analyzes financial data to surface financial-risk signals.',
     },
@@ -251,6 +290,8 @@ export const profile: Profile = {
       company: 'Petbilir / Petlyst',
       period: 'Feb 2021 - Aug 2023',
       status: 'Exit',
+      founded: true,
+      companyUrl: 'https://github.com/PetlystHQ',
       description:
         'Co-founded a veterinary SaaS startup at university; led a small team across product and engineering, from idea to paying customers.',
     },
