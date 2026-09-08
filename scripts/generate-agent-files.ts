@@ -18,6 +18,7 @@ import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import { profile } from '../src/data/profile'
 import { projects, type Project } from '../src/data/projects'
+import { privacy, privacyUpdated } from '../src/data/privacy'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const PUBLIC_DIR = path.join(ROOT, 'public')
@@ -262,6 +263,64 @@ const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
 `
 
 // ---------------------------------------------------------------------------
+// privacy/index.html
+//
+// The same text components/PrivacyModal.tsx renders, as a page with an address.
+// The modal is what people actually open; this exists so the notice can be
+// linked to, quoted, or handed to someone who asks for a URL.
+//
+// A whole static file rather than a route: there is deliberately no SPA
+// catch-all (README), so /privacy would 404 as a route no matter how it was
+// written. Deliberately not in sitemap.xml either -- findable is the goal, not
+// promoted.
+//
+// Inline <style>, no <script>: an inline stylesheet is covered by the CSP's
+// `style-src 'unsafe-inline'`, and adding an executable inline script here
+// would need a hash that cspInlineScriptHashes only computes for index.html.
+// ---------------------------------------------------------------------------
+const esc = (t: string) =>
+  t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+
+const privacyHtml = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>What ${esc(profile.siteUrl.replace(/^https?:\/\//, ''))} measures</title>
+<meta name="description" content="What this site collects, what it does not, and how to turn it off." />
+<link rel="canonical" href="${profile.siteUrl}/privacy/" />
+<!-- ${GENERATED} -->
+<style>
+  :root { color-scheme: dark; }
+  body { margin: 0 auto; padding: 3rem 1.25rem 4rem; max-width: 42rem;
+         background: #0a0a0a; color: #d4d4d4;
+         font: 15px/1.65 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+  h1 { color: #fafafa; font-size: 1.35rem; margin: 0 0 1.75rem; }
+  h2 { color: #fafafa; font-size: .95rem; margin: 2rem 0 .5rem; }
+  p { margin: 0 0 .6rem; color: #a3a3a3; font-size: .875rem; }
+  code { background: #171717; padding: .1rem .3rem; border-radius: 3px; font-size: .8rem; }
+  a { color: #a3a3a3; }
+  footer { margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid #262626;
+           color: #737373; font-size: .78rem; }
+</style>
+</head>
+<body>
+<h1>What this site measures</h1>
+${privacy
+  .map(
+    (s) =>
+      `<h2>${esc(s.heading)}</h2>\n` +
+      s.body.map((line) => `<p>${esc(line)}</p>`).join('\n'),
+  )
+  .join('\n')}
+<footer>
+  Last updated ${privacyUpdated}. <a href="${profile.siteUrl}/">Back to ${esc(profile.name)}</a>
+</footer>
+</body>
+</html>
+`
+
+// ---------------------------------------------------------------------------
 // Write
 // ---------------------------------------------------------------------------
 mkdirSync(PUBLIC_DIR, { recursive: true })
@@ -269,5 +328,9 @@ writeFileSync(path.join(PUBLIC_DIR, 'SKILL.md'), skillMd)
 writeFileSync(path.join(PUBLIC_DIR, 'llms.txt'), llmsTxt)
 writeFileSync(path.join(PUBLIC_DIR, 'resume.json'), JSON.stringify(resume, null, 2) + '\n')
 writeFileSync(path.join(PUBLIC_DIR, 'sitemap.xml'), sitemapXml)
+mkdirSync(path.join(PUBLIC_DIR, 'privacy'), { recursive: true })
+writeFileSync(path.join(PUBLIC_DIR, 'privacy', 'index.html'), privacyHtml)
 
-console.log('Generated public/SKILL.md, public/llms.txt, public/resume.json, public/sitemap.xml')
+console.log(
+  'Generated public/SKILL.md, public/llms.txt, public/resume.json, public/sitemap.xml, public/privacy/index.html',
+)

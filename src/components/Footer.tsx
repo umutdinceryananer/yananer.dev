@@ -1,12 +1,26 @@
+import { useState } from 'react'
 import { profile } from '../data/profile'
+import PrivacyModal from './PrivacyModal'
 
 const Footer = ({ className = '' }: { className?: string }) => {
+  const [privacyOpen, setPrivacyOpen] = useState(false)
+
   return (
     <footer className={`w-full bg-surface-0 py-6 ${className}`}>
       <div className="w-full max-w-[1400px] mx-auto px-2 sm:px-4 lg:px-8">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-gray-400 text-sm">
-          <p className="text-center sm:text-left">
-            {new Date().getFullYear()} {profile.name}.
+          <p className="text-center sm:text-left flex items-center gap-2">
+            <span>
+              {new Date().getFullYear()} {profile.name}.
+            </span>
+            {/* Deliberately understated. The obligation is that someone looking
+                for this can find it, not that everyone is made to read it. */}
+            <button
+              onClick={() => setPrivacyOpen(true)}
+              className="text-gray-500 hover:text-gray-300 underline underline-offset-2 decoration-gray-700 transition-colors"
+            >
+              Privacy
+            </button>
           </p>
           <div className="flex items-center gap-2">
             <span>Source code available on</span>
@@ -24,6 +38,7 @@ const Footer = ({ className = '' }: { className?: string }) => {
           </div>
         </div>
       </div>
+      <PrivacyModal open={privacyOpen} onClose={() => setPrivacyOpen(false)} />
     </footer>
   )
 }
