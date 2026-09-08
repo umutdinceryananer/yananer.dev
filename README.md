@@ -172,7 +172,7 @@ npm run build        # prebuild (gen) → type-check (tsc -b) → build to dist/
 npm run preview      # Preview the production build
 npm run lint         # Run ESLint
 npm run db:init      # Apply analytics/schema.sql to the D1 database
-npm run stats        # Run analytics/stats.sql and print the numbers
+npm run stats        # Run analytics/stats.sql and print the numbers as tables
 ```
 
 ## Deployment
@@ -239,8 +239,15 @@ without saying so:
 
 ```bash
 npx wrangler d1 create yananer-analytics    # note the database id it prints
+# paste that id into analytics/wrangler.toml
 npm run db:init                             # apply analytics/schema.sql
 ```
+
+`analytics/wrangler.toml` exists only so the two CLI scripts can find the database. It is
+deliberately *not* at the repo root: Pages reads a root `wrangler.toml` as the source of
+truth for the whole project, which would take the existing Git build's configuration —
+the EmailJS variables included — out of the dashboard's hands. The running collector never
+reads it either; at runtime the binding comes from the Pages project settings.
 
 Then, in the Pages project settings: bind the database as **`ANALYTICS_DB`**, and set
 **`VITE_ANALYTICS_ENDPOINT=/api/collect`** for Production. A rate-limiting WAF rule on
@@ -249,7 +256,10 @@ binding that [`mcp/`](mcp/) uses.
 
 ### Reading the numbers
 
-`npm run stats` runs `analytics/stats.sql`. There is no web dashboard yet, deliberately:
+`npm run stats` runs each query in `analytics/stats.sql` and prints it as a table. It
+splits the file itself rather than handing it to `wrangler d1 execute --file`, which
+reported "2 commands executed successfully" for a file containing six and skipped the rest
+without saying so. There is no web dashboard yet, deliberately:
 one built before any data exists is one designed around guesses. Two things the queries
 say out loud and worth repeating — at this traffic a day-over-day change smaller than
 about a third is Poisson noise, and a percentage whose denominator is under a hundred

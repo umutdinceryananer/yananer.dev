@@ -1,0 +1,23 @@
+# Config for the two D1 command-line scripts, and nothing else.
+#
+# It lives here rather than at the repo root deliberately. Cloudflare Pages
+# reads a *root* wrangler.toml as the source of truth for the whole project, and
+# adding one would take the existing Git-integrated build's configuration --
+# including the EmailJS variables set in the Pages dashboard -- out of the
+# dashboard's hands. That is a real change to a deployment that currently works,
+# and not one to make as a side effect of wanting `npm run stats` to run.
+#
+# `npm run db:init` and `npm run stats` point at this file with --config. The
+# Pages build never reads it, and the running collector never reads it either:
+# at runtime the ANALYTICS_DB binding comes from the Pages project settings.
+
+name = "yananer-analytics-cli"
+compatibility_date = "2026-01-01"
+
+[[d1_databases]]
+binding = "ANALYTICS_DB"
+database_name = "yananer-analytics"
+# Filled in from the output of `npx wrangler d1 create yananer-analytics`.
+# Left as-is, wrangler fails loudly on the first --remote command rather than
+# quietly reading the wrong database.
+database_id = "PASTE_DATABASE_ID_HERE"

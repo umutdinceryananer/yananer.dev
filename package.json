@@ -11,8 +11,8 @@
     "build": "tsc -b && vite build && vite build --ssr src/entry-server.tsx && tsx scripts/prerender.ts && tsx scripts/audit-analytics.ts",
     "lint": "eslint .",
     "preview": "vite preview",
-    "db:init": "wrangler d1 execute yananer-analytics --remote --file analytics/schema.sql",
-    "stats": "wrangler d1 execute yananer-analytics --remote --file analytics/stats.sql"
+    "db:init": "wrangler d1 execute ANALYTICS_DB --config analytics/wrangler.toml --remote --file analytics/schema.sql",
+    "stats": "tsx scripts/stats.ts"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",

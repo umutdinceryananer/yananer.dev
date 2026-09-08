@@ -263,12 +263,17 @@ export const onRequest = async ({ request, env }: EventContext): Promise<Respons
     if (origin && new URL(request.url).origin !== origin) return done(403)
   }
 
-  const ua = request.headers.get('User-Agent') ?? ''
+  // Both checks, always, rather than the score when it exists and the UA
+  // otherwise. That `else` was a bug: any environment that populates
+  // botManagement with a benign default -- Bot Fight Mode, or miniflare during
+  // local development, which scores every request 99 -- disabled the UA net
+  // entirely, and a request announcing itself as GPTBot was stored. Found by
+  // running the real Worker rather than a stub, which is the argument for doing
+  // that. Both are backstops anyway: the tracker refuses to send anything
+  // before a trusted input event.
+  if (BOT_UA.test(request.headers.get('User-Agent') ?? '')) return done(204)
   const score = request.cf?.botManagement?.score
-  // `score` is only populated where Bot Management is enabled; where it is not,
-  // the UA net is all there is. Both are backstops — the tracker already refuses
-  // to send anything before a trusted input event.
-  if (typeof score === 'number' ? score < 30 : BOT_UA.test(ua)) return done(204)
+  if (typeof score === 'number' && score < 30) return done(204)
 
   const raw = await request.text()
   if (raw.length > MAX_BODY) return done(413)
