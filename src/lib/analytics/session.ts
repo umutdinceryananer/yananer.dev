@@ -8,9 +8,18 @@ import type { Route, SessionContext } from './types'
  * not a cookie, it is never sent to any origin but our own collector, and there
  * is no second identifier anywhere that could stitch two of them together. So
  * "how far do people scroll on the Work page" is answerable and "has this
- * person been here before" is not — which is the trade this site wants, and
- * which is also what keeps it out of consent-banner territory under
- * GDPR/KVKK rather than relying on a banner nobody reads.
+ * person been here before" is not, which is the trade this site wants.
+ *
+ * What that does and does not buy, stated honestly rather than optimistically:
+ * it means there is no personal data to hold, no profile to build and nothing
+ * to hand over on request. It does NOT mean nothing is written to the device —
+ * ePrivacy Art. 5(3) is read technology-neutrally and covers sessionStorage as
+ * readily as it covers a cookie. The defensible position here is that the write
+ * is a single opaque tab-lifetime value, that the visitor is told about it on
+ * the privacy page, and that every signal a visitor can send to refuse is
+ * honoured before anything is stored at all — see optedOut() below, which runs
+ * first. An earlier version of this comment claimed the choice put the site
+ * outside consent-banner territory outright; that was further than the law goes.
  */
 
 const KEY = 'ya_sid'

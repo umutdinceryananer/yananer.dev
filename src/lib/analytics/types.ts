@@ -1,5 +1,5 @@
 /**
- * The wire contract between the tracker in this bundle and the collector Worker.
+ * The wire contract between the tracker in this bundle and the collector.
  *
  * Mirrored, deliberately by hand, in analytics/src/payload.ts. The two live in
  * separate packages with separate tsconfigs and separate deploys, so a shared
@@ -15,8 +15,8 @@
  * end-of-session data.
  */
 
-/** Bump on any breaking shape change; the Worker rejects payloads it predates. */
-export const PROTOCOL = 1
+/** Bump on any breaking shape change; the collector rejects payloads it predates. */
+export const PROTOCOL = 2
 
 /** Hash routes, normalised to the two the site actually has. */
 export type Route = 'about' | 'work'
@@ -38,7 +38,7 @@ export interface SessionContext {
   /** IANA zone. Coarser than an IP and enough to tell a timezone-shifted visit. */
   tz: string
   lang: string
-  /** Full referrer URL. The Worker keeps only host + path — never the query,
+  /** Full referrer URL. The collector keeps only host + path — never the query,
       which is where search engines and ad networks put identifiers. */
   ref: string
   /** UTM tags off the landing URL, if any. */
@@ -56,7 +56,16 @@ interface Base {
   r: Route
 }
 
-/** A route was entered — on load, and on every hashchange after. */
+/**
+ * Ten entries, one per 10% band of the page.
+ *
+ * A tuple rather than `number[]`: the comment used to promise ten and the type
+ * allowed any length, which made the collector's range check something a human
+ * had to remember. Now the shape is the check, on both sides of the wire.
+ */
+export type Bands = [number, number, number, number, number, number, number, number, number, number]
+
+/** A route was entered — on load, and on every route swap after. */
 export interface ViewEvent extends Base {
   t: 'view'
 }
@@ -70,13 +79,26 @@ export interface LeaveEvent extends Base {
   /** Wall time on the route. */
   ms: number
   /** Of which, time the tab was actually visible and the visitor was moving,
-      typing or scrolling. The honest engagement number. */
+      typing or scrolling — and no dialog was open. The honest engagement
+      number. See tracker.ts for why the dialog exclusion is not optional. */
   ams: number
   /** Deepest scroll reached, 0–100. */
   sd: number
   /** Milliseconds of visible time spent with each 10% band of the page on
-      screen. Ten entries. This is the scroll heatmap. */
-  bands: number[]
+      screen. This is the scroll heatmap. */
+  bands: Bands
+  /**
+   * How many times the document height changed during this view.
+   *
+   * ShowMore expands mid-session — on phones only, which is precisely where
+   * scroll depth is the metric worth having. When it does, the ten bands are
+   * measured against a moving denominator and everything accumulated before
+   * the change describes different content than everything after. Rather than
+   * try to rescale it, say how many times it happened and let the dashboard
+   * discount the sessions that carry a non-zero count.
+   */
+  hc?: number
+  /** Document height at leave time, not at load time: see hc. */
   dh: number
   vw: number
   vh: number
@@ -85,70 +107,60 @@ export interface LeaveEvent extends Base {
 /** A click, located well enough to be re-drawn on any viewport. */
 export interface ClickEvent extends Base {
   t: 'click'
-  /** Stable-ish selector for the element hit. */
+  /** The element's `data-ya` name, or a bounded structural fallback. Never a
+      class-based selector — see tracker.ts. */
   s: string
   /** Where inside that element's box, 0–1. Survives every reflow the element
       survives, which raw page coordinates do not. */
   ox: number
   oy: number
   /** Fallback page-space coordinates for elements we could not name: x as a
-      fraction of document width, y in absolute pixels. */
-  nx: number
-  py: number
+      fraction of document width, y in absolute pixels. Both omitted inside a
+      dialog, which is position:fixed and outside the scroll container — adding
+      the scroller's offset there fabricates a coordinate. */
+  nx?: number
+  py?: number
   vw: number
   dh: number
   tag: string
   /** aria-label or short visible text — never from a field, never from a
       redacted subtree. */
   lbl?: string
+  /**
+   * Outbound destination, host + path only, query stripped.
+   *
+   * Without this the site's highest-value question is unanswerable: `lbl` is
+   * the literal string "Repo" on all eleven project cards, so a click count
+   * keyed on it says how many people clicked "a repo" and never which one.
+   * `s` answers it too once the data-ya names land, but this also covers the
+   * links that will never be named individually.
+   */
+  h?: string
 }
 
-/** Three or more clicks on the same spot in under a second. Frustration. */
-export interface RageEvent extends Base {
-  t: 'rage'
-  s: string
-  n: number
-  lbl?: string
-}
-
-/** A click on something that looked clickable and did nothing at all. */
+/**
+ * A click on something that looked clickable and did nothing at all.
+ *
+ * This one genuinely earns its place on the wire, where `rage` did not: rage is
+ * three clicks on one selector inside a second, which the collector can derive
+ * from the click stream it already has. Whether anything *happened* after a
+ * click is only knowable in the page.
+ */
 export interface DeadEvent extends Base {
   t: 'dead'
   s: string
   lbl?: string
 }
 
-/**
- * Where the pointer rested, as dwell milliseconds per 5%×5% cell of the page.
- *
- * A grid rather than the usual sampled polyline: the polyline is 10× the bytes
- * and every consumer of it immediately bins it into a grid anyway. Binning on
- * the client also means a 40-second visit costs the same payload as a
- * 4-second one.
- */
-export interface AttentionEvent extends Base {
-  t: 'attn'
-  vw: number
-  dh: number
-  /** [cellX, cellY, ms] triples, cells 0–19. */
-  cells: [number, number, number][]
-}
-
-/**
- * A wireframe of the route as it was actually laid out.
- *
- * This is what makes the heatmap readable without iframing the live site —
- * which the site's own CSP forbids (`frame-ancestors 'none'`). The dashboard
- * redraws these boxes and paints the heat on top, per viewport bucket, and it
- * keeps working for historical data after the layout changes.
- *
- * Sampled: one visitor in five, once per route.
- */
-export interface LayoutEvent extends Base {
-  t: 'layout'
-  vw: number
-  dh: number
-  boxes: { s: string; l?: string; x: number; y: number; w: number; h: number }[]
+/** An uncaught error or rejected promise the visitor was actually exposed to. */
+export interface ErrEvent extends Base {
+  t: 'err'
+  /** Message, truncated. Never the stack: it carries file paths and, in a
+      bundled build, occasionally fragments of the values that broke. */
+  m: string
+  /** Source file, basename only. */
+  src?: string
+  ln?: number
 }
 
 /**
@@ -158,6 +170,8 @@ export interface LayoutEvent extends Base {
  */
 export interface FieldEvent extends Base {
   t: 'field'
+  /** Read off `data-ya-key`, not the <label> text, so renaming the visible
+      label does not orphan the funnel. */
   f: string
   a: 'focus' | 'filled' | 'abandon' | 'submit' | 'error'
   /** Time spent in the field, for focus-ending actions. */
@@ -171,14 +185,34 @@ export interface ActionEvent extends Base {
   s?: string
 }
 
+/**
+ * A wireframe of the route as it was actually laid out.
+ *
+ * Defined but NOT in the union below, and not emitted by the tracker: this is
+ * the input to a click heatmap, and a heatmap needs 350–500 clicks per bucket
+ * before it stops inventing structure that is not in the data. At this site's
+ * traffic that is months away. The type stays because the shape is the hard
+ * part and it was already worked out; turning it on later is one line here and
+ * one collector branch.
+ *
+ * It exists in this form — boxes we redraw — rather than as an overlay on the
+ * live site, because the site's own CSP forbids being framed
+ * (`frame-ancestors 'none'`), and because redrawn boxes keep working for
+ * historical data after the layout changes.
+ */
+export interface LayoutEvent extends Base {
+  t: 'layout'
+  vw: number
+  dh: number
+  boxes: { s: string; l?: string; x: number; y: number; w: number; h: number }[]
+}
+
 export type AnalyticsEvent =
   | ViewEvent
   | LeaveEvent
   | ClickEvent
-  | RageEvent
   | DeadEvent
-  | AttentionEvent
-  | LayoutEvent
+  | ErrEvent
   | FieldEvent
   | ActionEvent
 
@@ -187,7 +221,7 @@ export interface Batch {
   /** Anonymous, per-tab, regenerated on every new tab. Never persisted past
       the tab's life, so it cannot link two visits to the same person. */
   sid: string
-  /** Batch counter. Lets the Worker drop a beacon the browser retried. */
+  /** Batch counter. Lets the collector drop a beacon the browser retried. */
   seq: number
   ctx?: SessionContext
   events: AnalyticsEvent[]
