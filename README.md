@@ -202,6 +202,24 @@ system deliberately had no such identifier; that was reversed on purpose, and bo
 `session.ts` and the privacy notice say so rather than describing the newer design as if
 it had always been the plan. Opting out deletes both.
 
+`ya_vid` expires after thirteen months and is **not** renewed on each visit. That number
+comes from CNIL's audience-measurement exemption (Délibération 2020-092), the closest
+thing in the EU to a rule permitting returning-visitor measurement without a consent
+banner: first party only, purely statistical, no cross-site linkage, no third parties,
+identifier capped at 13 months without renewal, derived data at 25 (the retention job
+deletes at 90 days), the visitor informed, and a usable way to object. The privacy dialog
+carries that last one as a switch — a console command is not a mechanism anyone can use.
+
+None of which makes this settled. ePrivacy Art. 5(3) is technology-neutral, and EDPB
+Guidelines 2/2023 put `localStorage` squarely inside it, so "not a cookie" is not a
+defence. The CNIL exemption is French; the ICO requires consent for analytics regardless,
+and Turkey's KVKK guidance treats analytics as needing explicit consent with no
+equivalent carve-out. The Digital Omnibus would have added an EU-wide exemption for
+first-party *aggregated* measurement, but as of September 2026 the Data Omnibus is still
+in negotiation and the Council's text drops the cookie provisions. Whether this site
+needs a consent banner is an open question, not a closed one — the design above is the
+most defensible shape available without one.
+
 It exists for one number Cloudflare Web Analytics cannot give: that product counts
 document loads, and moving between `#about` and `#work` is a `hashchange`, so *does
 anyone reach the Work tab* has never been answerable for this site.

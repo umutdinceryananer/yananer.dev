@@ -124,21 +124,36 @@ if (html.includes(SENTINEL)) {
   fail(`the prerendered dist/index.html contains "${SENTINEL}" -- the tracker ran during the build.`)
 }
 
-// ── 5. The tracker must be its own chunk, and a small one ────────────────────
+// ── 5. The tracker must stay out of the main bundle, and stay small ─────────
+//
+// Markers rather than filenames: Rollup splits this across two chunks today
+// (session.ts is shared between the tracker and the privacy dialog's opt-out
+// switch, tracker.ts is not) and it is free to re-split at any time. What must
+// hold is the property, not the layout -- none of it in main, and the total
+// under budget.
 //
 // With no endpoint configured the early return in tracker.ts is statically
-// true, so the bundler folds the whole module away and the sentinel disappears
-// from the output entirely. That is worth asserting in its own right: it is the
-// proof that a fork, a preview or an opted-out build really does ship none of
-// this rather than merely not calling it.
+// true, so the bundler folds the whole thing away and the markers vanish. That
+// is worth asserting in its own right: it is the proof that a fork, a preview
+// or an opted-out build really does ship none of this rather than merely not
+// calling it.
+
+/** One per analytics module that must never reach the main bundle. */
+const MARKERS = [
+  SENTINEL, //                        session.ts -- the identities
+  'text/plain;charset=UTF-8', //      tracker.ts -- the beacon body type
+]
 
 const chunks = readdirSync(DIST).filter((f) => f.endsWith('.js'))
-const carrying = chunks.filter((f) => readFileSync(resolve(DIST, f), 'utf8').includes(SENTINEL))
+const carrying = chunks.filter((f) => {
+  const src = readFileSync(resolve(DIST, f), 'utf8')
+  return MARKERS.some((m) => src.includes(m))
+})
 
 if (!endpoint) {
   if (carrying.length) {
     fail(
-      `no endpoint is configured, but "${SENTINEL}" still ships in ${carrying.join(', ')}.\n` +
+      `no endpoint is configured, but analytics code still ships in ${carrying.join(', ')}.\n` +
         '      The disabled tracker is supposed to fold away entirely -- something now\n' +
         '      references it outside the endpoint check in tracker.ts.',
     )
@@ -146,24 +161,27 @@ if (!endpoint) {
     console.log('Analytics: no endpoint set, tracker folded out of the bundle')
   }
 } else if (!carrying.length) {
-  fail(`no built chunk contains "${SENTINEL}" -- is the tracker still reachable from Analytics.tsx?`)
-} else if (carrying.length > 1) {
-  fail(`"${SENTINEL}" appears in ${carrying.length} chunks (${carrying.join(', ')}); expected exactly one.`)
+  fail('no built chunk carries the analytics markers -- is the tracker still reachable from Analytics.tsx?')
 } else {
-  const [chunk] = carrying
-  if (chunk.startsWith('main.')) {
+  const inMain = carrying.filter((f) => f.startsWith('main.'))
+  if (inMain.length) {
     fail(
-      `the tracker was bundled into ${chunk}.\n` +
-        '      It must stay a dynamic import so a visitor who opts out never downloads it.',
+      `analytics code was bundled into ${inMain.join(', ')}.\n` +
+        '      It must stay behind a dynamic import so a visitor who opts out never\n' +
+        '      downloads it. A static import from anything App.tsx renders will do this.',
     )
   }
-  const gz = gzipSync(readFileSync(resolve(DIST, chunk))).length
+  const gz = carrying.reduce((n, f) => n + gzipSync(readFileSync(resolve(DIST, f))).length, 0)
   if (gz > MAX_TRACKER_GZIP) {
     fail(
-      `the tracker chunk ${chunk} is ${(gz / 1024).toFixed(1)}KB gzipped, over the ${MAX_TRACKER_GZIP / 1024}KB budget.`,
+      `analytics is ${(gz / 1024).toFixed(1)}KB gzipped across ${carrying.length} chunk(s), ` +
+        `over the ${MAX_TRACKER_GZIP / 1024}KB budget.`,
     )
   } else {
-    console.log(`Analytics: ${chunk}, ${(gz / 1024).toFixed(1)}KB gzipped`)
+    console.log(
+      `Analytics: ${(gz / 1024).toFixed(1)}KB gzipped across ${carrying.length} chunk(s) ` +
+        `(${carrying.join(', ')})`,
+    )
   }
 }
 

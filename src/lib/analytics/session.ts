@@ -29,6 +29,7 @@ import type { Route, SessionContext } from './types'
 
 const SID_KEY = 'ya_sid'
 const VID_KEY = 'ya_vid'
+const OPTOUT_KEY = 'ya_optout'
 
 /** Reads the endpoint from the build env. Unset — local dev, a fork, a preview
     someone spun up — and the whole tracker no-ops rather than 404ing in a loop. */
@@ -49,8 +50,8 @@ export function optedOut(): boolean {
     if (nav.globalPrivacyControl === true) return true
     if (nav.doNotTrack === '1' || nav.msDoNotTrack === '1') return true
     if (nav.webdriver) return true
-    // An explicit local kill switch: localStorage.ya_optout = '1'.
-    if (localStorage.getItem('ya_optout') === '1') {
+    // The visitor's own refusal, set by setOptedOut() from the privacy dialog.
+    if (localStorage.getItem(OPTOUT_KEY) === '1') {
       // Refusing has to remove what was already stored, or opting out leaves
       // the durable identifier sitting on the device doing nothing -- the worst
       // of both: still stored, no longer useful, and contradicting the notice.
@@ -65,21 +66,24 @@ export function optedOut(): boolean {
   return false
 }
 
+/** `randomUUID` needs a secure context, which every real visit is; the fallback
+    exists for `http://` on a LAN address during development. */
+const newId = (): string =>
+  typeof crypto?.randomUUID === 'function'
+    ? crypto.randomUUID()
+    : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`
+
 /**
  * The id for this tab.
  *
  * Reused within the tab so a reload does not read as a second visitor, thrown
- * away with it. `randomUUID` needs a secure context, which every real visit is;
- * the fallback exists for `http://` on a LAN address during development.
+ * away with it.
  */
 export function sessionId(): string {
   try {
     const existing = sessionStorage.getItem(SID_KEY)
     if (existing) return existing
-    const id =
-      typeof crypto?.randomUUID === 'function'
-        ? crypto.randomUUID()
-        : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`
+    const id = newId()
     sessionStorage.setItem(SID_KEY, id)
     return id
   } catch {
@@ -104,6 +108,30 @@ export function forget(): void {
 }
 
 /**
+ * Thirteen months, and it is not an arbitrary number.
+ *
+ * CNIL's audience-measurement exemption (Délibération 2020-092) is the closest
+ * thing in the EU to a rule that lets a site like this one measure returning
+ * visitors without a consent banner, and it caps the identifier's life at
+ * thirteen months with no renewal on each visit. Data derived from it is capped
+ * at twenty-five; the retention job here deletes at ninety days, so that half
+ * is not close.
+ *
+ * localStorage has no expiry of its own -- it is forever until someone clears
+ * their browser -- so the expiry is stored beside the id and enforced on read.
+ * Forever was the wrong answer whatever the law said.
+ */
+const VID_MAX_AGE_MS = 13 * 30 * 24 * 60 * 60 * 1000
+
+interface StoredVid {
+  id: string
+  /** Set once, at creation. Deliberately never extended -- renewing it on each
+      visit is the specific thing the exemption rules out, and it is also how a
+      thirteen-month identifier quietly becomes a permanent one. */
+  exp: number
+}
+
+/**
  * The id for this browser, across visits.
  *
  * Deliberately the only thing kept: no first-seen date, no visit counter, no
@@ -118,16 +146,53 @@ export function forget(): void {
  */
 export function visitorId(): string | undefined {
   try {
-    const existing = localStorage.getItem(VID_KEY)
-    if (existing) return existing
-    const id =
-      typeof crypto?.randomUUID === 'function'
-        ? crypto.randomUUID()
-        : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`
-    localStorage.setItem(VID_KEY, id)
-    return id
+    const raw = localStorage.getItem(VID_KEY)
+    if (raw) {
+      const stored = JSON.parse(raw) as Partial<StoredVid>
+      // A live id inside its window is returned untouched: reading must not
+      // extend it.
+      if (stored?.id && typeof stored.exp === 'number' && Date.now() < stored.exp) {
+        return stored.id
+      }
+      // Expired, or written by an older version of this code that stored a bare
+      // string with no expiry. Either way it is replaced rather than migrated --
+      // an id with no end date is the thing being fixed.
+    }
+    const fresh: StoredVid = { id: newId(), exp: Date.now() + VID_MAX_AGE_MS }
+    localStorage.setItem(VID_KEY, JSON.stringify(fresh))
+    return fresh.id
   } catch {
     return undefined
+  }
+}
+
+/** Whether measuring is currently refused on this device. */
+export function isOptedOut(): boolean {
+  try {
+    return localStorage.getItem(OPTOUT_KEY) === '1'
+  } catch {
+    return false
+  }
+}
+
+/**
+ * Refuse, or withdraw the refusal.
+ *
+ * A real control rather than a console incantation. CNIL's exemption is
+ * conditional on a mechanism the visitor can actually use to object, and
+ * "open the developer tools and type this" is not one. PrivacyModal renders it.
+ */
+export function setOptedOut(on: boolean): void {
+  try {
+    if (on) {
+      localStorage.setItem(OPTOUT_KEY, '1')
+      forget()
+    } else {
+      localStorage.removeItem(OPTOUT_KEY)
+    }
+  } catch {
+    // Nothing to record the choice in. The tracker treats an unreadable store
+    // as a refusal anyway, so the visitor gets the outcome they asked for.
   }
 }
 

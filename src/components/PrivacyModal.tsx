@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { privacy, privacyUpdated } from '../data/privacy'
 import { useDialogTransition, dialogChrome, dialogCloseButton } from '../lib/useDialogTransition'
@@ -16,6 +16,7 @@ import { useScrollLock } from '../lib/useScrollLock'
  * open, one click from the footer.
  */
 const PrivacyModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
+  const [optedOut, setOptedOut] = useState<boolean | null>(null)
   const { render, shown } = useDialogTransition(open)
   const chrome = dialogChrome(shown)
   const panelRef = useRef<HTMLDivElement>(null)
@@ -30,6 +31,32 @@ const PrivacyModal = ({ open, onClose }: { open: boolean; onClose: () => void })
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [open, onClose])
+
+  // Read on open rather than on mount: the dialog is mounted for the life of
+  // the page, and the answer can change in another tab.
+  useEffect(() => {
+    if (!open) return
+    let cancelled = false
+    import('../lib/analytics/session')
+      .then((m) => !cancelled && setOptedOut(m.isOptedOut()))
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+  }, [open])
+
+  const toggle = async () => {
+    const next = !optedOut
+    // Optimistic: the switch is the visitor's answer to a question about their
+    // own device, and it should never appear to hesitate.
+    setOptedOut(next)
+    try {
+      const m = await import('../lib/analytics/session')
+      m.setOptedOut(next)
+    } catch {
+      setOptedOut(!next)
+    }
+  }
 
   if (!render) return null
 
@@ -65,9 +92,27 @@ const PrivacyModal = ({ open, onClose }: { open: boolean; onClose: () => void })
               ))}
             </section>
           ))}
-          <p className="text-gray-500 text-[11px] pt-1 border-t border-gray-800">
-            Last updated {privacyUpdated}.
-          </p>
+          <div className="pt-1 border-t border-gray-800">
+            {optedOut !== null && (
+              <button
+                onClick={toggle}
+                aria-pressed={optedOut}
+                className={`w-full mt-3 px-4 py-2.5 rounded-lg border text-sm transition-colors ${
+                  optedOut
+                    ? 'border-gray-800 bg-surface-0 text-gray-300 hover:border-gray-700'
+                    : 'border-accent-500/30 bg-accent-500/10 text-ink hover:border-accent-500/50'
+                }`}
+              >
+                {optedOut ? 'Measuring is off. Turn it back on' : 'Turn measuring off for this browser'}
+              </button>
+            )}
+            <p className="text-gray-500 text-[11px] mt-3">
+              {optedOut
+                ? 'Nothing is being recorded, and both identifiers have been deleted from this browser.'
+                : 'Turning it off deletes both identifiers straight away and stops all recording on this browser.'}
+            </p>
+            <p className="text-gray-500 text-[11px] mt-2">Last updated {privacyUpdated}.</p>
+          </div>
         </div>
       </div>
     </div>,

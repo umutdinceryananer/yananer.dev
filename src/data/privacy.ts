@@ -50,14 +50,15 @@ export const privacy: PrivacySection[] = [
     body: [
       'Two random identifiers, and nothing else. Neither is a cookie, and neither is sent anywhere except this site.',
       'The first lasts until you close the tab. It keeps one visit together, so "how far down did this person read" has an answer.',
-      'The second stays until you clear your browser data. It is what lets this site tell that two visits came from the same browser -- so I can see whether people come back, rather than only how many arrive. It cannot tell who you are, and it is not joined to anything outside this site. But it is a durable identifier, and that is a real thing to store on someone else\'s device, so it is named here rather than buried.',
+      'The second lasts thirteen months and then a new one replaces it. Its clock is set once, when it is created, and visiting again does not push it back. It is what lets this site tell that two visits came from the same browser -- so I can see whether people come back, rather than only how many arrive. It cannot tell who you are, and it is not joined to anything outside this site. But it is a durable identifier, and that is a real thing to store on someone else\'s device, so it is named here rather than buried.',
+      'Nothing collected through it is kept longer than ninety days.',
     ],
   },
   {
     heading: 'Turning it off',
     body: [
       'If your browser sends Global Privacy Control or Do Not Track, nothing is collected at all and neither identifier is created -- no setting needed here.',
-      "Otherwise, run localStorage.ya_optout = '1' in the browser console. Measuring stops, and both identifiers are deleted from your browser straight away.",
+      'Otherwise, use the switch at the bottom of this page. Measuring stops on this browser, and both identifiers are deleted straight away.',
       'Clearing your site data for this domain also removes them.',
     ],
   },

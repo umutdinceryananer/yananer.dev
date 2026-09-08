@@ -1,6 +1,10 @@
-import { useState } from 'react'
+import { Suspense, lazy, useState } from 'react'
 import { profile } from '../data/profile'
-import PrivacyModal from './PrivacyModal'
+
+// Lazy, because the notice and its text are ~5KB that every visitor would
+// otherwise download so that roughly none of them can read it. It is one click
+// behind a footer link; a fetch at that moment is imperceptible.
+const PrivacyModal = lazy(() => import('./PrivacyModal'))
 
 const Footer = ({ className = '' }: { className?: string }) => {
   const [privacyOpen, setPrivacyOpen] = useState(false)
@@ -38,7 +42,11 @@ const Footer = ({ className = '' }: { className?: string }) => {
           </div>
         </div>
       </div>
-      <PrivacyModal open={privacyOpen} onClose={() => setPrivacyOpen(false)} />
+      {/* No fallback: the dialog animates itself in, and a spinner for a
+          same-origin chunk would flash and leave. */}
+      <Suspense fallback={null}>
+        {privacyOpen && <PrivacyModal open onClose={() => setPrivacyOpen(false)} />}
+      </Suspense>
     </footer>
   )
 }
