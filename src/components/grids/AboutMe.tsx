@@ -4,6 +4,7 @@ import McpModal from '../McpModal'
 import profilePhoto from '../../assets/umut-foto.jpg'
 import { profile } from '../../data/profile'
 import { usePrefersReducedMotion } from '../../lib/usePrefersReducedMotion'
+import { action } from '../../lib/analytics/emit'
 
 const SPINNER_VERBS = [
   'Accomplishing', 'Actioning', 'Actualizing', 'Architecting', 'Baking',
@@ -129,7 +130,10 @@ const AboutMe = () => {
         <div className="bg-surface-1 rounded-xl p-4 border border-gray-800">
           <div className="grid grid-cols-3 gap-2">
             <button
-              onClick={() => setIsEmailPopupOpen(true)}
+              onClick={() => {
+                action('contact.open')
+                setIsEmailPopupOpen(true)
+              }}
               aria-label="Send me an email"
               className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-accent-500 to-accent-600 hover:from-accent-600 hover:to-accent-700 text-accent-fg rounded-lg transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-accent-500/25 border border-accent-400/50"
             >
@@ -169,7 +173,10 @@ const AboutMe = () => {
           </div>
 
           <button
-            onClick={() => setMcpOpen(true)}
+            onClick={() => {
+              action('mcp.open')
+              setMcpOpen(true)
+            }}
             aria-label="Connect your AI to this site"
             className="group mt-3 w-full flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg border border-accent-500/25 bg-gradient-to-r from-accent-500/10 to-transparent hover:from-accent-500/20 hover:border-accent-500/50 transition-all duration-300"
           >

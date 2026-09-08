@@ -1,4 +1,5 @@
 import { setTheme, useTheme, type ResolvedTheme } from '../lib/useTheme'
+import { action } from '../lib/analytics/emit'
 
 /**
  * Toggles between light and dark.
@@ -49,7 +50,10 @@ const ThemeToggle = () => {
     <div className="relative group">
       <button
         type="button"
-        onClick={() => setTheme(next)}
+        onClick={() => {
+          action('theme.set', next)
+          setTheme(next)
+        }}
         // No `title`. The browser's own tooltip would open alongside the one
         // below it, in a style nothing else on the site uses and after a delay
         // nothing else on the site waits for.
