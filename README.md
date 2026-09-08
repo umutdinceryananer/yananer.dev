@@ -190,9 +190,17 @@ managed in Cloudflare. The remote MCP server is a separate Cloudflare Worker —
 
 First-party, written here rather than bought: a tracker in the bundle
 (`src/lib/analytics/`), a collector as a Pages Function (`functions/api/collect.ts`), and
-D1 behind it. No cookies, no third-party script, no cross-visit identity, and nothing
-stored that is derived from an IP. What it collects is written out for visitors in
-`src/data/privacy.ts`, shown from the footer and generated to `/privacy/`.
+D1 behind it. No cookies, no third-party script, and nothing stored that is derived from
+an IP. What it collects is written out for visitors in `src/data/privacy.ts`, shown from
+the footer and generated to `/privacy/`.
+
+There are two identities. `ya_sid` is per-tab and dies with the tab; it holds one visit
+together. `ya_vid` is per-browser and outlives the visit, which is what makes *does anyone
+come back* answerable — and it is the one with real consent weight, since joining two
+visits to one browser is what those rules are actually about. The first version of this
+system deliberately had no such identifier; that was reversed on purpose, and both
+`session.ts` and the privacy notice say so rather than describing the newer design as if
+it had always been the plan. Opting out deletes both.
 
 It exists for one number Cloudflare Web Analytics cannot give: that product counts
 document loads, and moving between `#about` and `#work` is a `hashchange`, so *does

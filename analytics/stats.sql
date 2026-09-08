@@ -3,7 +3,7 @@
 --   npm run stats
 --
 -- There is no web dashboard yet on purpose: a dashboard built before any data
--- exists is a dashboard designed around guesses. These four queries answer the
+-- exists is a dashboard designed around guesses. These queries answer the
 -- questions the system was actually built for, and the shape of their answers
 -- is what the real dashboard should be designed from.
 --
@@ -59,6 +59,32 @@ FROM batch b, json_each(b.events) e
 WHERE json_extract(e.value, '$.t') = 'view'
 GROUP BY b.day, route
 ORDER BY b.day DESC, route;
+
+-- ── Q2b. Does anyone come back? ─────────────────────────────────────────────
+--
+-- The reason `vid` exists. Counted over browsers that reported one -- a visitor
+-- whose browser refuses storage, or who has opted out, sends no vid and simply
+-- is not in this table. So read `browsers` as "browsers we could count", not as
+-- "everyone", and expect it to sit below the session count in Q1.
+--
+-- Give this months before believing the shape of it. A returning visitor is by
+-- definition someone who came back later, so early data undercounts by exactly
+-- the people who have not returned yet.
+SELECT
+  COUNT(*)                                          AS browsers,
+  SUM(CASE WHEN visits = 1 THEN 1 ELSE 0 END)       AS visited_once,
+  SUM(CASE WHEN visits > 1 THEN 1 ELSE 0 END)       AS came_back,
+  MAX(visits)                                       AS most_visits,
+  MAX(span_days)                                    AS longest_gap_days
+FROM (
+  SELECT
+    vid,
+    COUNT(DISTINCT sid)                             AS visits,
+    CAST(julianday(MAX(day)) - julianday(MIN(day)) AS INT) AS span_days
+  FROM batch
+  WHERE vid IS NOT NULL
+  GROUP BY vid
+);
 
 -- ── Q3. How far down does anyone get, and how long do they really read? ─────
 --

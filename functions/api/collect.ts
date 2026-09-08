@@ -50,7 +50,7 @@ interface IncomingCf {
 }
 
 /** Must match src/lib/analytics/types.ts. scripts/audit-analytics.ts enforces it. */
-const PROTOCOL = 2
+const PROTOCOL = 3
 
 /** sendBeacon's own ceiling. Anything larger did not come from our tracker. */
 const MAX_BODY = 64 * 1024
@@ -284,6 +284,10 @@ export const onRequest = async ({ request, env }: EventContext): Promise<Respons
   const sid = str(body.sid, 64)
   const seq = int(body.seq, 0, 100_000)
   if (!sid || sid.length < 8 || seq === null) return done(400)
+  // Optional by design: absent when the visitor's browser will not store it, or
+  // when they have opted out. A batch without one is still a good batch.
+  const vid = body.vid === undefined ? null : str(body.vid, 64)
+  if (vid !== null && vid.length < 8) return done(400)
   if (!Array.isArray(body.events) || !body.events.length) return done(400)
 
   const events = body.events
@@ -308,12 +312,13 @@ export const onRequest = async ({ request, env }: EventContext): Promise<Respons
   // same payload twice, and the duplicate is dropped at the storage layer
   // rather than costing a read to detect.
   await env.ANALYTICS_DB.prepare(
-    'INSERT OR IGNORE INTO batch (day, rcv, sid, seq, ctx, events) VALUES (?, ?, ?, ?, ?, ?)',
+    'INSERT OR IGNORE INTO batch (day, rcv, sid, vid, seq, ctx, events) VALUES (?, ?, ?, ?, ?, ?, ?)',
   )
     .bind(
       now.toISOString().slice(0, 10),
       now.getTime(),
       sid,
+      vid,
       seq,
       ctx ? JSON.stringify(ctx) : null,
       JSON.stringify(events),

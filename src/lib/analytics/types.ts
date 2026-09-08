@@ -16,7 +16,7 @@
  */
 
 /** Bump on any breaking shape change; the collector rejects payloads it predates. */
-export const PROTOCOL = 2
+export const PROTOCOL = 3
 
 /** Hash routes, normalised to the two the site actually has. */
 export type Route = 'about' | 'work'
@@ -218,9 +218,24 @@ export type AnalyticsEvent =
 
 export interface Batch {
   v: typeof PROTOCOL
-  /** Anonymous, per-tab, regenerated on every new tab. Never persisted past
-      the tab's life, so it cannot link two visits to the same person. */
+  /** Per-tab. Dies with the tab, and is what holds one visit together. */
   sid: string
+  /**
+   * Per-browser, and the one thing here that outlives the visit.
+   *
+   * Sent on the first batch of a session only -- it is stable, so repeating it
+   * would be pure payload. The collector counts visits per vid; the client
+   * stores nothing but the id itself, so "is this a returning visitor" is a
+   * question answered in SQL rather than one the page has to track.
+   *
+   * This is a real change in what the site holds, and it was not the original
+   * design: an earlier version of this contract had no such field and said so
+   * in as many words. Linking two visits to one browser is the thing consent
+   * rules are actually about, which is why it is optional here -- it is absent
+   * whenever storage is unavailable or the visitor has refused, and the tracker
+   * still works without it.
+   */
+  vid?: string
   /** Batch counter. Lets the collector drop a beacon the browser retried. */
   seq: number
   ctx?: SessionContext

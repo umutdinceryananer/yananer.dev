@@ -3,26 +3,32 @@ import type { Route, SessionContext } from './types'
 /**
  * Session identity, and the decision about whether to collect at all.
  *
- * The identity is deliberately the weakest thing that still answers a useful
- * question. It is a random id in `sessionStorage`: it dies with the tab, it is
- * not a cookie, it is never sent to any origin but our own collector, and there
- * is no second identifier anywhere that could stitch two of them together. So
- * "how far do people scroll on the Work page" is answerable and "has this
- * person been here before" is not, which is the trade this site wants.
+ * There are two identities here, and they answer different questions.
  *
- * What that does and does not buy, stated honestly rather than optimistically:
- * it means there is no personal data to hold, no profile to build and nothing
- * to hand over on request. It does NOT mean nothing is written to the device —
- * ePrivacy Art. 5(3) is read technology-neutrally and covers sessionStorage as
- * readily as it covers a cookie. The defensible position here is that the write
- * is a single opaque tab-lifetime value, that the visitor is told about it on
- * the privacy page, and that every signal a visitor can send to refuse is
- * honoured before anything is stored at all — see optedOut() below, which runs
- * first. An earlier version of this comment claimed the choice put the site
- * outside consent-banner territory outright; that was further than the law goes.
+ * `ya_sid` is per-tab and dies with the tab. It is what holds one visit
+ * together, so "how far down did this person read" has an answer.
+ *
+ * `ya_vid` is per-browser and outlives the visit. It is what makes "has this
+ * person been here before" answerable -- and it is the one that actually
+ * matters legally, because linking two visits to one browser is the thing
+ * consent rules are about. An earlier version of this file did not have it, and
+ * said in as many words that not having it was the trade this site wanted. That
+ * was reversed deliberately: the returning-visitor question turned out to be
+ * worth the cost. This comment records the reversal rather than quietly
+ * describing the new state as though it were always the plan.
+ *
+ * What is still true, and worth keeping true: the id is opaque and random, it
+ * is sent nowhere but this site's own collector, the collector never stores
+ * anything derived from an IP, and nothing about it is shared. What is no
+ * longer true is that two visits cannot be joined up. They can. src/data/
+ * privacy.ts says so plainly, because a notice that describes the old design
+ * would be worse than no notice at all.
+ *
+ * optedOut() runs before either id is read, and clears both when it fires.
  */
 
-const KEY = 'ya_sid'
+const SID_KEY = 'ya_sid'
+const VID_KEY = 'ya_vid'
 
 /** Reads the endpoint from the build env. Unset — local dev, a fork, a preview
     someone spun up — and the whole tracker no-ops rather than 404ing in a loop. */
@@ -43,8 +49,14 @@ export function optedOut(): boolean {
     if (nav.globalPrivacyControl === true) return true
     if (nav.doNotTrack === '1' || nav.msDoNotTrack === '1') return true
     if (nav.webdriver) return true
-    // An explicit local kill switch, for me: localStorage.ya_optout = '1'.
-    if (localStorage.getItem('ya_optout') === '1') return true
+    // An explicit local kill switch: localStorage.ya_optout = '1'.
+    if (localStorage.getItem('ya_optout') === '1') {
+      // Refusing has to remove what was already stored, or opting out leaves
+      // the durable identifier sitting on the device doing nothing -- the worst
+      // of both: still stored, no longer useful, and contradicting the notice.
+      forget()
+      return true
+    }
   } catch {
     // Storage throws outright in some privacy modes. A visitor locked down
     // enough to hit that is a visitor to leave alone.
@@ -62,16 +74,60 @@ export function optedOut(): boolean {
  */
 export function sessionId(): string {
   try {
-    const existing = sessionStorage.getItem(KEY)
+    const existing = sessionStorage.getItem(SID_KEY)
     if (existing) return existing
     const id =
       typeof crypto?.randomUUID === 'function'
         ? crypto.randomUUID()
         : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`
-    sessionStorage.setItem(KEY, id)
+    sessionStorage.setItem(SID_KEY, id)
     return id
   } catch {
     return `eph-${Math.random().toString(36).slice(2, 12)}`
+  }
+}
+
+/**
+ * Removes both identities from the device. Safe to call at any time.
+ *
+ * Used by the opt-out path, and worth having as an export: it is the honest
+ * implementation of the sentence in the privacy notice that says the visitor
+ * can make this stop.
+ */
+export function forget(): void {
+  try {
+    localStorage.removeItem(VID_KEY)
+    sessionStorage.removeItem(SID_KEY)
+  } catch {
+    // Nothing to remove in an environment that will not let us look.
+  }
+}
+
+/**
+ * The id for this browser, across visits.
+ *
+ * Deliberately the only thing kept: no first-seen date, no visit counter, no
+ * last-seen timestamp. The collector can derive every one of those from the
+ * rows it already has, and each one stored here would be another fact sitting
+ * on someone else's device for no gain.
+ *
+ * Returns undefined rather than throwing when storage is unavailable -- a
+ * locked-down browser still gets measured within the visit, it just does not
+ * get counted as returning. That is the right way round: the durable identifier
+ * is the optional part.
+ */
+export function visitorId(): string | undefined {
+  try {
+    const existing = localStorage.getItem(VID_KEY)
+    if (existing) return existing
+    const id =
+      typeof crypto?.randomUUID === 'function'
+        ? crypto.randomUUID()
+        : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`
+    localStorage.setItem(VID_KEY, id)
+    return id
+  } catch {
+    return undefined
   }
 }
 

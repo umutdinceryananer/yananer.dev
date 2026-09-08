@@ -11,7 +11,7 @@
  */
 
 import { PROTOCOL, type AnalyticsEvent, type Bands, type Batch, type Route } from './types'
-import { ENDPOINT, context, optedOut, routeFromHash, sessionId } from './session'
+import { ENDPOINT, context, optedOut, routeFromHash, sessionId, visitorId } from './session'
 import { ACTION_EVENT, type ActionDetail } from './emit'
 
 const BANDS = 10
@@ -95,6 +95,12 @@ export function start(): () => void {
     }
     if (!ctxSent) {
       batch.ctx = context()
+      // Both ride the first batch and never again: they are stable for the
+      // session, so repeating them would be payload spent on nothing. `vid` is
+      // simply absent when storage is unavailable -- the visit is still
+      // measured, it just does not join up with any other.
+      const vid = visitorId()
+      if (vid) batch.vid = vid
       ctxSent = true
     }
     const body = JSON.stringify(batch)

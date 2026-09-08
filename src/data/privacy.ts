@@ -10,6 +10,12 @@
  * Deliberately short, and deliberately not shoved in anyone's face: one small
  * link in the footer. The obligation is that someone looking for this can find
  * it, not that everyone has to read it before seeing the page.
+ *
+ * Written to be read, not to be survived -- plain sentences, and it names the
+ * durable identifier rather than describing it as a technical detail. That
+ * identifier was added after the first version of this file, which promised the
+ * opposite; a notice that quietly kept describing the older, cleaner design
+ * would be worse than having none.
  */
 
 import { profile } from './profile'
@@ -27,28 +33,32 @@ export const privacy: PrivacySection[] = [
     body: [
       'Which of the two views you open, how long each was actually on screen, how far down you scrolled, and the names of things you click -- "the contact button", not where on the screen your cursor was.',
       'Once per visit: screen and window size, timezone, browser language, colour theme, and the site that linked you here (its address only, never the search terms or tracking tags on the end of it).',
+      'Whether you have been here before, and roughly how long ago. See below for how.',
     ],
   },
   {
     heading: 'What is not',
     body: [
-      'No cookies, and no advertising or third-party analytics of any kind.',
+      'No advertising, and no third-party analytics of any kind. Nothing here is shared with anyone.',
       'Your IP address is never stored. The server has to see it to answer the request; nothing is written down from it.',
       'If you use the contact form, the names of the fields you touched are recorded -- never what you typed into them.',
-      'There is no way to tell that two visits came from the same person. The identifier below is thrown away when you close the tab, and nothing else is kept that could join them up.',
+      'Nothing here has your name, your address, or anything you could be looked up by.',
     ],
   },
   {
-    heading: 'The one thing stored on your device',
+    heading: 'What is stored on your device',
     body: [
-      'A random identifier, held in your browser for as long as the tab is open and deleted when you close it. It is not a cookie and it is not sent anywhere except this site. Its only job is to keep one visit together so "how far down did this person read" has an answer.',
+      'Two random identifiers, and nothing else. Neither is a cookie, and neither is sent anywhere except this site.',
+      'The first lasts until you close the tab. It keeps one visit together, so "how far down did this person read" has an answer.',
+      'The second stays until you clear your browser data. It is what lets this site tell that two visits came from the same browser -- so I can see whether people come back, rather than only how many arrive. It cannot tell who you are, and it is not joined to anything outside this site. But it is a durable identifier, and that is a real thing to store on someone else\'s device, so it is named here rather than buried.',
     ],
   },
   {
     heading: 'Turning it off',
     body: [
-      'If your browser sends Global Privacy Control or Do Not Track, nothing is collected at all -- no setting needed here.',
-      "Otherwise, run localStorage.ya_optout = '1' in the browser console and this site will stop measuring you.",
+      'If your browser sends Global Privacy Control or Do Not Track, nothing is collected at all and neither identifier is created -- no setting needed here.',
+      "Otherwise, run localStorage.ya_optout = '1' in the browser console. Measuring stops, and both identifiers are deleted from your browser straight away.",
+      'Clearing your site data for this domain also removes them.',
     ],
   },
   {
