@@ -12,7 +12,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "db:init": "npx --yes wrangler@4 d1 execute ANALYTICS_DB --config analytics/wrangler.toml --remote --file analytics/schema.sql",
-    "stats": "tsx scripts/stats.ts"
+    "stats": "tsx scripts/stats.ts",
+    "dashboard": "tsx scripts/dashboard.ts"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",

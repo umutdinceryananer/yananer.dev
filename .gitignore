@@ -67,3 +67,6 @@ debug.log*
 
 # Wrangler local dev state (miniflare sqlite, bundles, tmp)
 .wrangler
+
+# Generated analytics dashboard (local, reads production data)
+.analytics

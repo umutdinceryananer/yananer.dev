@@ -1,78 +1,15 @@
-// `npm run stats` -- the dashboard, until there is a real one.
+// `npm run stats` -- the same numbers as the dashboard, in a terminal.
 //
-// This exists because `wrangler d1 execute --file` is not usable for this:
-// given analytics/stats.sql it reported "2 commands executed successfully" for
-// a file holding six, silently skipping four of them, and printed what it did
-// run as raw JSON. A reporting tool that quietly drops two thirds of its report
-// is worse than no tool.
-//
-// So the splitting happens here, one --command per query, and the output is a
-// table. Extra arguments are passed through to wrangler, which is how the local
-// database gets queried during development:
+// Useful when you want one number in a shell, or want to pipe it. For the
+// readable version, `npm run dashboard`. Both read the same queries through
+// scripts/d1.ts, so the two can never disagree.
 //
 //   npm run stats
 //   npm run stats -- --local --persist-to .wrangler/state
 
-import { readFileSync } from 'fs'
-import { execFileSync } from 'child_process'
+import { runAll, type Row } from './d1'
 
-const CONFIG = 'analytics/wrangler.toml'
-const passthrough = process.argv.slice(2)
-// --remote unless the caller asked for something else. Production is the
-// default because that is where the data anyone wants to read lives.
-const location = passthrough.some((a) => a === '--local' || a === '--remote') ? [] : ['--remote']
-
-interface Block {
-  title: string
-  sql: string
-}
-
-/** Splits the file on its own section headers, then strips comments so what
-    reaches wrangler is only SQL. */
-function blocks(): Block[] {
-  const raw = readFileSync('analytics/stats.sql', 'utf8')
-  const out: Block[] = []
-  let title = ''
-  let buffer: string[] = []
-
-  const flush = () => {
-    const sql = buffer.join('\n').trim().replace(/;$/, '').trim()
-    if (sql) out.push({ title, sql })
-    buffer = []
-  }
-
-  for (const line of raw.split('\n')) {
-    const header = line.match(/^-- ── (.+?) ─+$/)
-    if (header) {
-      flush()
-      title = header[1]
-      continue
-    }
-    if (line.trim().startsWith('--')) continue
-    buffer.push(line)
-  }
-  flush()
-  return out
-}
-
-function run(sql: string): Record<string, unknown>[] {
-  // npx rather than a devDependency: the site's build never needs wrangler, and
-  // installing it would add weight to every Cloudflare Pages build for the sake
-  // of two commands run by hand. Pinned to a major so a future release cannot
-  // change the flags underneath this.
-  const raw = execFileSync(
-    'npx',
-    ['--yes', 'wrangler@4', 'd1', 'execute', 'ANALYTICS_DB', '--config', CONFIG, ...location, ...passthrough, '--json', '--command', sql],
-    { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 },
-  )
-  // wrangler prints a banner before the JSON on some paths; take from the first
-  // bracket rather than assuming the whole of stdout parses.
-  const start = raw.indexOf('[')
-  const parsed = JSON.parse(raw.slice(start)) as { results?: Record<string, unknown>[] }[]
-  return parsed.flatMap((r) => r.results ?? [])
-}
-
-function table(rows: Record<string, unknown>[]): void {
+function table(rows: Row[]): void {
   if (!rows.length) {
     console.log('  (no rows yet)')
     return
@@ -86,18 +23,16 @@ function table(rows: Record<string, unknown>[]): void {
   for (const r of rows) console.log(line(cols.map((c) => cell(r[c]))))
 }
 
-let failed = 0
-for (const { title, sql } of blocks()) {
-  console.log(`\n${title}`)
-  try {
-    table(run(sql))
-  } catch (err) {
-    failed += 1
-    console.log(`  ! ${err instanceof Error ? err.message.split('\n')[0] : String(err)}`)
-  }
+const sections = runAll(process.argv.slice(2))
+for (const s of sections) {
+  console.log(`\n${s.title}`)
+  if (s.error) console.log(`  ! ${s.error}`)
+  else table(s.rows)
 }
 console.log()
-if (failed) {
+
+const failed = sections.filter((s) => s.error)
+if (failed.length) {
   // Loud, because a partly-run report reads like a complete one.
-  throw new Error(`${failed} of the queries in analytics/stats.sql did not run.`)
+  throw new Error(`${failed.length} of the queries in analytics/stats.sql did not run.`)
 }
