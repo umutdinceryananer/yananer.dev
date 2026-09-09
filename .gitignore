@@ -64,3 +64,6 @@ debug.log*
 # Internal planning docs (keep out of the public repo)
 /agent-hooks-brief.md
 /entity-visibility-brief.md
+
+# Wrangler local dev state (miniflare sqlite, bundles, tmp)
+.wrangler
