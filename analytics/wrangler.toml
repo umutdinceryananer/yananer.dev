@@ -20,4 +20,4 @@ database_name = "yananer-analytics"
 # Filled in from the output of `npx wrangler d1 create yananer-analytics`.
 # Left as-is, wrangler fails loudly on the first --remote command rather than
 # quietly reading the wrong database.
-database_id = "PASTE_DATABASE_ID_HERE"
+database_id = "ed4ec841-b217-44b1-b1ea-d596ce336091"

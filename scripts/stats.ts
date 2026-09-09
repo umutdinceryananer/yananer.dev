@@ -56,9 +56,13 @@ function blocks(): Block[] {
 }
 
 function run(sql: string): Record<string, unknown>[] {
+  // npx rather than a devDependency: the site's build never needs wrangler, and
+  // installing it would add weight to every Cloudflare Pages build for the sake
+  // of two commands run by hand. Pinned to a major so a future release cannot
+  // change the flags underneath this.
   const raw = execFileSync(
     'npx',
-    ['wrangler', 'd1', 'execute', 'ANALYTICS_DB', '--config', CONFIG, ...location, ...passthrough, '--json', '--command', sql],
+    ['--yes', 'wrangler@4', 'd1', 'execute', 'ANALYTICS_DB', '--config', CONFIG, ...location, ...passthrough, '--json', '--command', sql],
     { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 },
   )
   // wrangler prints a banner before the JSON on some paths; take from the first
