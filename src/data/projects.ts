@@ -14,6 +14,20 @@
 // (recursive git tree) — do not edit paths by hand without re-verifying.
 
 export interface Project {
+  /**
+   * Permanent. Never edit one of these.
+   *
+   * It is the key analytics rows are written against and the JSON-LD @id a
+   * search engine has already indexed, so changing it does two invisible kinds
+   * of damage at once: the project's click history detaches and starts again
+   * from zero under a new key, and a crawler sees the old entity vanish and a
+   * new one appear. `name` is the part that is free to change -- rename the
+   * heading as often as you like and none of that moves.
+   *
+   * Seeded from each project's name as it stood when analytics landed, so
+   * nothing shifted on the day it was introduced.
+   */
+  id: string
   name: string
   kind: 'repo' | 'oss-contribution'
   /** Repo URL, or the PR URL for an oss-contribution. Omitted for private work. */
@@ -58,6 +72,7 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    id: 'government-citizen-services-voice-agent',
     name: 'government-citizen-services-voice-agent',
     kind: 'repo',
     repoUrl: 'https://github.com/umutdinceryananer/government-citizen-services-voice-agent',
@@ -80,6 +95,7 @@ export const projects: Project[] = [
     note: 'A portfolio/demo system: the government back-office API is mocked, so it is not connected to real government services or live citizen data. The agent orchestration, RAG, and phone/voice plumbing are real; treat the end-to-end flow as a demonstration, not production.',
   },
   {
+    id: 'fx-risk-engine',
     name: 'fx-risk-engine',
     kind: 'repo',
     repoUrl: 'https://github.com/umutdinceryananer/fx-risk-engine',
@@ -102,6 +118,7 @@ export const projects: Project[] = [
     isVerifiable: true,
   },
   {
+    id: 'my-game-theory-lab',
     name: 'my-game-theory-lab',
     kind: 'repo',
     repoUrl: 'https://github.com/umutdinceryananer/my-game-theory-lab',
@@ -125,6 +142,7 @@ export const projects: Project[] = [
     isVerifiable: true,
   },
   {
+    id: 'mobile-game-analytics-pipeline',
     name: 'mobile-game-analytics-pipeline',
     kind: 'repo',
     repoUrl: 'https://github.com/umutdinceryananer/mobile-game-analytics-pipeline',
@@ -150,6 +168,7 @@ export const projects: Project[] = [
     note: 'Data provenance: the base telemetry is the real Cookie Cats (Kaggle) dataset; the user-acquisition and monetization fields (acquisition_channel, CAC/ad spend, revenue) are SYNTHETIC enrichment. So retention metrics rest on real data while ROI/ROAS rest on synthetic fields — always say so when discussing numbers.',
   },
   {
+    id: 'petlyst-web',
     name: 'petlyst-web',
     kind: 'repo',
     repoUrl: 'https://github.com/PetlystHQ/petlyst-web',
@@ -170,6 +189,7 @@ export const projects: Project[] = [
     note: 'Archived on GitHub and no longer developed — it shipped as a CTIS senior project and stopped there; treat it as finished work, not something in progress. Built with a team under the PetlystHQ org, which makes it the best public signal of collaborative work (vs. the mostly-solo repos above).',
   },
   {
+    id: 'spotify-playlist-watcher',
     name: 'spotify-playlist-watcher',
     kind: 'repo',
     repoUrl: 'https://github.com/umutdinceryananer/spotify-playlist-watcher',
@@ -188,6 +208,7 @@ export const projects: Project[] = [
     isVerifiable: true,
   },
   {
+    id: 'slack-workflow-engine',
     name: 'slack-workflow-engine',
     kind: 'repo',
     repoUrl: 'https://github.com/umutdinceryananer/slack-workflow-engine',
@@ -206,6 +227,7 @@ export const projects: Project[] = [
     isVerifiable: true,
   },
   {
+    id: 'nightlightd',
     name: 'nightlightd',
     kind: 'repo',
     repoUrl: 'https://github.com/umutdinceryananer/nightlightd',
@@ -233,6 +255,7 @@ export const projects: Project[] = [
     note: "Shipped but early, and under active development — releases land often, so check the repo's releases page for the current version rather than trusting any number quoted elsewhere. Installable (.deb, AUR, static musl) and the daemon plus all three front-ends work, but it's young software with one machine's worth of dogfooding, so expect rough edges. X11 only (no Wayland). GPL-3.0. Also my first real Rust project.",
   },
   {
+    id: 'elastic-kibana-pr-268326',
     name: 'elastic/kibana — PR #268326',
     kind: 'oss-contribution',
     repoUrl: 'https://github.com/elastic/kibana/pull/268326',
@@ -244,6 +267,7 @@ export const projects: Project[] = [
     isVerifiable: true,
   },
   {
+    id: 'langfuse-langfuse-docs-pr-2821',
     name: 'langfuse/langfuse-docs — PR #2821',
     kind: 'oss-contribution',
     repoUrl: 'https://github.com/langfuse/langfuse-docs/pull/2821',
@@ -256,6 +280,7 @@ export const projects: Project[] = [
     note: 'Open pull request — under review, NOT yet merged. Describe it as a pending contribution, not a landed one.',
   },
   {
+    id: 'hisar',
     name: 'hisar',
     kind: 'repo',
     oneLiner:
@@ -269,6 +294,7 @@ export const projects: Project[] = [
     note: 'PRIVATE, in development, and NOT independently verifiable (no public code). Honest maturity: the ingestion/scoring backend runs end-to-end, BUT notifications are dry-run only (logged, not delivered) and the evaluation method is built yet never validated on real LLM outputs. GraphRAG / ontology retrieval, a gold-set / LLM-as-judge eval gate, formal return-based event studies, 10-K/10-Q support, and the iOS app are DESIGNED but NOT BUILT — do not present them as existing capabilities. Keep this clearly separate from the verifiable public repos; never present it as live or production.',
   },
   {
+    id: 'themis',
     name: 'themis',
     kind: 'repo',
     oneLiner:

@@ -14,7 +14,29 @@ import { useScrollLock } from '../lib/useScrollLock'
  * emits public/privacy/index.html from the same src/data/privacy.ts this reads,
  * for anyone who wants a URL to link to. This is the copy people will actually
  * open, one click from the footer.
+ *
+ * It also carries the opt-out switch, which has to be here rather than in a
+ * README: CNIL's audience-measurement exemption is conditional on offering a
+ * mechanism the visitor can actually use to object, and the previous one was a
+ * line to type into the developer console.
  */
+
+/**
+ * Whether this build measures anything at all.
+ *
+ * Read straight from the build env rather than through session.ts's ENDPOINT
+ * export, because importing that module to find out whether to import it is
+ * exactly the problem being avoided: Footer renders this dialog and App renders
+ * Footer, so a static import would pull the tracker's module graph into the main
+ * bundle. Read this way the reference disappears at build time when no endpoint
+ * is configured, and nothing analytics-related ships at all --
+ * scripts/audit-analytics.ts asserts both halves of that.
+ *
+ * It keeps the dialog honest too. A switch offering to stop measuring that is
+ * not happening is a worse lie than no switch.
+ */
+const MEASURING = !!import.meta.env.VITE_ANALYTICS_ENDPOINT
+
 const PrivacyModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
   const [optedOut, setOptedOut] = useState<boolean | null>(null)
   const { render, shown } = useDialogTransition(open)
@@ -35,7 +57,7 @@ const PrivacyModal = ({ open, onClose }: { open: boolean; onClose: () => void })
   // Read on open rather than on mount: the dialog is mounted for the life of
   // the page, and the answer can change in another tab.
   useEffect(() => {
-    if (!open) return
+    if (!open || !MEASURING) return
     let cancelled = false
     import('../lib/analytics/session')
       .then((m) => !cancelled && setOptedOut(m.isOptedOut()))
@@ -93,7 +115,7 @@ const PrivacyModal = ({ open, onClose }: { open: boolean; onClose: () => void })
             </section>
           ))}
           <div className="pt-1 border-t border-gray-800">
-            {optedOut !== null && (
+            {MEASURING && optedOut !== null && (
               <button
                 onClick={toggle}
                 aria-pressed={optedOut}
@@ -107,9 +129,11 @@ const PrivacyModal = ({ open, onClose }: { open: boolean; onClose: () => void })
               </button>
             )}
             <p className="text-gray-500 text-[11px] mt-3">
-              {optedOut
-                ? 'Nothing is being recorded, and both identifiers have been deleted from this browser.'
-                : 'Turning it off deletes both identifiers straight away and stops all recording on this browser.'}
+              {!MEASURING
+                ? 'Nothing is being measured on this build at all.'
+                : optedOut
+                  ? 'Nothing is being recorded, and both identifiers have been deleted from this browser.'
+                  : 'Turning it off deletes both identifiers straight away and stops all recording on this browser.'}
             </p>
             <p className="text-gray-500 text-[11px] mt-2">Last updated {privacyUpdated}.</p>
           </div>

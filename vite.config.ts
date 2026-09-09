@@ -71,7 +71,9 @@ function htmlHeadMeta(): Plugin {
         // typing it SoftwareSourceCode would describe something that does not
         // exist publicly.
         '@type': repo ? 'SoftwareSourceCode' : 'SoftwareApplication',
-        '@id': `${url}/#project-${slug(p.name)}`,
+        // The stable id, not slug(name): renaming a project must not make a
+        // search engine see one entity disappear and another appear.
+        '@id': `${url}/#project-${p.id}`,
         name: p.name,
         description: p.oneLiner,
         url: repo ?? p.liveDemoUrl,
