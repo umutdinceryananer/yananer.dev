@@ -67,15 +67,28 @@ if (endpoint) {
   // A relative path is same-origin and therefore already covered by 'self'.
 }
 
-// ── 2. Production must actually have an endpoint ─────────────────────────────
+// ── 2. Production should have an endpoint -- but this one only warns ─────────
 //
-// session.ts no-ops when it is unset, by design, so a fork and a preview build
-// stay quiet. On main that same silence is the bug.
+// A warning rather than a failure, and the distinction is the rule this file
+// follows from here: a build check may block a deploy only for something the
+// person running the build can fix in the code in front of them.
+//
+// This one cannot be. The endpoint is set in the Cloudflare Pages dashboard, not
+// in the repo, so throwing here stopped the entire site from deploying -- a
+// typo fix, a content change, anything -- over a condition that has nothing to
+// do with whether the site works. It did exactly that for three pushes before
+// anyone looked at the deployment list.
+//
+// The thing it guards against is real: an unset endpoint means production
+// collects nothing and says so nowhere. A loud line in the build log is the
+// right weight for that.
+
+const warnings: string[] = []
 
 if (process.env.CF_PAGES_BRANCH === 'main' && !endpoint) {
-  fail(
-    'VITE_ANALYTICS_ENDPOINT is unset on a production build.\n' +
-      '      The tracker no-ops silently without it. Set it in the Pages project settings.',
+  warnings.push(
+    'VITE_ANALYTICS_ENDPOINT is unset on a production build -- the tracker will\n' +
+      '    collect nothing, silently. Set it in the Pages project settings.',
   )
 }
 
@@ -337,6 +350,8 @@ for (const file of tsxFiles) {
 console.log(`Analytics: ${seen.size} named click target(s), ${tsxFiles.length} components scanned`)
 
 // ── report ───────────────────────────────────────────────────────────────────
+
+for (const w of warnings) console.warn(`\n  !! ${w}\n`)
 
 if (problems.length) {
   throw new Error(
