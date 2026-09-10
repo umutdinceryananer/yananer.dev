@@ -152,7 +152,11 @@ export default {
       return new Response('', {
         status: 401,
         headers: {
-          'WWW-Authenticate': 'Basic realm="yananer.dev analytics", charset="UTF-8"',
+          // The realm is the only text a browser shows in its own login box, and
+          // that box asks for two things while this checks one. Saying so there
+          // is the only place the answer can arrive in time to be useful.
+          'WWW-Authenticate':
+            'Basic realm="yananer.dev analytics - any username, password is what matters", charset="UTF-8"',
           'Cache-Control': 'no-store, private',
         },
       })
