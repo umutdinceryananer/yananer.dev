@@ -17,7 +17,7 @@
 
 import { PROTOCOL, type AnalyticsEvent, type Bands, type Batch, type ClickEvent, type Route } from './types'
 import { ENDPOINT, context, optedOut, routeFromHash, sessionId, visitorId } from './session'
-import { ACTION_EVENT, type ActionDetail } from './emit'
+import { ACTION_EVENT, OPTOUT_EVENT, type ActionDetail, type OptOutDetail } from './emit'
 
 const BANDS = 10
 const TICK_MS = 1000
@@ -465,6 +465,22 @@ export function start(): () => void {
     push({ t: 'err', ts: ts(), r: renderedRoute(view.r), m: m.slice(0, 200), src: 'promise' })
   }
 
+  const onOptOut = (e: Event) => {
+    if (!(e as CustomEvent<OptOutDetail>).detail?.on || stopped) return
+    /**
+     * Everything unsent is dropped, not flushed.
+     *
+     * The teardown below normally ends with a final batch, which is right when a
+     * tab is closing and wrong here: that batch is precisely the data the
+     * visitor has just asked not to have kept. Turning the switch back on does
+     * not restart this instance -- measuring resumes on the next page load, and
+     * the dialog says so.
+     */
+    queue.length = 0
+    view = null
+    teardown(false)
+  }
+
   const inputs = ['pointerdown', 'pointermove', 'keydown', 'touchstart', 'wheel'] as const
   for (const type of inputs) addEventListener(type, onInput, { passive: true, capture: true })
   const sc = scroller()
@@ -473,6 +489,7 @@ export function start(): () => void {
   addEventListener('visibilitychange', onVisibility)
   addEventListener('pagehide', onPageHide)
   addEventListener(ACTION_EVENT, onAction)
+  addEventListener(OPTOUT_EVENT, onOptOut)
   // Capture phase: a handler that stops propagation (the dialogs all do, to keep
   // a click off the backdrop) would otherwise hide the click from this entirely.
   addEventListener('click', onClick, { capture: true })
@@ -487,10 +504,13 @@ export function start(): () => void {
 
   enter(routeFromHash())
 
-  return () => {
+  function teardown(sendFinal: boolean) {
+    if (stopped) return
     stopped = true
-    leave()
-    flush(true)
+    if (sendFinal) {
+      leave()
+      flush(true)
+    }
     clearInterval(ticker)
     clearInterval(flusher)
     for (const type of inputs) removeEventListener(type, onInput, { capture: true })
@@ -499,6 +519,7 @@ export function start(): () => void {
     removeEventListener('visibilitychange', onVisibility)
     removeEventListener('pagehide', onPageHide)
     removeEventListener(ACTION_EVENT, onAction)
+    removeEventListener(OPTOUT_EVENT, onOptOut)
     removeEventListener('click', onClick, { capture: true })
     removeEventListener('focusin', onFocusIn)
     removeEventListener('focusout', onFocusOut)
@@ -506,4 +527,6 @@ export function start(): () => void {
     removeEventListener('error', onError)
     removeEventListener('unhandledrejection', onRejection)
   }
+
+  return () => teardown(true)
 }

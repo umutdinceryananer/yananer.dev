@@ -23,6 +23,19 @@ export interface ActionDetail {
 
 export const ACTION_EVENT = 'ya:action'
 
+/**
+ * Fired when the visitor uses the switch in the privacy dialog.
+ *
+ * The stored flag only governs the *next* page load -- the tracker reads it once
+ * when it starts and never again -- and the switch promises to stop recording
+ * now. This is how "now" reaches a tracker that is already running.
+ */
+export const OPTOUT_EVENT = 'ya:optout'
+
+export interface OptOutDetail {
+  on: boolean
+}
+
 /** Report a named thing happening. A no-op unless the tracker is listening. */
 export function action(n: string, s?: string, ms?: number): void {
   try {

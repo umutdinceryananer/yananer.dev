@@ -1,4 +1,5 @@
 import type { Route, SessionContext } from './types'
+import { OPTOUT_EVENT, type OptOutDetail } from './emit'
 
 /**
  * Session identity, and the decision about whether to collect at all.
@@ -193,6 +194,12 @@ export function setOptedOut(on: boolean): void {
   } catch {
     // Nothing to record the choice in. The tracker treats an unreadable store
     // as a refusal anyway, so the visitor gets the outcome they asked for.
+  }
+  // Storage governs the next page load. This governs this one.
+  try {
+    window.dispatchEvent(new CustomEvent<OptOutDetail>(OPTOUT_EVENT, { detail: { on } }))
+  } catch {
+    /* no DOM: the build-time prerender, where there is nothing running to tell */
   }
 }
 
