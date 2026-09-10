@@ -17,6 +17,7 @@
  */
 
 import { num, type Row, type Section } from './queries'
+import { label } from './labels'
 
 /** Below this many sessions a percentage reports precision the data lacks. */
 const PCT_FLOOR = 100
@@ -161,7 +162,7 @@ export function renderDashboard(
   const unnamed = clicks.filter((r) => String(r.target).startsWith('?'))
   const clickBars = bars(
     clicks.slice(0, 12).map((r) => ({
-      label: String(r.target),
+      label: label(String(r.target)),
       value: num(r.clicks),
       note: `${num(r.sessions)} sessions`,
       accent: String(r.target).startsWith('work.card.'),
@@ -191,7 +192,7 @@ export function renderDashboard(
         // renders "5/0" when it is has stopped describing anything.
         const value = focus >= filled && focus > 0 ? `${filled}/${focus}` : `${filled} filled`
         return `<div class="bar">
-          <span class="bl">${esc(f)}</span>
+          <span class="bl">${esc(label(`mail.field:${f}`))}</span>
           <span class="bt"><i style="width:${focus > 0 ? Math.min(100, (filled / focus) * 100) : 0}%"></i></span>
           <span class="bv">${value}${left ? `<em>${left} left it empty</em>` : ''}</span>
         </div>`
@@ -218,7 +219,7 @@ export function renderDashboard(
 
   const rage = rows('Q8')
   const rageList = rage.length
-    ? bars(rage.map((r) => ({ label: String(r.target), value: num(r.bursts), note: `${num(r.sessions)} sessions`, accent: true })))
+    ? bars(rage.map((r) => ({ label: label(String(r.target)), value: num(r.bursts), note: `${num(r.sessions)} sessions`, accent: true })))
     : `<p class="empty">Nobody has clicked the same thing three times in a second.</p>`
 
   // ── page ────────────────────────────────────────────────────────────────────
@@ -254,8 +255,10 @@ export function renderDashboard(
     .big.muted { color:#404040; font-size:1.6rem; }
     .of { font-size:1rem; color:#797979; font-weight:400; letter-spacing:0; }
     .bars { display:flex; flex-direction:column; gap:.5rem; }
-    .bar { display:grid; grid-template-columns:9.5rem 1fr auto; align-items:center; gap:.7rem; font-size:.78rem; }
-    .bl { color:#a3a3a3; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .bar { display:grid; grid-template-columns:minmax(0,17rem) 1fr auto; align-items:center; gap:.9rem; font-size:.78rem; }
+    /* Wraps rather than truncating. A label cut to "work.card.demo:my-gam..."
+     answers nothing, and there is room for two lines. */
+  .bl { color:#a3a3a3; line-height:1.35; }
     .bt { background:#131313; border-radius:3px; height:9px; overflow:hidden; }
     .bt i { display:block; height:100%; background:#3f3f3f; border-radius:3px; }
     .bt i.acc { background:#6ea8a1; }
