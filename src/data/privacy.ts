@@ -31,41 +31,33 @@ export const privacy: PrivacySection[] = [
   {
     heading: 'What is measured',
     body: [
-      'Which of the two views you open, how long each was actually on screen, how far down you scrolled, and the names of things you click -- "the contact button", not where on the screen your cursor was.',
-      'Once per visit: screen and window size, timezone, browser language, colour theme, and the site that linked you here (its address only, never the search terms or tracking tags on the end of it).',
-      'Whether you have been here before, and roughly how long ago. See below for how.',
+      'Which of the two views you open, how long each was on screen, how far you scroll, and the names of the things you click — "the contact button", not what you typed.',
+      'Once per visit: screen size, timezone, browser language, colour theme, and the site that linked you here.',
     ],
   },
   {
     heading: 'What is not',
     body: [
-      'No advertising, and no third-party analytics of any kind. Nothing here is shared with anyone.',
-      'Your IP address is never stored. The server has to see it to answer the request; nothing is written down from it.',
-      'If you use the contact form, the names of the fields you touched are recorded -- never what you typed into them.',
-      'Nothing here has your name, your address, or anything you could be looked up by.',
+      'No cookies, no advertising, no third-party analytics. Your IP address is never stored. If you use the contact form, the names of the fields you touched are recorded — never their contents.',
     ],
   },
   {
-    heading: 'What is stored on your device',
+    heading: 'Stored on your device',
     body: [
-      'Two random identifiers, and nothing else. Neither is a cookie, and neither is sent anywhere except this site.',
-      'The first lasts until you close the tab. It keeps one visit together, so "how far down did this person read" has an answer.',
-      'The second lasts thirteen months and then a new one replaces it. Its clock is set once, when it is created, and visiting again does not push it back. It is what lets this site tell that two visits came from the same browser -- so I can see whether people come back, rather than only how many arrive. It cannot tell who you are, and it is not joined to anything outside this site. But it is a durable identifier, and that is a real thing to store on someone else\'s device, so it is named here rather than buried.',
-      'Nothing collected is kept longer than ninety days. A job runs every night and deletes anything older.',
+      'Two random identifiers, and nothing else. One lasts until you close the tab. The other lasts thirteen months and is what tells this site you have been here before — a durable identifier, named here rather than buried.',
+      'Nothing collected is kept longer than ninety days.',
     ],
   },
   {
     heading: 'Turning it off',
     body: [
-      'If your browser sends Global Privacy Control or Do Not Track, nothing is collected at all and neither identifier is created -- no setting needed here.',
-      'Otherwise, use the switch at the bottom of this page. Measuring stops on this browser, and both identifiers are deleted straight away.',
-      'Clearing your site data for this domain also removes them.',
+      'Use the switch below. If your browser sends Do Not Track or Global Privacy Control, nothing is collected in the first place.',
     ],
   },
   {
     heading: 'The contact form',
     body: [
-      `Sending a message passes your address, subject and message through EmailJS, which delivers it to ${profile.email}. That is the only time anything you type leaves your browser, and it only happens when you press send.`,
+      `Sending a message passes it through EmailJS to reach ${profile.email}. That is the only time anything you type leaves your browser.`,
     ],
   },
 ]
