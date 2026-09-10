@@ -1,12 +1,14 @@
 /**
  * The wire contract between the tracker in this bundle and the collector.
  *
- * Mirrored, deliberately by hand, in analytics/src/payload.ts. The two live in
- * separate packages with separate tsconfigs and separate deploys, so a shared
- * import would either drag the site's types into a Worker bundle or force a
- * build step between them. Copying ~60 lines is the cheaper trade — the same
- * one mcp/src/data/decisions.ts already makes. If you change a key here, change
- * it there, and bump PROTOCOL.
+ * The collector imports this file directly rather than mirroring it.
+ *
+ * An earlier version of this comment promised a hand-maintained copy in
+ * analytics/src/payload.ts, which was the right call when the collector was
+ * going to be a separately deployed package with its own tsconfig. It is a
+ * Pages Function in this repo instead (functions/api/collect.ts), built by the
+ * same command, so it can read the definition — and one definition beats a copy
+ * plus a check that notices the copy has drifted.
  *
  * Keys are short on purpose. Every batch has to fit in the 64KB a
  * `navigator.sendBeacon` is allowed, and the last batch of a session — the one

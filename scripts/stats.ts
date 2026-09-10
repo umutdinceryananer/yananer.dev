@@ -7,7 +7,8 @@
 //   npm run stats
 //   npm run stats -- --local --persist-to .wrangler/state
 
-import { runAll, type Row } from './d1'
+import { runAll } from './d1'
+import type { Row } from '../analytics/src/queries'
 
 function table(rows: Row[]): void {
   if (!rows.length) {

@@ -1,23 +1,55 @@
-# Config for the two D1 command-line scripts, and nothing else.
+# The analytics dashboard Worker, and the config the two D1 command-line
+# scripts read.
 #
 # It lives here rather than at the repo root deliberately. Cloudflare Pages
 # reads a *root* wrangler.toml as the source of truth for the whole project, and
 # adding one would take the existing Git-integrated build's configuration --
 # including the EmailJS variables set in the Pages dashboard -- out of the
-# dashboard's hands. That is a real change to a deployment that currently works,
-# and not one to make as a side effect of wanting `npm run stats` to run.
+# dashboard's hands. That is a real change to a deployment that works, and not
+# one to make as a side effect of wanting `npm run stats` to run.
 #
-# `npm run db:init` and `npm run stats` point at this file with --config. The
-# Pages build never reads it, and the running collector never reads it either:
-# at runtime the ANALYTICS_DB binding comes from the Pages project settings.
+# The collector is NOT here. It is a Pages Function (functions/api/collect.ts)
+# deployed with the site, and its ANALYTICS_DB binding comes from the Pages
+# project settings. Two bindings to one database, from two deploys.
 
-name = "yananer-analytics-cli"
+name = "yananer-stats"
+main = "src/worker.ts"
 compatibility_date = "2026-01-01"
+
+# Load-bearing, not tidiness.
+#
+# The dashboard is protected by Cloudflare Access, which sits in front of the
+# custom domain below. A *.workers.dev hostname routes straight to the Worker
+# and around the policy, which would publish the site's analytics to anyone who
+# guessed the name. The Worker also refuses to serve without the header Access
+# injects, so this is the second of two locks rather than the only one.
+workers_dev = false
+
+# Attach the hostname BEFORE creating the Access application: Cloudflare will
+# not add a custom domain that already has a policy on it.
+#
+# And expect this line to be ignored. mcp/wrangler.toml records wrangler
+# silently dropping `custom_domain = true` on deploy, leaving a deploy that
+# looked successful and a hostname that did not route; it had to be attached
+# through the dashboard. Check that stats.yananer.dev actually resolves rather
+# than assuming.
+routes = [{ pattern = "stats.yananer.dev", custom_domain = true }]
+
+# The nightly retention delete. 03:17 UTC -- an odd minute on purpose, because
+# every scheduler on the platform is busiest on the hour.
+#
+# Free-plan cron triggers are capped at five PER ACCOUNT, not per Worker. This
+# is currently the only one.
+[triggers]
+crons = ["17 3 * * *"]
 
 [[d1_databases]]
 binding = "ANALYTICS_DB"
 database_name = "yananer-analytics"
-# Filled in from the output of `npx wrangler d1 create yananer-analytics`.
-# Left as-is, wrangler fails loudly on the first --remote command rather than
-# quietly reading the wrong database.
 database_id = "ed4ec841-b217-44b1-b1ea-d596ce336091"
+
+# On by default here, unlike the collector, because nothing in this Worker
+# touches a request's IP or body -- the only thing it logs is how many rows the
+# retention job dropped.
+[observability]
+enabled = true

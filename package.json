@@ -13,7 +13,9 @@
     "preview": "vite preview",
     "db:init": "npx --yes wrangler@4 d1 execute ANALYTICS_DB --config analytics/wrangler.toml --remote --file analytics/schema.sql",
     "stats": "tsx scripts/stats.ts",
-    "dashboard": "tsx scripts/dashboard.ts"
+    "dashboard": "tsx scripts/dashboard.ts",
+    "stats:deploy": "npx --yes wrangler@4 deploy --config analytics/wrangler.toml",
+    "stats:dev": "npx --yes wrangler@4 dev --config analytics/wrangler.toml"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",

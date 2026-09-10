@@ -27,6 +27,17 @@
  * logged. The edge sees an IP because it must; that is where it stops.
  */
 
+/**
+ * Imported, not copied.
+ *
+ * The contract's header used to promise this file mirrored it by hand, which
+ * was the right shape when the collector was going to be a separately deployed
+ * package. It is a Pages Function in this repo, so it can simply read the
+ * definition -- and a mirror that cannot drift is better than a check that
+ * catches drift after the fact.
+ */
+import { PROTOCOL } from '../../src/lib/analytics/types'
+
 /** The slice of D1 this function uses. Declared rather than imported, so the
     site's build stays free of Workers type packages — mcp/src/worker.ts makes
     the same trade for its rate limiter. */
@@ -48,9 +59,6 @@ interface EventContext {
 interface IncomingCf {
   botManagement?: { score?: number; verifiedBot?: boolean }
 }
-
-/** Must match src/lib/analytics/types.ts. scripts/audit-analytics.ts enforces it. */
-const PROTOCOL = 3
 
 /** sendBeacon's own ceiling. Anything larger did not come from our tracker. */
 const MAX_BODY = 64 * 1024

@@ -226,40 +226,25 @@ if (endpoint) {
   }
 }
 
-// ── 7. The two copies of the protocol must agree ─────────────────────────────
+// ── 7. The collector must handle every event the contract can emit ──────────
 //
-// PROTOCOL is declared twice on purpose -- once in the bundle's contract and
-// once in the collector, which is a Pages Function with its own tsconfig and no
-// import path back into src/. The header of types.ts has always said the two are
-// mirrored by hand; nothing checked it. Drift here is the quiet kind: the
-// collector answers 409 to every batch and the site simply stops collecting.
+// PROTOCOL itself no longer needs checking: the collector imports it from the
+// contract, so the two cannot disagree. What can still drift is the switch --
+// an event the tracker is free to send and the collector has no branch for is
+// dropped without a trace, and the only symptom is a number that is quietly
+// lower than it should be.
 
 const contract = readFileSync(resolve('src/lib/analytics/types.ts'), 'utf8')
 const collector = readFileSync(resolve('functions/api/collect.ts'), 'utf8')
-// `export const` in the contract, bare `const` in the collector -- the two files
-// have no import path between them, which is the whole reason this check exists.
-const versionIn = (src: string) => src.match(/^(?:export )?const PROTOCOL = (\d+)$/m)?.[1]
-const [a, b] = [versionIn(contract), versionIn(collector)]
-
-if (!a || !b) {
-  fail(`could not read PROTOCOL from ${!a ? 'src/lib/analytics/types.ts' : 'functions/api/collect.ts'}.`)
-} else if (a !== b) {
-  fail(
-    `PROTOCOL disagrees: types.ts says ${a}, functions/api/collect.ts says ${b}.\n` +
-      '      The collector rejects every batch it predates, so this stops collection silently.',
-  )
-}
-
-// The event names have to line up too: an event the contract can emit and the
-// collector has no branch for is dropped without a trace.
-const emitted = [...contract.matchAll(/^\s+t: '([a-z]+)'$/gm)].map((m) => m[1])
 const handled = new Set([...collector.matchAll(/^\s+case '([a-z]+)':/gm)].map((m) => m[1]))
 const union = contract.slice(contract.indexOf('export type AnalyticsEvent'))
-for (const name of new Set(emitted)) {
-  // Only the ones actually in the union -- LayoutEvent is defined but excluded.
+
+for (const m of contract.matchAll(/^\s+t: '([a-z]+)'$/gm)) {
+  const name = m[1]
+  // Only what is actually in the union -- LayoutEvent is defined and excluded.
   const inUnion = union.includes(`${name.charAt(0).toUpperCase()}${name.slice(1)}Event`)
   if (inUnion && !handled.has(name)) {
-    fail(`the contract emits "${name}" but functions/api/collect.ts has no case for it -- it would be dropped.`)
+    fail(`the contract can emit "${name}" and functions/api/collect.ts has no case for it -- it would be dropped.`)
   }
 }
 

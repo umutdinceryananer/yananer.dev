@@ -51,6 +51,7 @@ export const privacy: PrivacySection[] = [
       'Two random identifiers, and nothing else. Neither is a cookie, and neither is sent anywhere except this site.',
       'The first lasts until you close the tab. It keeps one visit together, so "how far down did this person read" has an answer.',
       'The second lasts thirteen months and then a new one replaces it. Its clock is set once, when it is created, and visiting again does not push it back. It is what lets this site tell that two visits came from the same browser -- so I can see whether people come back, rather than only how many arrive. It cannot tell who you are, and it is not joined to anything outside this site. But it is a durable identifier, and that is a real thing to store on someone else\'s device, so it is named here rather than buried.',
+      'Nothing collected is kept longer than ninety days. A job runs every night and deletes anything older.',
     ],
   },
   {
