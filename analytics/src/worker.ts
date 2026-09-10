@@ -13,17 +13,22 @@
  *
  * ── On being readable by anyone ──────────────────────────────────────────────
  *
- * This page is behind Cloudflare Access. Access is configured in the Zero Trust
- * dashboard, not here, so this Worker cannot depend on it having been done --
- * and a deploy that lands before the policy does would publish the site's
- * analytics to anyone who guesses the hostname.
+ * Two ways in, and it fails closed without either.
  *
- * So it fails closed. Without the header Access injects on an authenticated
- * request, nothing is served. That is a guard against being deployed naked, not
- * a verification of the token: Access terminates in front of this Worker and the
- * header cannot reach it from outside, provided nothing else can. Which is why
- * `workers_dev = false` in wrangler.toml is load-bearing rather than tidiness --
- * a *.workers.dev hostname would route straight here, around the policy.
+ * A password, checked here. `wrangler secret put STATS_PASSWORD` and the browser
+ * asks for it -- no other Cloudflare product involved, nothing to sign up for,
+ * and it works on a phone because every browser knows how to answer a 401.
+ *
+ * Or Cloudflare Access, if it is ever set up: the header it injects is accepted
+ * in place of the password. Access is configured in the Zero Trust dashboard,
+ * not here, so this Worker cannot assume it was done -- and a deploy landing
+ * before the policy would otherwise publish the site's analytics to whoever
+ * guessed the hostname.
+ *
+ * `workers_dev = false` in wrangler.toml is load-bearing for the Access half
+ * rather than tidiness: a *.workers.dev hostname routes straight here, around
+ * any policy. The password half does not depend on it, which is the argument
+ * for having both.
  */
 
 import { QUERIES, type Row, type Section } from './queries'
@@ -41,6 +46,8 @@ interface D1Database {
 
 export interface Env {
   ANALYTICS_DB: D1Database
+  /** Set with `npm run stats:password`. Absent means nothing is served. */
+  STATS_PASSWORD?: string
 }
 
 /** Set by Access on every authenticated request, and impossible to forge from
@@ -68,17 +75,51 @@ const html = (body: string, status = 200) =>
     },
   })
 
+/**
+ * Constant-time string compare.
+ *
+ * A plain === on a secret returns as soon as two bytes differ, and the time it
+ * takes is a function of how many leading characters were right. Over enough
+ * requests that is a way to guess the password one character at a time. The
+ * loop below always reads the whole of both.
+ */
+function same(a: string, b: string): boolean {
+  const x = new TextEncoder().encode(a)
+  const y = new TextEncoder().encode(b)
+  let diff = x.length ^ y.length
+  for (let i = 0; i < Math.max(x.length, y.length); i++) {
+    diff |= (x[i] ?? 0) ^ (y[i] ?? 0)
+  }
+  return diff === 0
+}
+
+/** True when the request carries a correct password, or arrived through Access. */
+function allowed(request: Request, env: Env): boolean {
+  if (request.headers.get(ACCESS_HEADER)) return true
+  if (!env.STATS_PASSWORD) return false
+  const header = request.headers.get('Authorization') ?? ''
+  if (!header.startsWith('Basic ')) return false
+  try {
+    // The username is ignored: there is one account here and naming it would
+    // only be a second thing to remember.
+    const decoded = atob(header.slice(6))
+    return same(decoded.slice(decoded.indexOf(':') + 1), env.STATS_PASSWORD)
+  } catch {
+    return false
+  }
+}
+
 const NOT_CONFIGURED = `<!doctype html><meta charset="utf-8">
 <title>Not configured</title>
 <style>body{background:#050505;color:#c6c6c6;font:15px/1.6 system-ui,sans-serif;
 margin:0;padding:4rem 1.5rem;max-width:34rem;margin:0 auto}
 h1{color:#fff;font-size:1.1rem}code{background:#171717;padding:.1rem .35rem;border-radius:4px}
 p{color:#a3a3a3;font-size:.9rem}</style>
-<h1>This dashboard is not protected yet</h1>
-<p>Nothing is served until Cloudflare Access is in front of it. Create an Access
-application for this hostname in Zero Trust, then reload.</p>
-<p>Attach the custom domain first and create the policy second — Cloudflare will
-not add a domain that already has one.</p>`
+<h1>This dashboard has no password yet</h1>
+<p>Nothing is served until there is a way to tell you from anyone else. Set one:</p>
+<p><code>npm run stats:password</code></p>
+<p>Then reload and the browser will ask for it. Cloudflare Access works too, if
+you would rather have a login — this page accepts either.</p>`
 
 async function runAll(db: D1Database): Promise<Section[]> {
   // Sequential rather than Promise.all: ten concurrent statements against one
@@ -98,9 +139,24 @@ async function runAll(db: D1Database): Promise<Section[]> {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const { pathname } = new URL(request.url)
-    if (request.method !== 'GET') return html('', 405)
+    // HEAD as well as GET: a HEAD that 405s makes every header check on this
+    // endpoint -- including the one that proves the password prompt is sent --
+    // answer a question nobody asked.
+    if (request.method !== 'GET' && request.method !== 'HEAD') return html('', 405)
     if (pathname !== '/') return html('', 404)
-    if (!request.headers.get(ACCESS_HEADER)) return html(NOT_CONFIGURED, 403)
+    if (!allowed(request, env)) {
+      // No password configured at all is a different problem from a wrong one,
+      // and answering both with the same 401 would leave the first looking like
+      // a typo forever.
+      if (!env.STATS_PASSWORD) return html(NOT_CONFIGURED, 403)
+      return new Response('', {
+        status: 401,
+        headers: {
+          'WWW-Authenticate': 'Basic realm="yananer.dev analytics", charset="UTF-8"',
+          'Cache-Control': 'no-store, private',
+        },
+      })
+    }
 
     const sections = await runAll(env.ANALYTICS_DB)
     return html(
