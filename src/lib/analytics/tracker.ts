@@ -143,6 +143,10 @@ export function start(): () => void {
       errors, none of them mine" stay distinguishable. */
   let foreignErrors = 0
   let fieldAt = 0
+  /** performance.now() of the first trusted input, and whether a leave event has
+      already carried it. There is only one first time in a session. */
+  let firstInput = 0
+  let ttiSent = false
 
   const now = () => performance.now()
   const ts = () => Math.round(now() - t0)
@@ -219,6 +223,10 @@ export function start(): () => void {
       sd: Math.round(v.sd),
       bands: v.bands.map(Math.round) as Bands,
       ...(v.hc ? { hc: v.hc } : {}),
+      // Only on the view it actually happened in, and only once.
+      ...(firstInput && !ttiSent && firstInput >= v.at
+        ? ((ttiSent = true), { tti: Math.round(firstInput - v.at) })
+        : {}),
       dh: sc ? sc.scrollHeight : 0,
       vw: document.documentElement.clientWidth,
       vh: document.documentElement.clientHeight,
@@ -279,6 +287,7 @@ export function start(): () => void {
   const onInput = (e: Event) => {
     if (!e.isTrusted) return
     lastInput = now()
+    if (!human) firstInput = lastInput
     human = true
   }
 
@@ -324,7 +333,14 @@ export function start(): () => void {
   const onAction = (e: Event) => {
     const d = (e as CustomEvent<ActionDetail>).detail
     if (!d?.n || !view) return
-    push({ t: 'action', ts: ts(), r: view.r, n: d.n.slice(0, 48), ...(d.s ? { s: d.s.slice(0, 64) } : {}) })
+    push({
+      t: 'action',
+      ts: ts(),
+      r: view.r,
+      n: d.n.slice(0, 48),
+      ...(d.s ? { s: d.s.slice(0, 64) } : {}),
+      ...(typeof d.ms === 'number' && d.ms >= 0 ? { ms: Math.round(d.ms) } : {}),
+    })
   }
 
   const clamp01 = (n: number) => (Number.isFinite(n) ? Math.min(1, Math.max(0, n)) : 0)

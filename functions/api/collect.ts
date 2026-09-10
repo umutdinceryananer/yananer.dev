@@ -125,6 +125,7 @@ function cleanEvent(raw: unknown): Rec | null {
       const bands = e.bands.map((b) => int(b, 0, MAX_TS))
       if (bands.some((b) => b === null)) return null
       const hc = int(e.hc, 0, 1000)
+      const tti = int(e.tti, 0, MAX_TS)
       return {
         t: 'leave',
         ...base,
@@ -136,6 +137,7 @@ function cleanEvent(raw: unknown): Rec | null {
         sd,
         bands,
         ...(hc ? { hc } : {}),
+        ...(tti !== null ? { tti: Math.min(tti, ms) } : {}),
         dh: int(e.dh, 0, 1e6) ?? 0,
         vw: int(e.vw, 0, 1e5) ?? 0,
         vh: int(e.vh, 0, 1e5) ?? 0,
@@ -194,7 +196,14 @@ function cleanEvent(raw: unknown): Rec | null {
     case 'action': {
       const n = str(e.n, 48)
       if (!n) return null
-      return { t: 'action', ...base, n, ...(str(e.s, 64) ? { s: str(e.s, 64) } : {}) }
+      const ams = int(e.ms, 0, MAX_TS)
+      return {
+        t: 'action',
+        ...base,
+        n,
+        ...(str(e.s, 64) ? { s: str(e.s, 64) } : {}),
+        ...(ams !== null ? { ms: ams } : {}),
+      }
     }
 
     // 'layout' is defined in the contract but not emitted yet, and anything

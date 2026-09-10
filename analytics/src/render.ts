@@ -222,6 +222,90 @@ export function renderDashboard(
     ? bars(rage.map((r) => ({ label: label(String(r.target)), value: num(r.bursts), note: `${num(r.sessions)} sessions`, accent: true })))
     : `<p class="empty">Nobody has clicked the same thing three times in a second.</p>`
 
+
+  // ── Q9-Q12: things that were already being collected ────────────────────────
+  //
+  // Every one of these reads a column the collector has been filling since the
+  // first batch and no query had ever asked about.
+
+  const sources = bars(
+    rows('Q9').map((r) => ({ label: String(r.source), value: num(r.sessions) })),
+  )
+
+  /**
+   * The scroll heat strip.
+   *
+   * Ten bands per route, top of the page at the top, shaded by how many seconds
+   * of visible-and-awake time each one collected. This is the one panel drawn
+   * from data that was being stored and thrown away: every leave event has
+   * carried these ten numbers from the beginning.
+   *
+   * Seconds rather than a percentage, and no smoothing. A gradient across sparse
+   * counts invents a shape the data does not have, which is the specific way a
+   * heatmap lies.
+   */
+  const bandRows = rows('Q10')
+  const heat = (() => {
+    const routes = [...new Set(bandRows.map((r) => String(r.route)))]
+    if (!routes.length) return `<p class="empty">Nothing recorded yet.</p>`
+    const max = Math.max(...bandRows.map((r) => num(r.seconds)), 1)
+    return `<div class="heat">${routes
+      .map((route) => {
+        const cells = Array.from({ length: 10 }, (_, i) => {
+          const secs = num(bandRows.find((r) => r.route === route && num(r.band) === i)?.seconds)
+          const share = secs / max
+          return `<div class="hc" title="${(i + 1) * 10 - 10}–${(i + 1) * 10}% of the page · ${secs}s">
+            <i style="opacity:${(0.08 + share * 0.92).toFixed(3)}"></i>
+            <span>${secs ? `${secs}s` : ''}</span>
+          </div>`
+        }).join('')
+        return `<div class="hcol"><h3>${esc(route)}</h3>${cells}
+          <p class="hfoot">bottom of page</p></div>`
+      })
+      .join('')}</div>`
+  })()
+
+  const devices = bars(
+    rows('Q11').map((r) => ({
+      label: `${r.kind} · ${r.screen}`,
+      value: num(r.sessions),
+      accent: r.kind === 'phone',
+    })),
+  )
+
+  const prefRows = rows('Q12')
+  const prefs = (() => {
+    const groups = [...new Set(prefRows.map((r) => String(r.setting)))]
+    if (!groups.length) return `<p class="empty">Nothing recorded yet.</p>`
+    return groups
+      .map(
+        (g) => `<p class="pref"><b>${esc(g)}</b> ${prefRows
+          .filter((r) => r.setting === g)
+          .map((r) => `${esc(r.value ?? '—')} <em>${num(r.sessions)}</em>`)
+          .join(' · ')}</p>`,
+      )
+      .join('')
+  })()
+
+  const watched = bars(
+    rows('Q13').map((r) => ({
+      label: label(`demo.watch:${r.project}`),
+      value: num(r.avg_seconds),
+      note: `${num(r.opens)} opens · longest ${num(r.longest_seconds)}s`,
+      accent: true,
+    })),
+    's',
+  )
+
+  const tti = bars(
+    rows('Q14').map((r) => ({
+      label: String(r.route),
+      value: num(r.avg_seconds),
+      note: `${num(r.sessions)} sessions · ${num(r.fastest_seconds)}–${num(r.slowest_seconds)}s`,
+    })),
+    's',
+  )
+
   // ── page ────────────────────────────────────────────────────────────────────
 
   const range = meta['first day'] === meta['last day'] ? meta['first day'] : `${meta['first day']} → ${meta['last day']}`
@@ -270,7 +354,18 @@ export function renderDashboard(
     .legend i { display:inline-block; width:9px; height:9px; border-radius:2px; vertical-align:middle; }
     .err { background:#1a0f0f; border:1px solid #3a1d1d; color:#c98b8b; padding:.8rem 1rem;
            border-radius:10px; font-size:.78rem; margin-bottom:1rem; }
-    footer { color:#4a4a4a; font-size:.72rem; margin-top:2rem; line-height:1.6; }
+    .heat { display:flex; gap:2.5rem; flex-wrap:wrap; }
+  .hcol { min-width:9rem; }
+  .hcol h3 { font-size:.78rem; color:#fff; margin:0 0 .5rem; font-weight:600; }
+  .hc { display:flex; align-items:center; gap:.5rem; height:1.55rem; }
+  .hc i { display:block; width:4.5rem; height:1.15rem; border-radius:2px; background:#6ea8a1; }
+  .hc span { color:#797979; font-size:.68rem; font-variant-numeric:tabular-nums; }
+  .hfoot { color:#4a4a4a; font-size:.65rem; margin:.35rem 0 0; }
+  .pref { font-size:.78rem; color:#a3a3a3; margin:0 0 .5rem; }
+  .pref b { color:#fff; display:block; font-size:.72rem; text-transform:uppercase;
+            letter-spacing:.04em; margin-bottom:.15rem; font-weight:600; }
+  .pref em { color:#5a5a5a; font-style:normal; }
+  footer { color:#4a4a4a; font-size:.72rem; margin-top:2rem; line-height:1.6; }
     /* Nine panels each saying "nothing yet" reads as nine broken things rather
        than one empty database. Below the first visit there is one panel. */
     .empty-state ol { color:#a3a3a3; font-size:.82rem; margin:.9rem 0 1.1rem; padding-left:1.2rem; }
@@ -345,7 +440,17 @@ export function renderDashboard(
     </section>
     ${card('Where does the contact form lose people?', 'Filled out of focused, per field. Field names only — what was typed never left the browser.', funnel)}
     ${card('Did anything break?', "Only this site's own files. Extension errors are dropped at the source and counted as err.foreign above.", errList)}
-    ${card('Rage clicks', 'Three hits on one target inside a second. Derived from the click stream, not collected separately.', rageList)}
+    <section class="card wide">
+    <h2>Which part of the page actually gets read?</h2>
+    <p class="sub">Seconds of awake, visible time per tenth of the page — tab hidden, dialog open and idle time all excluded. Top of the page at the top.</p>
+    ${heat}
+  </section>
+  ${card('Where do people come from?', 'The referring site, host only — never the search terms or tracking tags on the end of it.', sources)}
+  ${card('What are they reading it on?', 'Screen size as the browser reports it. No fingerprint, nothing derived from an IP.', devices)}
+  ${card('What their browsers say', 'Collected once per visit and, until now, never looked at.', prefs)}
+  ${card('Is anyone actually watching the demos?', 'Average seconds the demo stayed open. The click on Enter Lab says someone was curious; this says whether they stayed.', watched)}
+  ${card('How long before anyone touches anything?', 'Seconds from the page opening to the first deliberate move. Instant means navigating through; a pause means reading.', tti)}
+  ${card('Rage clicks', 'Three hits on one target inside a second. Derived from the click stream, not collected separately.', rageList)}
   </div>
 
   <footer>

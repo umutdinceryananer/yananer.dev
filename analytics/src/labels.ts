@@ -13,6 +13,7 @@
  */
 
 import { projects } from '../../src/data/projects'
+import { hisarDecisions, type Decision } from '../../src/data/decisions'
 
 /** A key is `name` or `name:instance`. */
 function split(key: string): [string, string | undefined] {
@@ -26,6 +27,14 @@ const titleCase = (s: string) =>
 
 const projectName = (id: string) =>
   projects.find((p) => p.id === id)?.name ?? titleCase(id)
+
+/** Every decision list the site exports, flattened. Named individually rather
+    than star-imported so adding a new list is a compile error here rather than a
+    row that quietly stays unreadable. */
+const allDecisions: Decision[] = [...hisarDecisions]
+
+const decisionTitle = (id: string) =>
+  allDecisions.find((d) => d.id === id)?.title ?? titleCase(id)
 
 /** Names with no instance. */
 const PLAIN: Record<string, string> = {
@@ -96,6 +105,8 @@ export function label(key: string): string {
     if (what) return `${projectName(instance)} — ${what}`
 
     if (name === 'work.now') return `"Now" card — ${instance}`
+    if (name === 'work.decision.row') return `Decision — ${decisionTitle(instance)}`
+    if (name === 'demo.watch') return `${projectName(instance)} — demo watched`
   }
 
   return PLAIN[name] ?? key

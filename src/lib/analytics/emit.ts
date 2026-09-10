@@ -17,14 +17,16 @@
 export interface ActionDetail {
   n: string
   s?: string
+  /** For actions where the duration is the point -- how long a demo was open. */
+  ms?: number
 }
 
 export const ACTION_EVENT = 'ya:action'
 
 /** Report a named thing happening. A no-op unless the tracker is listening. */
-export function action(n: string, s?: string): void {
+export function action(n: string, s?: string, ms?: number): void {
   try {
-    window.dispatchEvent(new CustomEvent<ActionDetail>(ACTION_EVENT, { detail: { n, s } }))
+    window.dispatchEvent(new CustomEvent<ActionDetail>(ACTION_EVENT, { detail: { n, s, ms } }))
   } catch {
     // A CustomEvent constructor that throws means an environment with no DOM,
     // which is the build-time prerender. Nothing to report there.

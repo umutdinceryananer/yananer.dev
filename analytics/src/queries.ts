@@ -172,4 +172,89 @@ WHERE third_last IS NOT NULL AND ts - third_last <= 1000
 GROUP BY target
 ORDER BY bursts DESC`,
   },
+  {
+    title: "Q9. Where do people come from?",
+    sql: `SELECT
+  CASE
+    WHEN json_extract(ctx, '$.utm.source') IS NOT NULL
+      THEN json_extract(ctx, '$.utm.source') || ' (utm)'
+    WHEN COALESCE(json_extract(ctx, '$.ref'), '') = '' THEN '(typed or bookmarked)'
+    ELSE substr(
+      json_extract(ctx, '$.ref'),
+      1,
+      instr(json_extract(ctx, '$.ref') || '/', '/') - 1
+    )
+  END                      AS source,
+  COUNT(DISTINCT sid)      AS sessions
+FROM batch
+WHERE ctx IS NOT NULL
+GROUP BY source
+ORDER BY sessions DESC`,
+  },
+  {
+    title: "Q10. Which part of the page actually gets read?",
+    sql: `SELECT
+  json_extract(e.value, '$.r')   AS route,
+  b.key                          AS band,
+  CAST(SUM(b.value) / 1000 AS INT) AS seconds
+FROM batch ba,
+     json_each(ba.events) e,
+     json_each(json_extract(e.value, '$.bands')) b
+WHERE json_extract(e.value, '$.t') = 'leave'
+GROUP BY route, band
+ORDER BY route, band`,
+  },
+  {
+    title: "Q11. What are they reading it on?",
+    sql: `SELECT
+  CASE WHEN json_extract(ctx, '$.vw') < 745 THEN 'phone' ELSE 'desktop' END AS kind,
+  json_extract(ctx, '$.sw') || ' x ' || json_extract(ctx, '$.sh')           AS screen,
+  COUNT(DISTINCT sid)                                                       AS sessions
+FROM batch
+WHERE ctx IS NOT NULL
+GROUP BY kind, screen
+ORDER BY sessions DESC`,
+  },
+  {
+    title: "Q12. What do their browsers say about them?",
+    sql: `SELECT 'theme' AS setting, json_extract(ctx, '$.theme') AS value, COUNT(DISTINCT sid) AS sessions
+  FROM batch WHERE ctx IS NOT NULL GROUP BY value
+UNION ALL
+SELECT 'language', json_extract(ctx, '$.lang'), COUNT(DISTINCT sid)
+  FROM batch WHERE ctx IS NOT NULL GROUP BY 2
+UNION ALL
+SELECT 'timezone', json_extract(ctx, '$.tz'), COUNT(DISTINCT sid)
+  FROM batch WHERE ctx IS NOT NULL GROUP BY 2
+UNION ALL
+SELECT 'reduced motion', CASE WHEN json_extract(ctx, '$.rm') THEN 'on' ELSE 'off' END, COUNT(DISTINCT sid)
+  FROM batch WHERE ctx IS NOT NULL GROUP BY 2
+ORDER BY setting, sessions DESC`,
+  },
+  {
+    title: "Q13. Is anyone actually watching the demos?",
+    sql: `SELECT
+  json_extract(e.value, '$.s')                             AS project,
+  COUNT(*)                                                 AS opens,
+  CAST(AVG(json_extract(e.value, '$.ms')) / 1000 AS INT)   AS avg_seconds,
+  CAST(MAX(json_extract(e.value, '$.ms')) / 1000 AS INT)   AS longest_seconds
+FROM batch b, json_each(b.events) e
+WHERE json_extract(e.value, '$.t') = 'action'
+  AND json_extract(e.value, '$.n') = 'demo.watch'
+GROUP BY project
+ORDER BY avg_seconds DESC`,
+  },
+  {
+    title: "Q14. How long before anyone touches anything?",
+    sql: `SELECT
+  json_extract(e.value, '$.r')                             AS route,
+  COUNT(*)                                                 AS sessions,
+  CAST(AVG(json_extract(e.value, '$.tti')) / 1000 AS INT)  AS avg_seconds,
+  CAST(MIN(json_extract(e.value, '$.tti')) / 1000 AS INT)  AS fastest_seconds,
+  CAST(MAX(json_extract(e.value, '$.tti')) / 1000 AS INT)  AS slowest_seconds
+FROM batch b, json_each(b.events) e
+WHERE json_extract(e.value, '$.t') = 'leave'
+  AND json_extract(e.value, '$.tti') IS NOT NULL
+GROUP BY route
+ORDER BY route`,
+  },
 ]

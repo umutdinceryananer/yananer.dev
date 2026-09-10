@@ -18,7 +18,7 @@
  */
 
 /** Bump on any breaking shape change; the collector rejects payloads it predates. */
-export const PROTOCOL = 3
+export const PROTOCOL = 4
 
 /** Hash routes, normalised to the two the site actually has. */
 export type Route = 'about' | 'work'
@@ -100,6 +100,16 @@ export interface LeaveEvent extends Base {
    * discount the sessions that carry a non-zero count.
    */
   hc?: number
+  /**
+   * Milliseconds from the view opening to the visitor's first deliberate move.
+   *
+   * Present on one leave event per session -- the view during which it happened
+   * -- and absent on the rest, because there is only one first time. A page that
+   * is looked at for four seconds before anyone touches it is being read; one
+   * touched instantly is being navigated through. Nothing here identifies the
+   * move, only when it came.
+   */
+  tti?: number
   /** Document height at leave time, not at load time: see hc. */
   dh: number
   vw: number
@@ -185,6 +195,15 @@ export interface ActionEvent extends Base {
   t: 'action'
   n: string
   s?: string
+  /**
+   * How long the thing lasted, where that is the interesting part.
+   *
+   * A demo is the case this exists for: knowing the Enter Lab button was pressed
+   * says someone was curious, and says nothing about whether they watched. Three
+   * seconds and three minutes are different answers to the only question the
+   * button was ever asked.
+   */
+  ms?: number
 }
 
 /**

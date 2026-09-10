@@ -7,6 +7,7 @@ import { useLatestRelease } from '../lib/useLatestRelease'
 import { useDialogTransition, dialogChrome, dialogCloseButton } from '../lib/useDialogTransition'
 import { useDialogFocus } from '../lib/useDialogFocus'
 import { useScrollLock } from '../lib/useScrollLock'
+import { action } from '../lib/analytics/emit'
 
 const Tag = ({ children }: { children: React.ReactNode }) => (
   <span className="px-2 py-1 bg-surface-2 rounded-md text-gray-400 text-xs border border-gray-800">
@@ -74,7 +75,13 @@ const DecisionsIcon = () => (
 
 // Full-screen demo overlay. The iframe is only mounted while open, so the
 // embedded app is loaded lazily (on click), never on page load.
-const DemoModal = ({ demo, onClose }: { demo: { url: string; title: string } | null; onClose: () => void }) => {
+const DemoModal = ({
+  demo,
+  onClose,
+}: {
+  demo: { url: string; title: string; id: string } | null
+  onClose: () => void
+}) => {
   const { render, shown } = useDialogTransition(!!demo)
   const chrome = dialogChrome(shown)
   const panelRef = useRef<HTMLDivElement>(null)
@@ -98,6 +105,28 @@ const DemoModal = ({ demo, onClose }: { demo: { url: string; title: string } | n
       document.removeEventListener('keydown', onKey)
     }
   }, [demo, onClose])
+
+  /**
+   * How long the demo was actually open.
+   *
+   * The click on Enter Lab is already recorded, and it only says someone was
+   * curious. Whether they watched is a different question, and three seconds and
+   * three minutes are different answers to it.
+   *
+   * Reported on close rather than on open so the duration is known, and keyed on
+   * the project id so it survives a rename. Nothing about what happened inside
+   * the iframe is visible from here, and nothing is attempted -- it is another
+   * origin, and prying into it is exactly what the site's own CSP forbids
+   * everyone else.
+   */
+  useEffect(() => {
+    if (!demo) return
+    const id = demo.id
+    const openedAt = performance.now()
+    return () => {
+      action('demo.watch', id, performance.now() - openedAt)
+    }
+  }, [demo])
 
   if (!render || !current) return null
   // Portalled to <body> so the overlay can never be trapped by an ancestor
@@ -264,6 +293,7 @@ const DecisionRow = ({ d }: { d: Decision }) => {
     <div>
       <button
         data-ya="work.decision.row"
+        data-ya-key={d.id}
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
         className="w-full flex items-center gap-2.5 py-3 text-left group"
@@ -407,7 +437,7 @@ const DecisionsModal = ({
 const Projects = () => {
   const repos = projects.filter((p) => p.kind === 'repo')
   const decisionsFor = (name: string) => hisarDecisions.filter((d) => d.repo === name.toLowerCase())
-  const [demo, setDemo] = useState<{ url: string; title: string } | null>(null)
+  const [demo, setDemo] = useState<{ url: string; title: string; id: string } | null>(null)
   const [decisionsModal, setDecisionsModal] = useState<{ title: string; items: Decision[] } | null>(null)
 
   return (
@@ -487,7 +517,9 @@ const Projects = () => {
           <ProjectCard
             key={p.name}
             p={p}
-            onPlay={(proj) => proj.liveDemoUrl && setDemo({ url: proj.liveDemoUrl, title: proj.name })}
+            onPlay={(proj) =>
+              proj.liveDemoUrl && setDemo({ url: proj.liveDemoUrl, title: proj.name, id: proj.id })
+            }
             hasDecisions={decisionsFor(p.name).length > 0}
             onDecisions={(proj) => setDecisionsModal({ title: proj.name, items: decisionsFor(proj.name) })}
           />
