@@ -130,6 +130,7 @@ const AboutMe = () => {
         <div className="bg-surface-1 rounded-xl p-4 border border-gray-800">
           <div className="grid grid-cols-3 gap-2">
             <button
+              data-ya="about.contact"
               onClick={() => {
                 action('contact.open')
                 setIsEmailPopupOpen(true)
@@ -147,6 +148,8 @@ const AboutMe = () => {
                 identity signal from the sameAs list in the JSON-LD -- read by
                 different consumers -- and costs three characters. */}
             <a
+              data-ya="about.social"
+              data-ya-key="linkedin"
               href={linkedinUrl}
               target="_blank"
               rel="me noopener noreferrer"
@@ -159,6 +162,8 @@ const AboutMe = () => {
             </a>
 
             <a
+              data-ya="about.social"
+              data-ya-key="github"
               href={githubUrl}
               target="_blank"
               rel="me noopener noreferrer"
@@ -173,6 +178,7 @@ const AboutMe = () => {
           </div>
 
           <button
+            data-ya="about.mcp"
             onClick={() => {
               action('mcp.open')
               setMcpOpen(true)

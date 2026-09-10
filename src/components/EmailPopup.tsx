@@ -176,6 +176,7 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
           <div className="flex justify-between items-center mb-8">
             <h3 id={titleId} className="text-2xl font-semibold text-ink">Mail to Umut</h3>
             <button
+              data-ya="mail.close"
               onClick={onClose}
               aria-label="Close"
               className={dialogCloseButton}
@@ -190,6 +191,8 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
                 <label htmlFor={`${titleId}-from`} className="block text-gray-300 text-sm font-medium mb-2">From:</label>
                 <input
                   id={`${titleId}-from`}
+                  data-ya="mail.field"
+                  data-ya-key="from"
                   type="email"
                   aria-invalid={!!errors.fromEmail}
                   aria-describedby={errors.fromEmail ? `${titleId}-from-error` : undefined}
@@ -208,6 +211,7 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
                 <div className="relative group">
                   <input
                     id={`${titleId}-to`}
+                    data-ya="mail.copy"
                     type="text"
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' || e.key === ' ') {
@@ -236,6 +240,8 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
               <label htmlFor={`${titleId}-subject`} className="block text-gray-300 text-sm font-medium mb-2">Subject</label>
               <input
                 id={`${titleId}-subject`}
+                data-ya="mail.field"
+                data-ya-key="subject"
                 type="text"
                 aria-invalid={!!errors.subject}
                 aria-describedby={errors.subject ? `${titleId}-subject-error` : undefined}
@@ -253,6 +259,8 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
               <label htmlFor={`${titleId}-message`} className="block text-gray-300 text-sm font-medium mb-2">Message</label>
               <textarea
                 id={`${titleId}-message`}
+                data-ya="mail.field"
+                data-ya-key="message"
                 aria-invalid={!!errors.message}
                 aria-describedby={errors.message ? `${titleId}-message-error` : undefined}
                 value={message}
@@ -268,6 +276,7 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
             <div className="flex justify-end gap-3 mt-8">
               <button
                 type="button"
+                data-ya="mail.cancel"
                 onClick={onClose}
                 className="px-5 py-2.5 font-medium text-gray-300 hover:text-ink transition-colors"
               >
@@ -275,6 +284,7 @@ const EmailPopup = ({ isOpen, onClose }: EmailPopupProps) => {
               </button>
               <button
                 type="submit"
+                data-ya="mail.submit"
                 className={`px-7 py-2.5 font-medium bg-accent-500 hover:bg-accent-600 text-accent-fg rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50 ${
                   // accent-fg, not ink: ink is the page's brightest text, which
                   // means it flips with the theme and lands near-black on a red

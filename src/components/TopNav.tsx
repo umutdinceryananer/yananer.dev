@@ -36,6 +36,8 @@ const TopNav = ({ route }: { route: Route }) => {
             // The sliding pill says which tab is live to anyone who can see it.
             // aria-current is the same sentence for anyone who cannot.
             aria-current={route === t.id ? 'page' : undefined}
+            data-ya="nav.tab"
+            data-ya-key={t.id}
             className={`relative z-10 inline-flex items-center justify-center px-5 py-2.5 rounded-full text-sm font-medium leading-none transition-colors duration-300 ${
               route === t.id ? 'text-accent-fg' : 'text-gray-400 hover:text-ink'
             }`}

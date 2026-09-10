@@ -120,3 +120,78 @@ FROM batch b, json_each(b.events) e
 WHERE json_extract(e.value, '$.t') = 'action'
 GROUP BY action, route
 ORDER BY n DESC;
+
+-- ── Q5. Which project earns the click? ──────────────────────────────────────
+--
+-- Product question #2, and the one the contract could not answer before the
+-- names landed: `lbl` is the string "Repo" on every project card, so a count
+-- keyed on it said how many people clicked "a repo" and never which one.
+--
+-- A target beginning `?` is an interactive element with no data-ya. It is a
+-- bug, not a finding -- the build should have caught it.
+SELECT
+  json_extract(e.value, '$.s')  AS target,
+  COUNT(*)                      AS clicks,
+  COUNT(DISTINCT b.sid)         AS sessions
+FROM batch b, json_each(b.events) e
+WHERE json_extract(e.value, '$.t') = 'click'
+GROUP BY target
+ORDER BY clicks DESC;
+
+-- ── Q6. Where does the contact form lose people? ────────────────────────────
+--
+-- Product question #4. Field names only -- what was typed is never recorded and
+-- never left the browser. `abandon` means the field was left empty, `filled`
+-- means it was not; neither says anything about the content.
+--
+-- An event log, not a funnel percentage: one of only two conversions on this
+-- site, at a volume where a rate would be theatre.
+SELECT
+  json_extract(e.value, '$.f')  AS field,
+  json_extract(e.value, '$.a')  AS action,
+  COUNT(*)                      AS n,
+  COUNT(DISTINCT b.sid)         AS sessions
+FROM batch b, json_each(b.events) e
+WHERE json_extract(e.value, '$.t') = 'field'
+GROUP BY field, action
+ORDER BY field, action;
+
+-- ── Q7. Did anything break in front of a visitor? ───────────────────────────
+--
+-- Only errors thrown by this site's own files. Anything from an extension is
+-- dropped at the source and counted instead, and surfaces as the `err.foreign`
+-- action in Q4 -- so "no errors" and "plenty, none of them mine" stay apart.
+SELECT
+  json_extract(e.value, '$.m')    AS message,
+  json_extract(e.value, '$.src')  AS source,
+  json_extract(e.value, '$.ln')   AS line,
+  COUNT(*)                        AS n,
+  COUNT(DISTINCT b.sid)           AS sessions
+FROM batch b, json_each(b.events) e
+WHERE json_extract(e.value, '$.t') = 'err'
+GROUP BY message, source, line
+ORDER BY n DESC;
+
+-- ── Q8. Where do people click and click and nothing happens? ────────────────
+--
+-- Rage clicks, derived rather than collected: three hits on one target inside a
+-- second. This is why `rage` was cut from the wire -- the collector already has
+-- every click, so sending a second event to say three of them were close
+-- together was bytes spent on arithmetic.
+WITH clicks AS (
+  SELECT
+    b.sid                         AS sid,
+    json_extract(e.value, '$.s')  AS target,
+    json_extract(e.value, '$.ts') AS ts
+  FROM batch b, json_each(b.events) e
+  WHERE json_extract(e.value, '$.t') = 'click'
+)
+SELECT target, COUNT(*) AS bursts, COUNT(DISTINCT sid) AS sessions
+FROM (
+  SELECT sid, target, ts,
+         LAG(ts, 2) OVER (PARTITION BY sid, target ORDER BY ts) AS third_last
+  FROM clicks
+)
+WHERE third_last IS NOT NULL AND ts - third_last <= 1000
+GROUP BY target
+ORDER BY bursts DESC;

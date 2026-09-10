@@ -70,6 +70,7 @@ const McpModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => 
             </h2>
           </div>
           <button
+            data-ya="mcp.close"
             onClick={onClose}
             aria-label="Close"
             className={dialogCloseButton}
@@ -99,13 +100,15 @@ const McpModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => 
             <div className="flex items-center gap-2 bg-surface-1 border border-gray-800 rounded-lg p-1.5 pl-3">
               <code className="text-gray-300 text-[11px] sm:text-xs font-mono truncate flex-1">{SKILL_PROMPT}</code>
               <button
+                data-ya="mcp.copy"
+                data-ya-key="skill-prompt"
                 onClick={() => copy(SKILL_PROMPT, 'skill')}
                 className="shrink-0 px-3 py-1.5 rounded-md text-xs font-medium bg-surface-3 hover:bg-surface-4 text-gray-200 border border-gray-700 transition-colors"
               >
                 {copied === 'skill' ? 'Copied!' : 'Copy'}
               </button>
             </div>
-            <a href={SKILL_URL} target="_blank" rel="noopener noreferrer" className="inline-block mt-2 text-[11px] text-gray-500 hover:text-accent-300 transition-colors">
+            <a data-ya="mcp.link" data-ya-key="skill-md" href={SKILL_URL} target="_blank" rel="noopener noreferrer" className="inline-block mt-2 text-[11px] text-gray-500 hover:text-accent-300 transition-colors">
               view raw SKILL.md &rarr;
             </a>
           </section>
@@ -126,6 +129,8 @@ const McpModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => 
             <div className="flex items-center gap-2 bg-surface-0 border border-gray-800 rounded-lg p-1.5 pl-3">
               <code className="text-accent-300 text-xs sm:text-sm font-mono truncate flex-1">{MCP_URL}</code>
               <button
+                data-ya="mcp.copy"
+                data-ya-key="endpoint"
                 onClick={() => copy(MCP_URL, 'mcp')}
                 className="shrink-0 px-3 py-1.5 rounded-md text-xs font-medium bg-accent-500 hover:bg-accent-600 text-accent-fg transition-colors"
               >
@@ -156,8 +161,8 @@ const McpModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => 
 
           <p className="text-gray-600 text-[11px] leading-relaxed">
             Both read-only and rate-limited. Also machine-readable at{' '}
-            <a href="/llms.txt" className="text-accent-400/80 hover:text-accent-300">llms.txt</a> and{' '}
-            <a href="/resume.json" className="text-accent-400/80 hover:text-accent-300">resume.json</a>.
+            <a data-ya="mcp.link" data-ya-key="llms-txt" href="/llms.txt" className="text-accent-400/80 hover:text-accent-300">llms.txt</a> and{' '}
+            <a data-ya="mcp.link" data-ya-key="resume-json" href="/resume.json" className="text-accent-400/80 hover:text-accent-300">resume.json</a>.
           </p>
         </div>
       </div>

@@ -98,7 +98,7 @@ const PrivacyModal = ({ open, onClose }: { open: boolean; onClose: () => void })
           <h2 id={titleId} className="text-ink text-sm font-semibold truncate">
             What this site measures
           </h2>
-          <button onClick={onClose} aria-label="Close" className={dialogCloseButton}>
+          <button data-ya="privacy.close" onClick={onClose} aria-label="Close" className={dialogCloseButton}>
             ✕
           </button>
         </div>
@@ -117,6 +117,7 @@ const PrivacyModal = ({ open, onClose }: { open: boolean; onClose: () => void })
           <div className="pt-1 border-t border-gray-800">
             {MEASURING && optedOut !== null && (
               <button
+                data-ya="privacy.optout"
                 onClick={toggle}
                 aria-pressed={optedOut}
                 className={`w-full mt-3 px-4 py-2.5 rounded-lg border text-sm transition-colors ${

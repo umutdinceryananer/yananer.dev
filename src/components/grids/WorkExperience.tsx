@@ -125,6 +125,7 @@ const WorkExperience = () => {
           </div>
           {isPhone && rest.length > 0 && (
             <ShowMore
+              name="work-experience"
               open={expanded}
               hidden={rest.length}
               onToggle={() => setExpanded((v) => !v)}

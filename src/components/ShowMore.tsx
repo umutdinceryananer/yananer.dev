@@ -71,15 +71,21 @@ export const ShowMore = ({
   open,
   hidden,
   onToggle,
+  name,
 }: {
   open: boolean
   hidden: number
   onToggle: () => void
+  /** Which collapse this is. Both call sites render the same control, so
+      without it the two are one indistinguishable row in the click data. */
+  name: string
 }) => (
   <button
     type="button"
     onClick={onToggle}
     aria-expanded={open}
+    data-ya="showmore"
+    data-ya-key={name}
     className="mt-4 w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-surface-2 border border-gray-800 text-gray-300 text-sm font-medium hover:bg-surface-3 hover:border-accent-500 hover:text-ink transition-colors"
   >
     {open ? 'Show less' : `Show ${hidden} more`}

@@ -121,10 +121,10 @@ const DemoModal = ({ demo, onClose }: { demo: { url: string; title: string } | n
         <div className="flex items-center justify-between gap-3 px-4 py-2.5 border-b border-gray-800 shrink-0">
           <span id={titleId} className="text-ink text-sm font-medium truncate">{current.title}</span>
           <div className="flex items-center gap-4 shrink-0">
-            <a href={current.url} target="_blank" rel="noopener noreferrer" className="text-accent-400 hover:text-accent-300 text-xs">
+            <a data-ya="work.demo.newtab" href={current.url} target="_blank" rel="noopener noreferrer" className="text-accent-400 hover:text-accent-300 text-xs">
               Open in new tab ↗
             </a>
-            <button onClick={onClose} aria-label="Close demo" className={dialogCloseButton}>
+            <button data-ya="work.demo.close" onClick={onClose} aria-label="Close demo" className={dialogCloseButton}>
               ✕
             </button>
           </div>
@@ -157,7 +157,11 @@ const ProjectCard = ({
   onDecisions?: (p: Project) => void
   hasDecisions?: boolean
 }) => (
-  <div className="h-full flex flex-col bg-surface-2 rounded-lg p-4 relative overflow-hidden group hover:ring-2 hover:ring-accent-500/20 transition-all">
+  // No hover ring. A ring around the whole card is the standard "this is one
+  // click target" signal, and it is not: only the buttons at the bottom do
+  // anything, so a click on the title or the description does nothing at all.
+  // `group` stays -- children still key their own hover off it.
+  <div className="h-full flex flex-col bg-surface-2 rounded-lg p-4 relative overflow-hidden group transition-all">
     {/* Decorative Elements (match Education) */}
     <div className="absolute inset-0 pointer-events-none">
       <div className="absolute top-0 left-0 w-96 h-96 bg-accent-500/5 rounded-full blur-3xl transform -translate-x-1/2 -translate-y-1/2" />
@@ -196,6 +200,8 @@ const ProjectCard = ({
         <div className="mt-auto flex flex-wrap gap-2 pt-2">
           {p.repoUrl && (
             <a
+              data-ya="work.card.repo"
+              data-ya-key={p.id}
               href={p.repoUrl}
               target="_blank"
               rel="noopener noreferrer"
@@ -206,6 +212,8 @@ const ProjectCard = ({
           )}
           {p.embedDemo && p.liveDemoUrl ? (
             <button
+              data-ya="work.card.demo"
+              data-ya-key={p.id}
               onClick={() => onPlay?.(p)}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-surface-1 text-gray-300 hover:text-ink border border-accent-500/30 hover:border-accent-500/50 hover:bg-surface-3 transition-colors"
             >
@@ -213,6 +221,8 @@ const ProjectCard = ({
             </button>
           ) : p.liveDemoUrl ? (
             <a
+              data-ya="work.card.live"
+              data-ya-key={p.id}
               href={p.liveDemoUrl}
               target="_blank"
               rel="noopener noreferrer"
@@ -223,6 +233,8 @@ const ProjectCard = ({
           ) : null}
           {hasDecisions && (
             <button
+              data-ya="work.card.decisions"
+              data-ya-key={p.id}
               onClick={() => onDecisions?.(p)}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-surface-1 text-gray-300 hover:text-ink border border-accent-500/30 hover:border-accent-500/50 hover:bg-surface-3 transition-colors"
             >
@@ -251,6 +263,7 @@ const DecisionRow = ({ d }: { d: Decision }) => {
   return (
     <div>
       <button
+        data-ya="work.decision.row"
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
         className="w-full flex items-center gap-2.5 py-3 text-left group"
@@ -360,6 +373,7 @@ const DecisionsModal = ({
           </span>
           <button
             onClick={onClose}
+            data-ya="work.decisions.close"
             aria-label="Close decisions"
             className={dialogCloseButton}
           >
@@ -414,9 +428,14 @@ const Projects = () => {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             {profile.now.map((n, i) => (
+              // The ring only where it is true. Two of these three entries have
+              // no url and are completely inert, and they are otherwise
+              // indistinguishable from the one that opens.
               <div
                 key={i}
-                className="relative overflow-hidden bg-surface-2 rounded-lg p-4 border border-gray-800 group hover:ring-2 hover:ring-accent-500/20 transition-all"
+                className={`relative overflow-hidden bg-surface-2 rounded-lg p-4 border border-gray-800 group transition-all ${
+                  n.url ? 'hover:ring-2 hover:ring-accent-500/20' : ''
+                }`}
               >
                 <div className="absolute inset-0 pointer-events-none">
                   <div className="absolute top-0 left-0 w-96 h-96 bg-accent-500/5 rounded-full blur-3xl transform -translate-x-1/2 -translate-y-1/2" />
@@ -425,6 +444,8 @@ const Projects = () => {
                 {n.url && (
                   <>
                     <a
+                      data-ya="work.now"
+                      data-ya-key={n.title}
                       href={n.url}
                       target="_blank"
                       rel="noopener noreferrer"

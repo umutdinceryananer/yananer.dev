@@ -20,6 +20,7 @@ const Footer = ({ className = '' }: { className?: string }) => {
             {/* Deliberately understated. The obligation is that someone looking
                 for this can find it, not that everyone is made to read it. */}
             <button
+              data-ya="footer.privacy"
               onClick={() => setPrivacyOpen(true)}
               className="text-gray-500 hover:text-gray-300 underline underline-offset-2 decoration-gray-700 transition-colors"
             >
@@ -29,6 +30,7 @@ const Footer = ({ className = '' }: { className?: string }) => {
           <div className="flex items-center gap-2">
             <span>Source code available on</span>
             <a
+              data-ya="footer.source"
               href={profile.sourceRepoUrl}
               target="_blank"
               rel="noopener noreferrer"

@@ -250,6 +250,92 @@ for (const name of new Set(emitted)) {
   }
 }
 
+// ── 7. Every click target has to have a name ────────────────────────────────
+//
+// The whole click dataset is keyed on `data-ya`. An interactive element without
+// one is not an error anyone will see: the tracker reports it as `?button`,
+// which is enough to notice but not enough to act on, and by the time it is
+// noticed the clicks are already recorded under a name nobody can map back.
+//
+// Exemptions are structural rather than a list of file positions, so they
+// cannot go stale: a dialog backdrop and a panel that only stops propagation
+// are not targets anyone chooses, and counting them would bury the ones they do.
+
+const EXEMPT = ['stopPropagation', 'role="dialog"', 'chrome.root']
+
+function clickTargets(src: string): { line: number; text: string }[] {
+  const lines = src.split('\n')
+  const out: { line: number; text: string }[] = []
+  for (let i = 0; i < lines.length; i++) {
+    if (!lines[i].includes('onClick=')) continue
+    let start = i
+    while (start >= 0 && !/^\s*<[A-Za-z]/.test(lines[start])) start--
+    if (start < 0) continue
+    let end = i
+    while (end < lines.length && !/\/?>\s*$/.test(lines[end])) end++
+    out.push({ line: start + 1, text: lines.slice(start, end + 1).join('\n') })
+  }
+  return out
+}
+
+const tsxFiles: string[] = []
+const walk = (dir: string) => {
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const full = resolve(dir, entry.name)
+    if (entry.isDirectory()) walk(full)
+    else if (entry.name.endsWith('.tsx')) tsxFiles.push(full)
+  }
+}
+walk(resolve('src'))
+
+const unnamed: string[] = []
+for (const file of tsxFiles) {
+  const src = readFileSync(file, 'utf8')
+  for (const { line, text } of clickTargets(src)) {
+    if (text.includes('data-ya="')) continue
+    if (EXEMPT.some((e) => text.includes(e))) continue
+    unnamed.push(`${file.replace(resolve('.') + '/', '')}:${line}`)
+  }
+}
+if (unnamed.length) {
+  fail(
+    `${unnamed.length} clickable element(s) have no data-ya name:\n` +
+      unnamed.map((u) => `        ${u}`).join('\n') +
+      '\n      Add one, or -- if it is a backdrop or a propagation stopper -- it should look like one.',
+  )
+}
+
+// Names without a key are one specific element and must be unique; names with a
+// key are templates over a list (twelve project cards, three form fields) and
+// are supposed to repeat.
+//
+// Scanned by position rather than by a regex over the whole element: attributes
+// here are written both inline and across lines, and a pattern that assumed
+// either shape quietly matched only some of them -- which is the failure mode
+// where a check reports success while examining two thirds of the input.
+
+const NAME = /data-ya="([^"]+)"/g
+const seen = new Map<string, string>()
+
+for (const file of tsxFiles) {
+  const src = readFileSync(file, 'utf8')
+  const short = file.replace(resolve('.') + '/', '')
+  const hits = [...src.matchAll(NAME)]
+  for (let i = 0; i < hits.length; i++) {
+    const name = hits[i][1]
+    // Everything between this name and the next one belongs to this element.
+    const until = i + 1 < hits.length ? hits[i + 1].index : src.length
+    if (src.slice(hits[i].index, until).includes('data-ya-key')) continue
+    const prev = seen.get(name)
+    if (prev) {
+      fail(`data-ya="${name}" appears in ${prev} and ${short} with no data-ya-key to tell them apart.`)
+    }
+    seen.set(name, short)
+  }
+}
+
+console.log(`Analytics: ${seen.size} named click target(s), ${tsxFiles.length} components scanned`)
+
 // ── report ───────────────────────────────────────────────────────────────────
 
 if (problems.length) {

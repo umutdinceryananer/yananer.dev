@@ -50,6 +50,7 @@ const ThemeToggle = () => {
     <div className="relative group">
       <button
         type="button"
+        data-ya="nav.theme"
         onClick={() => {
           action('theme.set', next)
           setTheme(next)

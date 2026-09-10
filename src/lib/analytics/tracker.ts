@@ -1,16 +1,21 @@
 /**
  * The tracker. Loaded only from components/Analytics.tsx, and only dynamically.
  *
- * Phase 1 emits `view`, `leave` and `action`. Clicks, dead clicks and errors
- * arrive with the data-ya naming pass; the wire contract already has room for
- * them.
+ * Emits `view`, `leave`, `action`, `click`, `field` and `err`.
+ *
+ * Not `dead`. Detecting "a click happened and nothing followed" is a heuristic
+ * with a real false-positive rate, and this site's three known dead-click sites
+ * were found by reading it rather than by measuring it -- two of which have
+ * since been fixed. It stays defined in the contract for when there is an
+ * unknown one worth hunting. Not `layout` either: that is heatmap input, and a
+ * heatmap needs hundreds of clicks per bucket before it stops inventing shapes.
  *
  * Three things in this file exist because of how *this* site is built, and all
  * three would silently produce plausible, wrong numbers if written the usual
  * way. They are marked THIS SITE below.
  */
 
-import { PROTOCOL, type AnalyticsEvent, type Bands, type Batch, type Route } from './types'
+import { PROTOCOL, type AnalyticsEvent, type Bands, type Batch, type ClickEvent, type Route } from './types'
 import { ENDPOINT, context, optedOut, routeFromHash, sessionId, visitorId } from './session'
 import { ACTION_EVENT, type ActionDetail } from './emit'
 
@@ -22,6 +27,13 @@ const FLUSH_MS = 10_000
 const MAX_QUEUE = 24
 /** Below this, a scrollHeight change is a scrollbar or a font settling. */
 const HEIGHT_EPS = 8
+/** Per session. A render loop that throws can produce thousands; the first few
+    say everything the rest would. */
+const MAX_ERRORS = 5
+/** Elements that look like they do something. An unnamed one is worth knowing
+    about -- it means a data-ya was forgotten -- so it is reported as `?tag`
+    rather than dropped. */
+const INTERACTIVE = 'a, button, input, textarea, select, summary, [role="button"]'
 
 /**
  * THIS SITE (1 of 3): the page does not scroll.
@@ -33,6 +45,55 @@ const HEIGHT_EPS = 8
  * this element instead. useScrollLock.ts already reaches for it the same way.
  */
 const scroller = () => document.querySelector('.app-scroll')
+
+/**
+ * The route the visitor is actually looking at.
+ *
+ * App.tsx puts `rendered` on <main data-ya-route>, which lags the hash by
+ * PAGE_EXIT_MS during a swap -- and does not lag at all for a reduced-motion
+ * visitor. Reading the DOM rather than the hash is what keeps a click made
+ * during that window from being filed against a page that is not on screen yet,
+ * and keeps the bug from being one that only some visitors can reproduce.
+ */
+function renderedRoute(fallback: Route): Route {
+  const r = document.querySelector('[data-ya-route]')?.getAttribute('data-ya-route')
+  return r === 'work' || r === 'about' ? r : fallback
+}
+
+/**
+ * The name of the thing that was clicked, and the element it was named on.
+ *
+ * `data-ya` plus an optional `data-ya-key` for the instance -- the project id,
+ * the tab, the form field. Never a generated CSS selector: Tailwind emits class
+ * names verbatim, so one would be stable within a deploy and would silently
+ * detach every historical row the first time a padding changed.
+ */
+function named(target: Element): { s: string; box: Element } | null {
+  const el = target.closest('[data-ya]')
+  if (el) {
+    const base = el.getAttribute('data-ya') ?? ''
+    const key = el.getAttribute('data-ya-key')
+    return base ? { s: key ? `${base}:${key.slice(0, 48)}` : base, box: el } : null
+  }
+  // Unnamed but interactive: report the tag alone. Enough to notice that
+  // something is being clicked and has no name yet, and it cannot rot, because
+  // there is nothing in it to rot.
+  const hit = target.closest(INTERACTIVE)
+  return hit ? { s: `?${hit.tagName.toLowerCase()}`, box: hit } : null
+}
+
+/** Outbound destination, host + path, query dropped. */
+function href(el: Element): string | undefined {
+  const a = el.closest('a')
+  if (!a?.href) return undefined
+  try {
+    const u = new URL(a.href)
+    if (u.origin === location.origin && !u.pathname.startsWith('/')) return undefined
+    return `${u.host}${u.pathname}`.slice(0, 160)
+  } catch {
+    return undefined
+  }
+}
 
 interface View {
   r: Route
@@ -76,6 +137,12 @@ export function start(): () => void {
   let lastHeight = 0
   let heightMoving = false
   let stopped = false
+  let errors = 0
+  /** Errors thrown by code that is not ours -- browser extensions, mostly.
+      Dropped rather than recorded, but counted, so "no errors" and "plenty of
+      errors, none of them mine" stay distinguishable. */
+  let foreignErrors = 0
+  let fieldAt = 0
 
   const now = () => performance.now()
   const ts = () => Math.round(now() - t0)
@@ -136,6 +203,10 @@ export function start(): () => void {
 
   function leave() {
     if (!view) return
+    if (foreignErrors) {
+      push({ t: 'action', ts: ts(), r: view.r, n: 'err.foreign', s: String(foreignErrors) })
+      foreignErrors = 0
+    }
     const sc = scroller()
     const v = view
     view = null
@@ -256,6 +327,128 @@ export function start(): () => void {
     push({ t: 'action', ts: ts(), r: view.r, n: d.n.slice(0, 48), ...(d.s ? { s: d.s.slice(0, 64) } : {}) })
   }
 
+  const clamp01 = (n: number) => (Number.isFinite(n) ? Math.min(1, Math.max(0, n)) : 0)
+
+  const onClick = (e: Event) => {
+    if (!e.isTrusted || !view) return
+    const target = e.target as Element | null
+    if (!target?.closest) return
+    const hit = named(target)
+    if (!hit) return
+
+    const me = e as MouseEvent
+    const box = hit.box.getBoundingClientRect()
+    const sc = scroller()
+    const tag = hit.box.tagName.toLowerCase()
+
+    const ev: ClickEvent = {
+      t: 'click',
+      ts: ts(),
+      r: renderedRoute(view.r),
+      s: hit.s,
+      // Where inside the element's own box. Survives every reflow the element
+      // survives, which a page coordinate does not.
+      ox: box.width ? clamp01((me.clientX - box.left) / box.width) : 0,
+      oy: box.height ? clamp01((me.clientY - box.top) / box.height) : 0,
+      vw: document.documentElement.clientWidth,
+      dh: sc ? sc.scrollHeight : 0,
+      tag: tag.slice(0, 16),
+    }
+
+    /**
+     * Page coordinates only outside a dialog.
+     *
+     * The four dialogs are portalled to <body> and are position:fixed, so they
+     * sit outside the scroll container entirely. Adding the scroller's offset to
+     * a click inside one produces a page coordinate that describes nowhere, and
+     * it would smear across any map drawn from this later.
+     */
+    if (sc && !target.closest('[role="dialog"]')) {
+      ev.nx = clamp01(me.clientX / Math.max(1, sc.clientWidth))
+      ev.py = Math.round(me.clientY + sc.scrollTop)
+    }
+
+    // Never text from a field: that is the visitor's own writing.
+    if (tag !== 'input' && tag !== 'textarea') {
+      const label = hit.box.getAttribute('aria-label') ?? hit.box.textContent?.trim() ?? ''
+      if (label) ev.lbl = label.replace(/\s+/g, ' ').slice(0, 64)
+    }
+    const h = href(hit.box)
+    if (h) ev.h = h
+
+    push(ev)
+  }
+
+  const fieldOf = (e: Event): Element | null =>
+    (e.target as Element | null)?.closest?.('[data-ya="mail.field"]') ?? null
+
+  const onFocusIn = (e: Event) => {
+    const el = fieldOf(e)
+    if (!el || !view) return
+    fieldAt = now()
+    push({ t: 'field', ts: ts(), r: renderedRoute(view.r), f: el.getAttribute('data-ya-key') ?? '?', a: 'focus' })
+  }
+
+  const onFocusOut = (e: Event) => {
+    const el = fieldOf(e)
+    if (!el || !view) return
+    /**
+     * The only thing read from the field is whether it is empty, and only that
+     * boolean ever leaves the page -- never the value, never its length, never
+     * a hash of it. It is the minimum that answers "which field do people stop
+     * at", and there is no version of this question that needs more.
+     */
+    const filled = !!(el as HTMLInputElement).value?.trim()
+    push({
+      t: 'field',
+      ts: ts(),
+      r: renderedRoute(view.r),
+      f: el.getAttribute('data-ya-key') ?? '?',
+      a: filled ? 'filled' : 'abandon',
+      ms: Math.round(now() - fieldAt),
+    })
+  }
+
+  const onSubmit = (e: Event) => {
+    if (!e.isTrusted || !view) return
+    if (!(e.target as Element | null)?.querySelector?.('[data-ya="mail.field"]')) return
+    push({ t: 'field', ts: ts(), r: renderedRoute(view.r), f: 'form', a: 'submit' })
+  }
+
+  const onError = (e: ErrorEvent) => {
+    if (!view || errors >= MAX_ERRORS) return
+    // Extensions run in the page and throw into it constantly. An error from a
+    // file that is not ours is not something this site can act on, and left
+    // unfiltered it would be most of the list.
+    const src = e.filename ?? ''
+    if (!src.startsWith(location.origin)) {
+      foreignErrors += 1
+      return
+    }
+    errors += 1
+    push({
+      t: 'err',
+      ts: ts(),
+      r: renderedRoute(view.r),
+      // The message only. Never the stack: it carries paths, and in a bundled
+      // build occasionally fragments of the values that broke.
+      m: (e.message || 'error').slice(0, 200),
+      src: src.split('/').pop()?.slice(0, 80),
+      ...(typeof e.lineno === 'number' ? { ln: e.lineno } : {}),
+    })
+  }
+
+  const onRejection = (e: PromiseRejectionEvent) => {
+    if (!view || errors >= MAX_ERRORS) return
+    // No filename on a rejection, so the origin filter cannot run. Kept anyway:
+    // they are rare, and the ones this site produces (a failed fetch) are worth
+    // seeing.
+    errors += 1
+    const reason = e.reason
+    const m = reason instanceof Error ? reason.message : String(reason ?? 'rejection')
+    push({ t: 'err', ts: ts(), r: renderedRoute(view.r), m: m.slice(0, 200), src: 'promise' })
+  }
+
   const inputs = ['pointerdown', 'pointermove', 'keydown', 'touchstart', 'wheel'] as const
   for (const type of inputs) addEventListener(type, onInput, { passive: true, capture: true })
   const sc = scroller()
@@ -264,6 +457,14 @@ export function start(): () => void {
   addEventListener('visibilitychange', onVisibility)
   addEventListener('pagehide', onPageHide)
   addEventListener(ACTION_EVENT, onAction)
+  // Capture phase: a handler that stops propagation (the dialogs all do, to keep
+  // a click off the backdrop) would otherwise hide the click from this entirely.
+  addEventListener('click', onClick, { capture: true })
+  addEventListener('focusin', onFocusIn)
+  addEventListener('focusout', onFocusOut)
+  addEventListener('submit', onSubmit, { capture: true })
+  addEventListener('error', onError)
+  addEventListener('unhandledrejection', onRejection)
 
   const ticker = setInterval(tick, TICK_MS)
   const flusher = setInterval(() => flush(false), FLUSH_MS)
@@ -282,5 +483,11 @@ export function start(): () => void {
     removeEventListener('visibilitychange', onVisibility)
     removeEventListener('pagehide', onPageHide)
     removeEventListener(ACTION_EVENT, onAction)
+    removeEventListener('click', onClick, { capture: true })
+    removeEventListener('focusin', onFocusIn)
+    removeEventListener('focusout', onFocusOut)
+    removeEventListener('submit', onSubmit, { capture: true })
+    removeEventListener('error', onError)
+    removeEventListener('unhandledrejection', onRejection)
   }
 }

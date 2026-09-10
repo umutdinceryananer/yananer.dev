@@ -155,6 +155,73 @@ const actionBars = bars(
   actions.map((r) => ({ label: String(r.action), value: num(r.n), note: `${num(r.sessions)} sessions` })),
 )
 
+
+// ── Q5: which project earns the click ───────────────────────────────────────
+
+const clicks = rows('Q5')
+const unnamed = clicks.filter((r) => String(r.target).startsWith('?'))
+const clickBars = bars(
+  clicks.slice(0, 12).map((r) => ({
+    label: String(r.target),
+    value: num(r.clicks),
+    note: `${num(r.sessions)} sessions`,
+    accent: String(r.target).startsWith('work.card.'),
+  })),
+)
+
+// ── Q6: the contact funnel ──────────────────────────────────────────────────
+//
+// Presented as an event log rather than a conversion rate. One of only two
+// conversions on this site, at a volume where a percentage would be theatre --
+// and the interesting number is which field people stop at, which a single rate
+// throws away.
+
+const fieldRows = rows('Q6')
+const funnel = (() => {
+  const fields = [...new Set(fieldRows.map((r) => String(r.field)))].filter((f) => f !== 'form')
+  if (!fields.length) return `<p class="empty">Nobody has touched the form yet.</p>`
+  const at = (f: string, a: string) => num(fieldRows.find((r) => r.field === f && r.action === a)?.n)
+  const submits = num(fieldRows.find((r) => r.field === 'form' && r.action === 'submit')?.n)
+  return `<div class="bars">${fields
+    .map((f) => {
+      const focus = at(f, 'focus')
+      const filled = at(f, 'filled')
+      const left = at(f, 'abandon')
+      // No ratio without a denominator. The tracker emits focus before filled,
+      // so focus should never be the smaller number -- but a display that
+      // renders "5/0" when it is has stopped describing anything.
+      const value = focus >= filled && focus > 0 ? `${filled}/${focus}` : `${filled} filled`
+      return `<div class="bar">
+        <span class="bl">${esc(f)}</span>
+        <span class="bt"><i style="width:${focus > 0 ? Math.min(100, (filled / focus) * 100) : 0}%"></i></span>
+        <span class="bv">${value}${left ? `<em>${left} left it empty</em>` : ''}</span>
+      </div>`
+    })
+    .join('')}</div>
+  <p class="sub" style="margin:.8rem 0 0">${submits} message${submits === 1 ? '' : 's'} sent.</p>`
+})()
+
+// ── Q7 / Q8: errors and rage ────────────────────────────────────────────────
+
+const errs = rows('Q7')
+const errList = errs.length
+  ? `<div class="bars">${errs
+      .slice(0, 6)
+      .map(
+        (r) => `<div class="bar">
+      <span class="bl" title="${esc(r.message)}">${esc(r.message)}</span>
+      <span class="bt"><i style="width:100%"></i></span>
+      <span class="bv">${num(r.n)}<em>${esc(r.source ?? '')}${r.line ? `:${num(r.line)}` : ''}</em></span>
+    </div>`,
+      )
+      .join('')}</div>`
+  : `<p class="empty">Nothing has thrown in front of a visitor.</p>`
+
+const rage = rows('Q8')
+const rageList = rage.length
+  ? bars(rage.map((r) => ({ label: String(r.target), value: num(r.bursts), note: `${num(r.sessions)} sessions`, accent: true })))
+  : `<p class="empty">Nobody has clicked the same thing three times in a second.</p>`
+
 // ── page ────────────────────────────────────────────────────────────────────
 
 const generated = new Date().toISOString().replace('T', ' ').slice(0, 16)
@@ -235,7 +302,17 @@ ${
     ${dayChart}
   </section>
   ${card('How far down does anyone get?', 'Average deepest scroll. "read" is active time only — tab hidden, dialog open and idle time are all excluded.', depthBars)}
-  ${card('What did people press?', 'Counts, never rates. Named targets only, until the data-ya pass lands.', actionBars)}
+  ${card('What did people press?', 'Named things that are not clicks — a theme flip, a dropped foreign error.', actionBars)}
+  <section class="card wide">
+    <h2>Which project earns the click?</h2>
+    <p class="sub">Every named target, most-clicked first. Project cards highlighted.${
+      unnamed.length ? ` <b>${unnamed.length} target(s) have no name</b> — the build should have caught that.` : ''
+    }</p>
+    ${clickBars}
+  </section>
+  ${card('Where does the contact form lose people?', 'Filled out of focused, per field. Field names only — what was typed never left the browser.', funnel)}
+  ${card('Did anything break?', "Only this site's own files. Extension errors are dropped at the source and counted as err.foreign above.", errList)}
+  ${card('Rage clicks', 'Three hits on one target inside a second. Derived from the click stream, not collected separately.', rageList)}
 </div>
 
 <footer>

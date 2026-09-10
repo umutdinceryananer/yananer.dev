@@ -69,6 +69,7 @@ const TechStack = () => {
                   back in by a negative margin so the row does not shift. */}
               <button
                 type="button"
+                data-ya="about.tech.tooltip"
                 aria-label="Used in this portfolio"
                 aria-expanded={openTip === index}
                 onClick={() => setOpenTip((cur) => (cur === index ? null : index))}
@@ -156,6 +157,8 @@ const TechStack = () => {
             {VIEWS.map((v) => (
               <button
                 key={v.id}
+                data-ya="about.tech.view"
+                data-ya-key={v.id}
                 onClick={() => setView(v.id)}
                 className={`relative z-10 inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-medium leading-none transition-colors duration-300 ${
                   view === v.id ? 'text-accent-fg' : 'text-gray-400 hover:text-ink'
@@ -210,6 +213,7 @@ const TechStack = () => {
           )}
           {restItems.length > 0 && (
             <ShowMore
+              name="tech-stack"
               open={expanded}
               hidden={restItems.length}
               onToggle={() => setExpanded((v) => !v)}

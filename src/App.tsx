@@ -55,7 +55,16 @@ function App() {
             the content above the scroll origin and put it out of reach. The
             footer carries no auto margin of its own -- a third one would split
             the free space three ways and pull the content off centre. */}
-        <main className={`my-auto w-full max-w-[1400px] px-2 sm:px-4 lg:px-8 pb-6 sm:pb-8 ${page}`}>
+        {/* data-ya-route carries `rendered`, not `route`. useSwapTransition
+            holds the outgoing page for PAGE_EXIT_MS, so for that window the
+            hash already says the new route while the DOM still shows the old
+            one -- and the window does not exist at all for reduced-motion
+            visitors, which would make the mis-attribution intermittent per
+            visitor. The tracker reads this instead of the hash. */}
+        <main
+          data-ya-route={rendered}
+          className={`my-auto w-full max-w-[1400px] px-2 sm:px-4 lg:px-8 pb-6 sm:pb-8 ${page}`}
+        >
           {rendered === 'work' ? <Projects /> : <Home />}
         </main>
         {/* The footer fades with the page: the two routes differ enough in
