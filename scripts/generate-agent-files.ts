@@ -235,9 +235,14 @@ const resume = {
     studyType: e.degree,
     area: e.field,
     startDate: e.startYear,
-    ...(e.incoming ? {} : { endDate: e.endYear }),
+    // JSON Resume reads a missing endDate as "ongoing". An expected year in
+    // that field would claim a graduation that has not happened.
+    ...(e.status ? {} : { endDate: e.endYear }),
   })),
   skills: profile.tech.map((t) => ({ name: t.name, keywords: [t.description] })),
+  // Read off the skill each one certifies, so the badge on the page and this
+  // list cannot disagree.
+  certificates: profile.tech.flatMap((t) => (t.certification ? [{ name: t.certification }] : [])),
   projects: projects.map((p) => ({
     name: p.name,
     description: p.note ? `${p.oneLiner} (${p.note})` : p.oneLiner,

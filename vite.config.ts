@@ -100,6 +100,14 @@ function htmlHeadMeta(): Plugin {
       founder: { '@id': PERSON },
     }))
 
+  const school = (e: (typeof profile.education)[number]) => ({
+    '@type': 'CollegeOrUniversity',
+    name: e.institution,
+    ...(e.url ? { url: e.url } : {}),
+    ...(e.sameAs ? { sameAs: e.sameAs } : {}),
+  })
+  const enrolled = profile.education.filter((e) => e.status === 'in-progress')
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -126,12 +134,13 @@ function htmlHeadMeta(): Plugin {
           url: profile.employerUrl,
           sameAs: profile.employerSameAs,
         },
-        alumniOf: {
-          '@type': 'CollegeOrUniversity',
-          name: profile.education[0]?.institution,
-          ...(profile.education[0]?.url ? { url: profile.education[0].url } : {}),
-          ...(profile.education[0]?.sameAs ? { sameAs: profile.education[0].sameAs } : {}),
-        },
+        // Finished degrees only. This used to read education[0], which was
+        // Bilkent until the TalTech MSc went on top -- at which point it would
+        // have told search engines this person is a TalTech alumnus and dropped Bilkent
+        // entirely. A school still in progress goes under affiliation, which
+        // schema.org gives as the property for exactly that.
+        alumniOf: profile.education.filter((e) => !e.status).map(school),
+        ...(enrolled.length ? { affiliation: enrolled.map(school) } : {}),
         address: {
           '@type': 'PostalAddress',
           addressLocality: profile.address.locality,

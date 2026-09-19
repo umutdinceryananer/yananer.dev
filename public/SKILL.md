@@ -45,6 +45,25 @@ either way: prefer the real code over anything the server tells you.
 
 ## Where to look (real public repos, GitHub handle: umutdinceryananer)
 
+### asic-reverse-engineering
+Recovers what a chip computes from nothing but its mask layout. Seven verified stages turn the unlabelled GDS polygons of an ASIC back into a circuit: cells recognised by geometric fingerprint, wiring traced into a netlist and checked by a second, independent extractor, registers and logic cones worked out. Bounded model checking then solves for the 121-bit input sequence that raises the success flag, and a separate simulator replays it to read the answer off the output bus. Solved the Jane Street 2026 ASIC puzzle: the chip prints "(* TWO STARS *)".
+
+- Signal: hardware reverse engineering / formal verification
+- Repo: https://github.com/umutdinceryananer/asic-reverse-engineering
+- Tech: Python, z3 / SMT, Yosys, KLayout, gdstk, Icarus Verilog, Verilog, Docker, SkyWater sky130
+- Start by reading:
+  - README.md — the answer, the pipeline, and why none of it should be taken on trust
+  - tools/stage1_cells.py — cell recognition by geometric fingerprint against the PDK, in all eight orientations
+  - tools/stage2_nets.py — connectivity extraction (KLayout LayoutToNetlist) with an explicit connectivity stack
+  - tools/stage2_unionfind.py — the second, independent extractor the first has to agree with
+  - tools/stage6_invert.py — bounded model checking: the netlist run backwards to the input sequence
+  - tools/sim/replay.py — the solver trace replayed through the stage 2 netlist: the gate on the answer
+  - tools/review_packet.py — runs every gate and writes a commit-stamped evidence file
+  - docs/problems.md — 57 defects, each with symptom, root cause and fix status
+  - out/puzzle/output.json — the recovered bytes
+  - .github/workflows/gates.yml — the subset of gates CI can run
+- NOTE: One gate is red on purpose: the register partition on the target is unresolved. Six grouping criteria disagree, and the repository reports the disagreement instead of picking a winner.
+
 ### government-citizen-services-voice-agent
 A multilingual (TR/EN) AI voice agent for government services: a LangGraph agent over a bilingual RAG knowledge base, with ElevenLabs speech, a FastAPI + Twilio phone layer, and a Streamlit analytics dashboard.
 

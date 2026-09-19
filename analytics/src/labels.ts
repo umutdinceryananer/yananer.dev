@@ -42,6 +42,7 @@ const PLAIN: Record<string, string> = {
   'about.contact': 'Contact button',
   'about.mcp': '"Connect your AI" button',
   'about.tech.tooltip': 'Skills — "used here" dot',
+  'about.tech.cert': 'Skills — certification dot',
   'footer.source': 'Footer — source code',
   'footer.privacy': 'Footer — privacy',
   'work.demo.newtab': 'Demo — open in new tab',

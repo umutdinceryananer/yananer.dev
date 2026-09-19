@@ -8,7 +8,12 @@ const Home = () => {
   return (
     <div className="grid grid-cols-1 min-[745px]:grid-cols-2 min-[1240px]:grid-cols-[1.2fr_1.4fr_1.2fr] gap-3 sm:gap-4 lg:gap-6">
       {/* Left Column - AboutMe */}
-      <div className="min-w-0 min-[745px]:row-span-2 bg-surface-1 rounded-lg sm:rounded-xl p-[2px] card-shadow card-shadow-hover transition-shadow">
+      {/* Two rows tall only in the three-column layout. In two columns it used
+          to span down beside Education and GitHub stacked, which held while the
+          bio filled it -- without the bio it left a card-sized gap under the
+          links. Now it sits beside Education alone, and GitHub takes the full
+          row underneath. */}
+      <div className="min-w-0 min-[1240px]:row-span-2 bg-surface-1 rounded-lg sm:rounded-xl p-[2px] card-shadow card-shadow-hover transition-shadow">
         <div className="h-full w-full bg-surface-1 rounded-[10px] p-4 sm:p-6 lg:p-7">
           <AboutMe />
         </div>
@@ -22,7 +27,7 @@ const Home = () => {
       </div>
 
       {/* GitHub Contributions */}
-      <div className="min-[1240px]:col-start-3 min-[1240px]:row-start-1 min-[745px]:order-3 min-[1240px]:order-none bg-surface-1 rounded-lg sm:rounded-xl p-[2px] card-shadow card-shadow-hover transition-shadow min-w-0">
+      <div className="min-[745px]:col-span-2 min-[1240px]:col-span-1 min-[1240px]:col-start-3 min-[1240px]:row-start-1 min-[745px]:order-3 min-[1240px]:order-none bg-surface-1 rounded-lg sm:rounded-xl p-[2px] card-shadow card-shadow-hover transition-shadow min-w-0">
         <div className="h-full w-full bg-surface-1 rounded-[10px] p-4 sm:p-6 lg:p-7">
           <GitHubContributions />
         </div>

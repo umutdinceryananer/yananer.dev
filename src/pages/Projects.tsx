@@ -34,6 +34,8 @@ const ReleaseTag = ({ repo }: { repo?: string }) => {
 const nowBadgeClass: Record<string, string> = {
   'In Development': 'bg-accent-500/10 text-accent-300 border-accent-500/20',
   'Pre-launch': 'bg-green-500/10 text-green-300 border-green-500/20',
+  // Under way and on track: the same green as Pre-launch.
+  'In progress': 'bg-green-500/10 text-green-300 border-green-500/20',
   // Shipped, but early (0.1.x) — deliberately not the green used for mature work.
   'Early release': 'bg-amber-500/10 text-amber-300 border-amber-500/20',
   // Finished and no longer developed. Muted on purpose: it is not a warning.
@@ -456,7 +458,9 @@ const Projects = () => {
             </h2>
             <div className="h-0.5 w-8 mx-auto rounded-full bg-accent-500" />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+          {/* Four cards: two by two until there is room for a single row, so
+              the fourth never sits alone under the other three. */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             {profile.now.map((n, i) => (
               // The ring only where it is true. Two of these three entries have
               // no url and are completely inert, and they are otherwise

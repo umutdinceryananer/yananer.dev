@@ -16,12 +16,17 @@ export interface EducationEntry {
   field: string
   startYear: string
   endYear: string
-  /** Institution homepage. Only used to give JSON-LD's alumniOf a resolvable node. */
+  /** Institution homepage. Only used in JSON-LD, to give the institution node a resolvable URL. */
   url?: string
   /** Authoritative pages for the institution itself, e.g. its Wikidata item. */
   sameAs?: string[]
-  /** When true, the degree hasn't started/finished yet — UI shows "Incoming" instead of a graduation year. */
-  incoming?: boolean
+  /**
+   * Where the degree stands, when it is not finished. Absent means completed.
+   * - "incoming": not started yet. Shows "Starting:" and no end year.
+   * - "in-progress": under way. No badge; endYear is the *expected* year and
+   *   is labelled that way, never as a graduation.
+   */
+  status?: 'incoming' | 'in-progress'
 }
 
 export interface WorkEntry {
@@ -51,6 +56,9 @@ export interface TechItem {
   hasHeart?: boolean
   /** "Used in this portfolio" pulse dot + tooltip in the UI. */
   hasTooltip?: boolean
+  /** A certification held in this, by its official name. Amber dot + tooltip in the
+      UI, and a `certificates` entry in resume.json. */
+  certification?: string
 }
 
 export interface GrowthItem {
@@ -107,6 +115,8 @@ export interface Profile {
   headline: string
   /** Short one-liner for llms.txt / JSON-LD description. */
   tagline: string
+  /** resume.json's summary. No longer rendered on the home page: the card gave
+      its space to the education entries below. */
   bio: string
   /** Human-readable, for display. Optional; omitted from JSON-LD / resume when absent. */
   location?: string
@@ -190,8 +200,8 @@ export const profile: Profile = {
     'Software engineer who builds across backend and data/ML.',
   bio:
     'Software Engineer & Founder, turning business needs into GenAI and agentic solutions. AWS Cloud Practitioner.',
-  location: 'Ankara, Türkiye',
-  address: { locality: 'Ankara', country: 'TR' },
+  location: 'Tallinn, Estonia',
+  address: { locality: 'Tallinn', country: 'EE' },
   photo: '/og.jpg',
   knowsAbout: [
     'Large language model applications',
@@ -227,6 +237,16 @@ export const profile: Profile = {
   // scoped on purpose: the region-neutral form answers 301 and this one 200.
   identityUrls: ['https://apps.apple.com/tr/developer/umut-dincer-yananer/id6777488982'],
   education: [
+    {
+      institution: 'Tallinn University of Technology',
+      degree: 'MSc',
+      field: 'Computer Science and Artificial Intelligence',
+      startYear: '2026',
+      endYear: '2028',
+      url: 'https://taltech.ee',
+      sameAs: ['https://www.wikidata.org/wiki/Q604487'],
+      status: 'in-progress',
+    },
     {
       institution: 'Ihsan Dogramaci Bilkent University',
       degree: 'BSc',
@@ -316,7 +336,7 @@ export const profile: Profile = {
     { name: 'Data Visualization', description: 'Data', hasHeart: true },
     { name: 'Java', description: 'OOP' },
     { name: 'Javascript', description: 'Web Dev' },
-    { name: 'AWS', description: 'Cloud Services', hasHeart: true },
+    { name: 'AWS', description: 'Cloud Services', hasHeart: true, certification: 'AWS Certified Cloud Practitioner' },
     { name: 'React', description: 'UI Framework', hasTooltip: true },
     { name: 'Typescript', description: 'Type Safety', hasTooltip: true },
     { name: 'Node.js', description: 'Runtime Environment' },
@@ -341,6 +361,7 @@ export const profile: Profile = {
     { area: 'Rust / systems programming', note: 'Shipped nightlightd (a 5-crate X11 daemon, packaged for Debian and the AUR) as my first real Rust project, but still early: leveling up on ownership, unsafe boundaries and systems patterns.' },
   ],
   now: [
+    { title: 'MSc at TalTech', badge: 'In progress', description: 'Computer Science and Artificial Intelligence, Tallinn University of Technology.', url: 'https://taltech.ee/en/masters-programmes/computer-science-and-artificial-intelligence' },
     { title: 'Building hisar', badge: 'In Development', description: 'LLM analysis over financial data.' },
     { title: 'Building nightlightd', badge: 'Early release', description: 'Zero-config X11 colour-temperature daemon in Rust; released and iterating.', url: 'https://github.com/umutdinceryananer/nightlightd', releaseRepo: 'umutdinceryananer/nightlightd' },
     { title: 'Closing LLM gaps', badge: 'Learning', description: 'Transformer internals; chasing a first paper.' },

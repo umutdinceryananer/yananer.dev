@@ -10,9 +10,14 @@ const Education = () => {
 
       <div className="flex-1 flex flex-col gap-3">
         {profile.education.map((edu, i) => (
+          // flex-auto, not flex-1. With a zero basis every entry is handed an
+          // equal share of the column, and overflow-hidden (there for the blur
+          // below) drops the floor that would stop a taller entry shrinking to
+          // it -- so whichever one wraps to an extra line loses its bottom
+          // padding. Growing from its own height, it cannot.
           <div
             key={i}
-            className="flex-1 bg-surface-2 rounded-lg p-4 relative overflow-hidden group hover:ring-2 hover:ring-accent-500/20 transition-all"
+            className="flex-auto bg-surface-2 rounded-lg p-4 relative overflow-hidden group hover:ring-2 hover:ring-accent-500/20 transition-all"
           >
             {/* Decorative Elements */}
             <div className="absolute inset-0 pointer-events-none">
@@ -28,7 +33,7 @@ const Education = () => {
                 <span className="px-1.5 py-0.5 bg-accent-500/10 text-accent-300 text-[10px] font-medium rounded-full border border-accent-500/20">
                   {edu.degree}
                 </span>
-                {edu.incoming && (
+                {edu.status === 'incoming' && (
                   <span className="px-1.5 py-0.5 bg-green-500/10 text-green-300 text-[10px] font-medium rounded-full border border-green-500/20">
                     Incoming
                   </span>
@@ -40,7 +45,7 @@ const Education = () => {
 
               {/* Timeline */}
               <div className="flex items-center gap-2 text-xs">
-                {edu.incoming ? (
+                {edu.status === 'incoming' ? (
                   <div className="flex items-center gap-1">
                     <span className="text-gray-400">Starting:</span>
                     <span className="text-accent-400 font-medium">{edu.startYear}</span>
@@ -53,7 +58,9 @@ const Education = () => {
                     </div>
                     <span className="text-gray-600">•</span>
                     <div className="flex items-center gap-1">
-                      <span className="text-gray-400">Graduated:</span>
+                      <span className="text-gray-400">
+                        {edu.status === 'in-progress' ? 'Expected:' : 'Graduated:'}
+                      </span>
                       <span className="text-accent-400 font-medium">{edu.endYear}</span>
                     </div>
                   </>

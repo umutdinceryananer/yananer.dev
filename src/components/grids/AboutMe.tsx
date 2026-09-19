@@ -121,12 +121,6 @@ const AboutMe = () => {
       </div>
 
       <div className="flex-1 flex flex-col">
-        <div className="bg-surface-1 rounded-xl p-4 border border-gray-800 mb-4">
-          <h3 className="text-xl font-semibold text-ink mb-3">About Me</h3>
-          <p className="text-gray-300 text-sm leading-relaxed">
-            {profile.bio}
-          </p>
-        </div>
         <div className="bg-surface-1 rounded-xl p-4 border border-gray-800">
           <div className="grid grid-cols-3 gap-2">
             <button

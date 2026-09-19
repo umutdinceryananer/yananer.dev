@@ -52,51 +52,83 @@ const TechStack = () => {
 
   /** One skill card. Takes the index it has in the full list, not the slice —
       the tooltip state is keyed by it and must survive the split. */
-  const techCard = (tech: TechItem, index: number) => (
-    <div
-      key={tech.name}
-      className="bg-surface-1 p-3 rounded-lg flex items-center border border-gray-800 hover:border-accent-500/50 transition-colors relative group"
-    >
-      <div className="flex flex-col gap-1">
-        <div className="flex items-center gap-2">
-          <span className="text-accent-300 text-sm">{tech.name}</span>
-          {tech.hasTooltip && (
-            <>
-              {/* The dot was an 8px mystery: what it meant lived in a hover
-                  tooltip, so on a phone it meant nothing at all and to a screen
-                  reader it was not there. As a button it carries its own name,
-                  answers a tap, and takes focus -- with a 32px hit area pulled
-                  back in by a negative margin so the row does not shift. */}
+  const techCard = (tech: TechItem, index: number) => {
+    // Every marker on a card explains itself in the one tooltip above it. Two
+    // tooltips would open in the same spot and sit on top of each other.
+    const tips = [tech.hasTooltip && 'Used in this portfolio', tech.certification].filter(
+      (t): t is string => Boolean(t),
+    )
+    const tipOpen = openTip === index
+    const toggleTip = () => setOpenTip((cur) => (cur === index ? null : index))
+
+    return (
+      <div
+        key={tech.name}
+        className="bg-surface-1 p-3 rounded-lg flex items-center border border-gray-800 hover:border-accent-500/50 transition-colors relative group"
+      >
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            <span className="text-accent-300 text-sm">{tech.name}</span>
+            {tech.hasTooltip && (
+              // The dot was an 8px mystery: what it meant lived in a hover
+              // tooltip, so on a phone it meant nothing at all and to a screen
+              // reader it was not there. As a button it carries its own name,
+              // answers a tap, and takes focus -- with a 32px hit area pulled
+              // back in by a negative margin so the row does not shift.
               <button
                 type="button"
                 data-ya="about.tech.tooltip"
                 aria-label="Used in this portfolio"
-                aria-expanded={openTip === index}
-                onClick={() => setOpenTip((cur) => (cur === index ? null : index))}
+                aria-expanded={tipOpen}
+                onClick={toggleTip}
                 className="-m-2.5 grid h-8 w-8 place-items-center rounded-full"
               >
                 <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse motion-reduce:animate-none" />
               </button>
-              <div
-                aria-hidden
-                className={`absolute -top-6 left-1/2 -translate-x-1/2 bg-surface-2 text-xs text-gray-300 px-3 py-2 rounded-lg border border-gray-800 transition-opacity whitespace-nowrap z-10 pointer-events-none ${
-                  openTip === index ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
-                }`}
+            )}
+            {tech.hasHeart && (
+              <svg className="w-3 h-3 text-red-500" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+              </svg>
+            )}
+            {tech.certification && (
+              // The same marker as the blue dot, in amber and holding still. A
+              // drawn badge was tried first; at this size its scalloped edge and
+              // check mark smeared into one blur. The tooltip carries the name.
+              <button
+                type="button"
+                data-ya="about.tech.cert"
+                aria-label={tech.certification}
+                aria-expanded={tipOpen}
+                onClick={toggleTip}
+                className="-m-2.5 grid h-8 w-8 place-items-center rounded-full"
               >
-                Used in this portfolio
-              </div>
-            </>
-          )}
-          {tech.hasHeart && (
-            <svg className="w-3 h-3 text-red-500" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-            </svg>
-          )}
+                <span className="w-2 h-2 rounded-full bg-amber-500" />
+              </button>
+            )}
+          </div>
+          <span className="text-gray-500 text-xs">{tech.description}</span>
         </div>
-        <span className="text-gray-500 text-xs">{tech.description}</span>
+        {tips.length > 0 && (
+          // Never wider than the card, and it grows upwards. The list is a
+          // scroller, which clips sideways as well as down, so a one-line
+          // tooltip wider than a left-column card lost its first few letters;
+          // this one wraps instead, and a second line pushes up into the card
+          // above rather than down over the name it is explaining.
+          <div
+            aria-hidden
+            className={`absolute bottom-[calc(100%-10px)] left-1/2 -translate-x-1/2 w-max max-w-full text-center bg-surface-2 text-xs text-gray-300 px-3 py-2 rounded-lg border border-gray-800 transition-opacity z-10 pointer-events-none ${
+              tipOpen ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 group-has-[:focus-visible]:opacity-100'
+            }`}
+          >
+            {tips.map((t) => (
+              <div key={t}>{t}</div>
+            ))}
+          </div>
+        )}
       </div>
-    </div>
-  )
+    )
+  }
 
   const scrollerRef = useRef<HTMLDivElement>(null)
   const topFadeRef = useRef<HTMLDivElement>(null)
