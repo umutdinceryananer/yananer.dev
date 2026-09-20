@@ -46,6 +46,9 @@ const SYNONYM_ALLOWLIST = new Set([
   'open source', 'large codebase',
   // cloud (AWS S3 + AWS Cloud Practitioner cert; 'aws' is in-corpus, 'cloud' is the synonym)
   'cloud',
+  // formal-verification: both are the evidence's own words in shorter form --
+  // the corpus says "bounded model checking" and "formal verification".
+  'bmc', 'formal methods',
 ])
 
 const reviewed = new Set([...ALIASES, ...SYNONYM_ALLOWLIST])

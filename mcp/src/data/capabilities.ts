@@ -88,6 +88,19 @@ export const capabilities: Capability[] = [
     evidence: ['my-game-theory-lab — React/Vite', 'yananer.dev — this site'],
   },
   {
+    id: 'formal-verification',
+    label: 'Formal methods & hardware reverse engineering',
+    // No 'sat'. The solving is bounded model checking discharged to z3, which
+    // is SMT; claiming SAT as well would be stretching one piece of evidence
+    // over two words.
+    keywords: ['formal verification', 'formal methods', 'model checking', 'bmc', 'smt', 'z3', 'solver', 'verilog', 'eda', 'asic', 'reverse engineering', 'hardware'],
+    evidence: [
+      'asic-reverse-engineering — tools/stage6_invert.py (bounded model checking over the netlist, solved with z3)',
+      'asic-reverse-engineering — tools/stage1_cells.py, tools/stage2_nets.py (GDS layout to netlist, with a second independent extractor)',
+      'asic-reverse-engineering — tools/sim/replay.py (solver trace replayed under the vendor gate models)',
+    ],
+  },
+  {
     id: 'testing-ci',
     label: 'Testing & CI',
     keywords: ['testing', 'tests', 'unit test', 'ci', 'continuous integration', 'pytest', 'vitest'],

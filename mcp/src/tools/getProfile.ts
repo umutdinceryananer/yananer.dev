@@ -38,9 +38,18 @@ export function registerGetProfile(server: McpServer) {
           institution: e.institution,
           degree: e.degree,
           field: e.field,
-          years: e.incoming ? `${e.startYear}- (incoming)` : `${e.startYear}-${e.endYear}`,
+          // An unfinished degree has to say so. Printed as a bare range, one in
+          // progress reads exactly like one that was completed -- and a model
+          // reading this has nothing else to go on.
+          years:
+            e.status === 'incoming'
+              ? `${e.startYear}- (starting)`
+              : e.status === 'in-progress'
+                ? `${e.startYear}-${e.endYear} (expected, in progress)`
+                : `${e.startYear}-${e.endYear}`,
         })),
         skills: profile.tech.map((t) => t.name),
+        certifications: profile.tech.flatMap((t) => (t.certification ? [t.certification] : [])),
         notGoodAtYet: profile.growth.map((g) => ({ area: g.area, note: g.note })),
         links: {
           site: profile.siteUrl,
