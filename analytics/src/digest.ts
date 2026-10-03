@@ -70,9 +70,9 @@ export async function sendWeeklyDigest(env: Env): Promise<void> {
       title: 'yananer.dev · bu hafta',
       message: formatDigest(summary),
       tags: ['bar_chart'],
-      // Tapping the notification opens the dashboard, which asks for the
-      // password -- the topic grants a summary, not the page.
-      click: 'https://stats.yananer.dev',
+      // No click link. It used to open the dashboard, which meant a password
+      // prompt on a phone to see a page holding less than the notification
+      // already says. Tapping now just opens ntfy, with the full text.
     }),
   })
   // Logged, not thrown. Both triggers share one cron history in the dashboard,
