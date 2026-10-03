@@ -240,73 +240,76 @@ const siteSummary: Tool = {
   },
   annotations: { readOnlyHint: true, openWorldHint: false },
 
-  async run(args, db) {
-    const days = Math.min(45, Math.max(1, Math.round(Number(args.days ?? 7)) || 7))
-    const tomorrow = isoDay(-DAY_MS)
-    const from = isoDay((days - 1) * DAY_MS)
-    const prevFrom = isoDay((2 * days - 1) * DAY_MS)
+  run: (args, db) => summarize(db, Math.min(45, Math.max(1, Math.round(Number(args.days ?? 7)) || 7))),
+}
 
-    const [now, before] = await Promise.all([periodCounts(db, from, tomorrow), periodCounts(db, prevFrom, from)])
+/** The last `days` days against the `days` before. Shared by site_summary and
+    the weekly push, so the notification and the chat answer cannot disagree. */
+export async function summarize(db: D1Database, days: number) {
+  const tomorrow = isoDay(-DAY_MS)
+  const from = isoDay((days - 1) * DAY_MS)
+  const prevFrom = isoDay((2 * days - 1) * DAY_MS)
 
-    const sources = await rows(
-      db,
-      `SELECT
-         CASE
-           WHEN json_extract(ctx, '$.utm.source') IS NOT NULL
-             THEN json_extract(ctx, '$.utm.source') || ' (utm)'
-           WHEN COALESCE(json_extract(ctx, '$.ref'), '') = '' THEN 'typed or bookmarked'
-           ELSE substr(json_extract(ctx, '$.ref'), 1, instr(json_extract(ctx, '$.ref') || '/', '/') - 1)
-         END AS source,
-         COUNT(DISTINCT sid) AS sessions
-       FROM batch
-       WHERE ctx IS NOT NULL AND day >= ?1
-       GROUP BY source ORDER BY sessions DESC LIMIT 5`,
-      from,
-    )
-    const clicks = await rows(
-      db,
-      `SELECT json_extract(e.value, '$.s') AS target, COUNT(*) AS clicks
-       FROM batch b, json_each(b.events) e
-       WHERE b.day >= ?1 AND json_extract(e.value, '$.t') = 'click'
-       GROUP BY target ORDER BY clicks DESC LIMIT 8`,
-      from,
-    )
-    const [reading] = await rows(
-      db,
-      `SELECT
-         CAST(AVG(json_extract(e.value, '$.ams')) / 1000 AS INT) AS active_s,
-         CAST(AVG(json_extract(e.value, '$.sd')) AS INT)         AS scroll_pct
-       FROM batch b, json_each(b.events) e
-       WHERE b.day >= ?1 AND json_extract(e.value, '$.t') = 'leave'`,
-      from,
-    )
-    const errors = await rows(
-      db,
-      `SELECT json_extract(e.value, '$.m') AS message, COUNT(*) AS times
-       FROM batch b, json_each(b.events) e
-       WHERE b.day >= ?1 AND json_extract(e.value, '$.t') = 'err'
-       GROUP BY message ORDER BY times DESC LIMIT 5`,
-      from,
-    )
+  const [now, before] = await Promise.all([periodCounts(db, from, tomorrow), periodCounts(db, prevFrom, from)])
 
-    return {
-      period: { days, from, to: isoDay(0) },
-      visits: { thisPeriod: now.sessions, previousPeriod: before.sessions },
-      browsers: { thisPeriod: now.browsers, cameBack: now.cameBack },
-      openedWorkPage: { thisPeriod: now.openedWork, previousPeriod: before.openedWork },
-      reading:
-        reading?.active_s == null
-          ? null
-          : { averageActiveSeconds: num(reading.active_s), averageScrollPercent: num(reading.scroll_pct) },
-      sources: sources.map((r) => ({ source: String(r.source), visits: num(r.sessions) })),
-      topClicks: clicks.map((r) => ({ what: label(String(r.target)), clicks: num(r.clicks) })),
-      errors: errors.map((r) => ({ message: String(r.message), times: num(r.times) })),
-      notes: [
-        'A visit is one browser tab. The owner’s own visits are included.',
-        'browsers counts only visitors whose browser kept the id; opted-out and storage-blocked visits are visits without one.',
-      ],
-    }
-  },
+  const sources = await rows(
+    db,
+    `SELECT
+       CASE
+         WHEN json_extract(ctx, '$.utm.source') IS NOT NULL
+           THEN json_extract(ctx, '$.utm.source') || ' (utm)'
+         WHEN COALESCE(json_extract(ctx, '$.ref'), '') = '' THEN 'typed or bookmarked'
+         ELSE substr(json_extract(ctx, '$.ref'), 1, instr(json_extract(ctx, '$.ref') || '/', '/') - 1)
+       END AS source,
+       COUNT(DISTINCT sid) AS sessions
+     FROM batch
+     WHERE ctx IS NOT NULL AND day >= ?1
+     GROUP BY source ORDER BY sessions DESC LIMIT 5`,
+    from,
+  )
+  const clicks = await rows(
+    db,
+    `SELECT json_extract(e.value, '$.s') AS target, COUNT(*) AS clicks
+     FROM batch b, json_each(b.events) e
+     WHERE b.day >= ?1 AND json_extract(e.value, '$.t') = 'click'
+     GROUP BY target ORDER BY clicks DESC LIMIT 8`,
+    from,
+  )
+  const [reading] = await rows(
+    db,
+    `SELECT
+       CAST(AVG(json_extract(e.value, '$.ams')) / 1000 AS INT) AS active_s,
+       CAST(AVG(json_extract(e.value, '$.sd')) AS INT)         AS scroll_pct
+     FROM batch b, json_each(b.events) e
+     WHERE b.day >= ?1 AND json_extract(e.value, '$.t') = 'leave'`,
+    from,
+  )
+  const errors = await rows(
+    db,
+    `SELECT json_extract(e.value, '$.m') AS message, COUNT(*) AS times
+     FROM batch b, json_each(b.events) e
+     WHERE b.day >= ?1 AND json_extract(e.value, '$.t') = 'err'
+     GROUP BY message ORDER BY times DESC LIMIT 5`,
+    from,
+  )
+
+  return {
+    period: { days, from, to: isoDay(0) },
+    visits: { thisPeriod: now.sessions, previousPeriod: before.sessions },
+    browsers: { thisPeriod: now.browsers, cameBack: now.cameBack },
+    openedWorkPage: { thisPeriod: now.openedWork, previousPeriod: before.openedWork },
+    reading:
+      reading?.active_s == null
+        ? null
+        : { averageActiveSeconds: num(reading.active_s), averageScrollPercent: num(reading.scroll_pct) },
+    sources: sources.map((r) => ({ source: String(r.source), visits: num(r.sessions) })),
+    topClicks: clicks.map((r) => ({ what: label(String(r.target)), clicks: num(r.clicks) })),
+    errors: errors.map((r) => ({ message: String(r.message), times: num(r.times) })),
+    notes: [
+      'A visit is one browser tab. The owner’s own visits count too, except from browsers opted out with yananer.dev/?notrack.',
+      'browsers counts only visitors whose browser kept the id; storage-blocked visits are visits without one.',
+    ],
+  }
 }
 
 const QUESTION_LIST = QUERIES.map((q) => q.title).join('\n')

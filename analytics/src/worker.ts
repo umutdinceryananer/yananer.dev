@@ -34,6 +34,7 @@
 import { QUERIES, type Row, type Section } from './queries'
 import { renderDashboard } from './render'
 import { handleMcp } from './mcp'
+import { sendWeeklyDigest, WEEKLY_CRON } from './digest'
 
 /** The slice of D1 used here, declared rather than imported so this package
     needs no types dependency -- the same trade mcp/src/worker.ts makes. */
@@ -48,10 +49,25 @@ export interface D1Database {
   prepare(query: string): D1PreparedStatement
 }
 
+/** The Workers rate-limit binding. Counts per Cloudflare location, not
+    globally -- a backstop, not an exact budget. */
+interface RateLimit {
+  limit(options: { key: string }): Promise<{ success: boolean }>
+}
+
 export interface Env {
   ANALYTICS_DB: D1Database
-  /** Set with `npm run stats:password`. Absent means nothing is served. */
+  /** The dashboard's password. Set with `npm run stats:password`. Absent
+      means the dashboard serves nothing. */
   STATS_PASSWORD?: string
+  /** The MCP endpoint's bearer token, separate from the password on purpose.
+      Set with `npm run stats:token`. Absent means /mcp serves nothing. */
+  MCP_TOKEN?: string
+  /** The ntfy.sh topic the weekly summary goes to. On the public server the
+      topic name is the only lock, so it is a secret, not config. */
+  NTFY_TOPIC?: string
+  /** Requests per client IP that reach a password or token check. */
+  AUTH_LIMIT: RateLimit
 }
 
 /** Set by Access on every authenticated request, and impossible to forge from
@@ -97,16 +113,26 @@ function same(a: string, b: string): boolean {
   return diff === 0
 }
 
-/** True when the request carries a correct password, or arrived through Access. */
-function allowed(request: Request, env: Env): boolean {
+/**
+ * Two doors, two keys.
+ *
+ * The dashboard takes the password, because a person types it into a browser's
+ * login box and it has to be something a person can remember. /mcp takes a long
+ * random token instead, because nobody types it -- it is pasted into a connector
+ * once. Keeping them apart means the guessable one opens only the page, and a
+ * token leaked from a config file opens only the API.
+ */
+function tokenOk(request: Request, env: Env): boolean {
+  if (!env.MCP_TOKEN) return false
+  const header = request.headers.get('Authorization') ?? ''
+  return header.startsWith('Bearer ') && same(header.slice(7).trim(), env.MCP_TOKEN)
+}
+
+/** True when the request carries the dashboard password, or arrived through Access. */
+function passwordOk(request: Request, env: Env): boolean {
   if (request.headers.get(ACCESS_HEADER)) return true
   if (!env.STATS_PASSWORD) return false
   const header = request.headers.get('Authorization') ?? ''
-  // Bearer as well as Basic, for the MCP endpoint. A browser only speaks Basic,
-  // but a connector is configured by pasting a header into a form, and Basic
-  // would mean base64-encoding ":password" by hand first. Same secret, same
-  // constant-time compare, one less step to get wrong.
-  if (header.startsWith('Bearer ')) return same(header.slice(7).trim(), env.STATS_PASSWORD)
   if (!header.startsWith('Basic ')) return false
   try {
     // The username is ignored: there is one account here and naming it would
@@ -145,14 +171,39 @@ async function runAll(db: D1Database): Promise<Section[]> {
   return out
 }
 
+/**
+ * Whether this client has used up its tries for the minute.
+ *
+ * Every request that reaches a password or token check counts, the right ones
+ * included. Counting only the wrong ones would have to happen after the check,
+ * and by then the guess has already been tested -- the limit would change the
+ * status code of a failed guess without slowing the guessing at all.
+ *
+ * The cost is that the owner's own requests count too, which is why the limit
+ * sits at 30 a minute: a dashboard load is one request and a Claude question is
+ * a handful, so nobody legitimate gets near it, while a password-guessing loop
+ * is held to 30 tries a minute per address.
+ */
+async function throttled(request: Request, env: Env): Promise<Response | null> {
+  const ip = request.headers.get('CF-Connecting-IP') ?? 'unknown'
+  const { success } = await env.AUTH_LIMIT.limit({ key: ip })
+  if (success) return null
+  return new Response('Too many requests', {
+    status: 429,
+    headers: { 'Retry-After': '60', 'Cache-Control': 'no-store, private' },
+  })
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const { pathname } = new URL(request.url)
 
-    // The MCP endpoint: same door, same password, its own methods (POST).
+    // The MCP endpoint: its own token, its own methods (POST).
     if (pathname === '/mcp') {
-      if (!allowed(request, env)) {
-        if (!env.STATS_PASSWORD) return new Response('No password is set: npm run stats:password', { status: 403 })
+      const slow = await throttled(request, env)
+      if (slow) return slow
+      if (!tokenOk(request, env)) {
+        if (!env.MCP_TOKEN) return new Response('No token is set: npm run stats:token', { status: 403 })
         // Plain 401, no Basic challenge. A connector cannot answer a browser
         // login box, and a challenge it does not understand only sends some
         // clients off looking for an OAuth server that is not here.
@@ -166,7 +217,9 @@ export default {
     // answer a question nobody asked.
     if (request.method !== 'GET' && request.method !== 'HEAD') return html('', 405)
     if (pathname !== '/') return html('', 404)
-    if (!allowed(request, env)) {
+    const slow = await throttled(request, env)
+    if (slow) return slow
+    if (!passwordOk(request, env)) {
       // No password configured at all is a different problem from a wrong one,
       // and answering both with the same 401 would leave the first looking like
       // a typo forever.
@@ -207,7 +260,14 @@ export default {
    * traffic that is years away -- the dashboard prints the row count so the day
    * it stops being true is visible rather than inferred.
    */
-  async scheduled(_event: ScheduledController, env: Env): Promise<void> {
+  async scheduled(event: ScheduledController, env: Env): Promise<void> {
+    // Monday morning's trigger sends the weekly summary and nothing else. Every
+    // other trigger is the nightly retention delete, as it always was.
+    if (event.cron === WEEKLY_CRON) {
+      await sendWeeklyDigest(env)
+      return
+    }
+
     // Interpolated rather than bound: SQLite takes date() modifiers as literal
     // arguments, and RETENTION_DAYS is a number in this file -- there is no
     // input here to be careful about.

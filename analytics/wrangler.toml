@@ -40,8 +40,23 @@ routes = [{ pattern = "stats.yananer.dev", custom_domain = true }]
 #
 # Free-plan cron triggers are capped at five PER ACCOUNT, not per Worker. This
 # is currently the only one.
+#
+# The second is the weekly summary to ntfy: Monday 07:00 UTC. scheduled() tells
+# the two apart by the cron string, so the one here must match WEEKLY_CRON in
+# src/digest.ts character for character. That makes two of the account's five.
 [triggers]
-crons = ["17 3 * * *"]
+crons = ["17 3 * * *", "0 7 * * 1"]
+
+# A backstop on guessing, not an exact budget: counted per client IP and per
+# Cloudflare location. Every request that reaches the password or token check
+# counts -- see throttled() in src/worker.ts for why the right ones must too.
+# `period` must be 10 or 60. namespace_id is account-wide: mcp/ uses 1001, and
+# sharing it would share the counter.
+[[unsafe.bindings]]
+name = "AUTH_LIMIT"
+type = "ratelimit"
+namespace_id = "1002"
+simple = { limit = 30, period = 60 }
 
 [[d1_databases]]
 binding = "ANALYTICS_DB"

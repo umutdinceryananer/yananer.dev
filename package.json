@@ -16,7 +16,9 @@
     "dashboard": "tsx scripts/dashboard.ts",
     "stats:deploy": "npx --yes wrangler@4 deploy --config analytics/wrangler.toml",
     "stats:dev": "npx --yes wrangler@4 dev --config analytics/wrangler.toml",
-    "stats:password": "npx --yes wrangler@4 secret put STATS_PASSWORD --config analytics/wrangler.toml"
+    "stats:password": "npx --yes wrangler@4 secret put STATS_PASSWORD --config analytics/wrangler.toml",
+    "stats:token": "npx --yes wrangler@4 secret put MCP_TOKEN --config analytics/wrangler.toml",
+    "stats:ntfy": "npx --yes wrangler@4 secret put NTFY_TOPIC --config analytics/wrangler.toml"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
