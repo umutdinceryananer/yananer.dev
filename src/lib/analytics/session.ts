@@ -47,6 +47,20 @@ export const ENDPOINT: string | undefined = import.meta.env.VITE_ANALYTICS_ENDPO
  */
 export function optedOut(): boolean {
   try {
+    // yananer.dev/?notrack -- the dialog's switch, as a link. The refusal lives
+    // in this browser's storage, so the owner, on four machines with a couple of
+    // browsers each, would otherwise have to find the dialog on every one; this
+    // makes it one click each. First, so it is stored even where a header below
+    // would already have refused this visit. The parameter is then taken back
+    // out of the address bar, leaving nothing to be bookmarked or shared by
+    // accident.
+    const url = new URL(window.location.href)
+    if (url.searchParams.has('notrack')) {
+      localStorage.setItem(OPTOUT_KEY, '1')
+      url.searchParams.delete('notrack')
+      window.history.replaceState(window.history.state, '', url.pathname + url.search + url.hash)
+    }
+
     const nav = navigator as Navigator & { globalPrivacyControl?: boolean; msDoNotTrack?: string }
     if (nav.globalPrivacyControl === true) return true
     if (nav.doNotTrack === '1' || nav.msDoNotTrack === '1') return true

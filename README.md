@@ -258,14 +258,16 @@ binding that [`mcp/`](mcp/) uses.
 
 Three ways in, all reading the same queries in `analytics/src/queries.ts`:
 
-- **Ask Claude.** `https://stats.yananer.dev/mcp` is an MCP server behind the dashboard's
-  password. `site_summary` answers "how is the site doing" for the last N days against the
-  N before; `site_report` returns any of the dashboard's questions in full.
+- **Ask Claude.** `https://stats.yananer.dev/mcp` is an MCP server behind its own bearer
+  token — deliberately not the dashboard's password, so the guessable one opens only the
+  page. `site_summary` answers "how is the site doing" for the last N days against the N
+  before; `site_report` returns any of the dashboard's questions in full. Set the token
+  with `npm run stats:token`.
 
   ```bash
   # Claude Code
   claude mcp add --transport http yananer-stats https://stats.yananer.dev/mcp \
-    --header "Authorization: Bearer <STATS_PASSWORD>"
+    --header "Authorization: Bearer <MCP_TOKEN>"
   ```
 
   On claude.ai: Settings → Connectors → Add custom connector, the same URL, and the same
@@ -273,6 +275,14 @@ Three ways in, all reading the same queries in `analytics/src/queries.ts`:
 - **The dashboard** at `https://stats.yananer.dev` — the browser asks for the password.
 - **The terminal**: `npm run stats` prints every query as a table, `npm run dashboard`
   writes the dashboard page to a local file.
+- **Without asking**: every Monday at 07:00 UTC the Worker pushes the week's summary to an
+  [ntfy](https://ntfy.sh) topic — `npm run stats:ntfy` sets which. On the public ntfy server
+  the topic name is the only lock, so it is a secret and only weekly totals are sent.
+
+Both the dashboard and `/mcp` allow 30 requests a minute per address, the right ones
+included, to slow password guessing. To keep your own visits out of the numbers, open
+`yananer.dev/?notrack` once in each browser you use; it sets the same opt-out as the
+privacy dialog's switch.
 
 Two things the queries say out loud and worth repeating — at this traffic a day-over-day
 change smaller than about a third is Poisson noise, and a percentage whose denominator is
