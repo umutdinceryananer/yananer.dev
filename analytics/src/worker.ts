@@ -33,14 +33,18 @@
 
 import { QUERIES, type Row, type Section } from './queries'
 import { renderDashboard } from './render'
+import { handleMcp } from './mcp'
 
 /** The slice of D1 used here, declared rather than imported so this package
     needs no types dependency -- the same trade mcp/src/worker.ts makes. */
 interface D1PreparedStatement {
   all<T = Row>(): Promise<{ results?: T[] }>
   run(): Promise<{ meta?: { changes?: number } }>
+  /** Positional parameters, ?1 ?2 ... -- how the MCP tools pass a date range
+      without building SQL out of strings. */
+  bind(...values: unknown[]): D1PreparedStatement
 }
-interface D1Database {
+export interface D1Database {
   prepare(query: string): D1PreparedStatement
 }
 
@@ -98,6 +102,11 @@ function allowed(request: Request, env: Env): boolean {
   if (request.headers.get(ACCESS_HEADER)) return true
   if (!env.STATS_PASSWORD) return false
   const header = request.headers.get('Authorization') ?? ''
+  // Bearer as well as Basic, for the MCP endpoint. A browser only speaks Basic,
+  // but a connector is configured by pasting a header into a form, and Basic
+  // would mean base64-encoding ":password" by hand first. Same secret, same
+  // constant-time compare, one less step to get wrong.
+  if (header.startsWith('Bearer ')) return same(header.slice(7).trim(), env.STATS_PASSWORD)
   if (!header.startsWith('Basic ')) return false
   try {
     // The username is ignored: there is one account here and naming it would
@@ -139,6 +148,19 @@ async function runAll(db: D1Database): Promise<Section[]> {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const { pathname } = new URL(request.url)
+
+    // The MCP endpoint: same door, same password, its own methods (POST).
+    if (pathname === '/mcp') {
+      if (!allowed(request, env)) {
+        if (!env.STATS_PASSWORD) return new Response('No password is set: npm run stats:password', { status: 403 })
+        // Plain 401, no Basic challenge. A connector cannot answer a browser
+        // login box, and a challenge it does not understand only sends some
+        // clients off looking for an OAuth server that is not here.
+        return new Response('Unauthorized', { status: 401, headers: { 'Cache-Control': 'no-store, private' } })
+      }
+      return handleMcp(request, env.ANALYTICS_DB)
+    }
+
     // HEAD as well as GET: a HEAD that 405s makes every header check on this
     // endpoint -- including the one that proves the password prompt is sent --
     // answer a question nobody asked.

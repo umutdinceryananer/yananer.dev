@@ -172,7 +172,7 @@ npm run build        # prebuild (gen) → type-check (tsc -b) → build to dist/
 npm run preview      # Preview the production build
 npm run lint         # Run ESLint
 npm run db:init      # Apply analytics/schema.sql to the D1 database
-npm run stats        # Run analytics/stats.sql and print the numbers as tables
+npm run stats        # Run the analytics queries and print the numbers as tables
 ```
 
 ## Deployment
@@ -256,14 +256,27 @@ binding that [`mcp/`](mcp/) uses.
 
 ### Reading the numbers
 
-`npm run stats` runs each query in `analytics/stats.sql` and prints it as a table. It
-splits the file itself rather than handing it to `wrangler d1 execute --file`, which
-reported "2 commands executed successfully" for a file containing six and skipped the rest
-without saying so. There is no web dashboard yet, deliberately:
-one built before any data exists is one designed around guesses. Two things the queries
-say out loud and worth repeating — at this traffic a day-over-day change smaller than
-about a third is Poisson noise, and a percentage whose denominator is under a hundred
-sessions is reporting precision the data does not have.
+Three ways in, all reading the same queries in `analytics/src/queries.ts`:
+
+- **Ask Claude.** `https://stats.yananer.dev/mcp` is an MCP server behind the dashboard's
+  password. `site_summary` answers "how is the site doing" for the last N days against the
+  N before; `site_report` returns any of the dashboard's questions in full.
+
+  ```bash
+  # Claude Code
+  claude mcp add --transport http yananer-stats https://stats.yananer.dev/mcp \
+    --header "Authorization: Bearer <STATS_PASSWORD>"
+  ```
+
+  On claude.ai: Settings → Connectors → Add custom connector, the same URL, and the same
+  `Authorization` header under *Request headers*. It then works from the mobile app too.
+- **The dashboard** at `https://stats.yananer.dev` — the browser asks for the password.
+- **The terminal**: `npm run stats` prints every query as a table, `npm run dashboard`
+  writes the dashboard page to a local file.
+
+Two things the queries say out loud and worth repeating — at this traffic a day-over-day
+change smaller than about a third is Poisson noise, and a percentage whose denominator is
+under a hundred sessions is reporting precision the data does not have.
 
 ## License
 
