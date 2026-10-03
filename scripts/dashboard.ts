@@ -11,7 +11,7 @@
 import { writeFileSync, mkdirSync } from 'fs'
 import { resolve } from 'path'
 import { execFile } from 'child_process'
-import { runAll } from './d1'
+import { runAll, wranglerArgs } from './d1'
 import { renderDashboard } from '../analytics/src/render'
 
 const OUT_DIR = '.analytics'
@@ -24,7 +24,7 @@ const OWN_FLAGS = ['--no-open']
 const args = process.argv.slice(2)
 const forWrangler = args.filter((a) => !OWN_FLAGS.includes(a))
 const explicit = forWrangler.some((a) => a === '--local' || a === '--remote')
-const all = runAll([...(explicit ? [] : ['--remote']), ...forWrangler])
+const all = runAll(wranglerArgs(forWrangler))
 
 const html = renderDashboard(all, {
   generated: new Date().toISOString().replace('T', ' ').slice(0, 16),

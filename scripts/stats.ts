@@ -7,7 +7,7 @@
 //   npm run stats
 //   npm run stats -- --local --persist-to .wrangler/state
 
-import { runAll } from './d1'
+import { runAll, wranglerArgs } from './d1'
 import type { Row } from '../analytics/src/queries'
 
 function table(rows: Row[]): void {
@@ -24,7 +24,11 @@ function table(rows: Row[]): void {
   for (const r of rows) console.log(line(cols.map((c) => cell(r[c]))))
 }
 
-const sections = runAll(process.argv.slice(2))
+// Through wranglerArgs, which is what puts --remote in when nothing else was
+// asked for. Without it every query here went to a local database that does
+// not exist on most machines, and the report came back empty rather than wrong
+// -- the failure this file's own last line exists to make loud.
+const sections = runAll(wranglerArgs(process.argv.slice(2)))
 for (const s of sections) {
   console.log(`\n${s.title}`)
   if (s.error) console.log(`  ! ${s.error}`)
