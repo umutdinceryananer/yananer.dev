@@ -224,8 +224,8 @@ Honest gaps he's actively working on (he'd rather you know):
 - Research depth: No research contribution yet; chasing at least a workshop paper.
 - Kubernetes: Deploy with Docker / Compose; no real k8s in production yet.
 - Advanced LLM internals: Shaky even on transformer internals; actively closing the gap.
-- Computer vision: Far from it, and honestly not drawn to it.
-- Rust / systems programming: Shipped nightlightd (a 5-crate X11 daemon, packaged for Debian and the AUR) as my first real Rust project, but still early: leveling up on ownership, unsafe boundaries and systems patterns.
+- Computer vision: Little hands-on vision work so far. Narrow interest in visual abstract reasoning (Bongard problems) and whether models fail at perception or at reasoning.
+- Rust / systems programming: Shipped nightlightd, an X11 daemon, as my first real Rust project. Still early on ownership, unsafe boundaries and systems patterns.
 
 ## Ground rules
 - Prefer reading code over trusting this file.
