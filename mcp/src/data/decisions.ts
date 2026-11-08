@@ -83,18 +83,19 @@ const publicRepoDecisions: Decision[] = [
   },
   {
     id: 'pipeline-synthetic-separation',
-    title: 'mobile-game-analytics-pipeline: real base data vs synthetic enrichment',
+    title: 'mobile-game-analytics-pipeline: synthetic data with known effects',
     topics: ['synthetic data', 'kaggle cookie cats', 'roas roi', 'data provenance', 'monetization fields'],
     repo: 'mobile-game-analytics-pipeline',
     decision:
-      'The pipeline keeps a real base dataset (Cookie Cats / Kaggle telemetry) separate from synthetically generated user-acquisition & monetization fields (channel, CAC, revenue).',
+      'The pipeline starts from the Cookie Cats (Kaggle) player table but keeps only userid, version and the game-round count; retention is regenerated and the channel, purchase, CAC and revenue fields are generated from a documented config.',
     rationale:
-      'Retention can be computed on real behavioural data while ROI/ROAS analysis needs monetization fields the public dataset lacks; generating those synthetically (from a documented config) keeps the analysis runnable and honest about which numbers are real.',
+      'Effects set in the config are known in advance, so the SQL and Python outputs can be checked against them, and the analysis stays runnable without the monetization fields the public dataset lacks. A test confirms the configured retention channel effects are recovered from the pipeline output.',
     tradeoffs: [
-      'ROI/ROAS metrics rest on synthetic fields, so they are illustrative, not real-world.',
-      'Readers must be told which columns are synthetic (it is labelled throughout).',
+      'No funnel, retention or ROI/ROAS figure is a real measurement; they show that the pipeline works, not how a real game performs.',
+      'ROAS differences come entirely from the configured CAC, because the generator has no channel effect on revenue.',
+      'Readers must be told which columns are generated (the README lists every column).',
     ],
-    evidence: ['data/config/synthetic.yaml', 'data/make_dataset.py', 'references/sql/roi_by_channel.sql'],
+    evidence: ['data/config/synthetic.yaml', 'data/make_dataset.py', 'tests/test_channel_effects.py'],
     source: 'public-repo',
   },
   {

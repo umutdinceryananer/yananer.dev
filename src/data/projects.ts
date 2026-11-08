@@ -191,7 +191,7 @@ export const projects: Project[] = [
     isPrivate: false,
     isVerifiable: true,
     syntheticData: true,
-    note: 'Data provenance: the base telemetry is the real Cookie Cats (Kaggle) dataset; the user-acquisition and monetization fields (acquisition_channel, CAC/ad spend, revenue) are SYNTHETIC enrichment. So retention metrics rest on real data while ROI/ROAS rest on synthetic fields — always say so when discussing numbers.',
+    note: 'Data provenance: this project runs on SYNTHETIC data with known effects. Only userid, version and the game-round count come from the real Cookie Cats (Kaggle) dataset. Retention (retention_1, retention_7) is regenerated from a config, and acquisition_channel, country, platform, purchase, CAC and revenue are generated too. So no funnel, retention or ROI/ROAS figure is a real measurement: the pipeline recovers the configured retention channel effects, and ROAS differences come entirely from the configured CAC — always say so when discussing numbers.',
   },
   {
     id: 'petlyst-web',
