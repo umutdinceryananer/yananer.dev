@@ -131,7 +131,7 @@ A mobile-game user-acquisition analytics pipeline: SQL-driven KPIs, funnel + ROA
   - notebooks/3.0-Churn-Model.ipynb — churn modeling
   - references/sql/ — KPI SQL queries
   - reports/executive_summary.md — written summary
-- NOTE: Data provenance: the base telemetry is the real Cookie Cats (Kaggle) dataset; the user-acquisition and monetization fields (acquisition_channel, CAC/ad spend, revenue) are SYNTHETIC enrichment. So retention metrics rest on real data while ROI/ROAS rest on synthetic fields — always say so when discussing numbers.
+- NOTE: Data provenance: this project runs on SYNTHETIC data with known effects. Only userid, version and the game-round count come from the real Cookie Cats (Kaggle) dataset. Retention (retention_1, retention_7) is regenerated from a config, and acquisition_channel, country, platform, purchase, CAC and revenue are generated too. So no funnel, retention or ROI/ROAS figure is a real measurement: the pipeline recovers the configured retention channel effects, and ROAS differences come entirely from the configured CAC — always say so when discussing numbers.
 
 ### petlyst-web
 A team-built veterinary healthcare platform (CTIS senior project) connecting pet owners, vets, and clinics: a Node/Express + PostgreSQL backend with a TypeScript frontend, AWS S3 storage, token auth, and CI.
