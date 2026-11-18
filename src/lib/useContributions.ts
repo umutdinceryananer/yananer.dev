@@ -16,7 +16,8 @@ import type { Activity } from 'react-activity-calendar'
 
 const API = 'https://github-contributions-api.jogruber.de/v4'
 
-/** Columns drawn. The card is sized for this; changing it changes the layout. */
+/** The most week columns drawn. GitHubContributions drops the oldest weeks when
+    its card is too narrow for all of them. */
 export const WEEKS = 21
 
 const cache = new Map<string, Activity[]>()

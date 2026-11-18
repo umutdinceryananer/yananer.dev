@@ -1,5 +1,5 @@
 import { ActivityCalendar, type Activity } from 'react-activity-calendar'
-import { cloneElement, useEffect, useMemo, useState, useRef } from 'react'
+import { cloneElement, useEffect, useLayoutEffect, useMemo, useState, useRef } from 'react'
 import type { CSSProperties } from 'react'
 import { profile } from '../../data/profile'
 import { useContributions, WEEKS } from '../../lib/useContributions'
@@ -17,6 +17,27 @@ const GH_SCALES = {
   dark: ['#151515', '#0e4429', '#006d32', '#26a641', '#39d353'],
   light: ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'],
 } as const
+
+/** Cell size and gap, in px. The fit below and the calendar props read the same two. */
+const BLOCK = 12
+const GAP = 3
+
+/**
+ * How many week columns fit in `width` px, between 1 and WEEKS.
+ *
+ * The grid is never wider than its card. The library wraps it in an
+ * overflow-x:auto container, so a grid even a few pixels too wide showed a
+ * horizontal scrollbar under the heatmap (a 1280px window was enough). Dropping
+ * the oldest weeks is better than a bar nobody wants to drag.
+ */
+function weeksThatFit(width: number): number {
+  return Math.max(1, Math.min(WEEKS, Math.floor((width + GAP) / (BLOCK + GAP))))
+}
+
+// Measure before paint on the client, so a narrow card never shows the full
+// grid first. The prerender has no layout to measure, and useLayoutEffect
+// warns there, so it falls back to useEffect (which does not run there).
+const useIsomorphicLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect
 
 /**
  * Per-cell timing for the flap reveal.
@@ -90,8 +111,27 @@ const GitHubContributions = () => {
     if (loaded) flapped.current = true
   }, [loaded])
 
-  const timing = useMemo(() => flapTimings(activities), [activities])
-  const total = useMemo(() => activities.reduce((n, a) => n + a.count, 0), [activities])
+  // Width-driven column count. Starts at WEEKS so the client's first render
+  // matches the prerender, then settles to what the card can hold.
+  const fitRef = useRef<HTMLDivElement>(null)
+  const [weeks, setWeeks] = useState(WEEKS)
+  useIsomorphicLayoutEffect(() => {
+    const el = fitRef.current
+    if (!el) return
+    const fit = () => setWeeks(weeksThatFit(el.clientWidth))
+    fit()
+    const ro = new ResizeObserver(fit)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+
+  // The data starts on a week boundary, so dropping whole weeks from the front
+  // keeps it there, and the flap timing below still reads column and row
+  // straight off the index.
+  const shown = useMemo(() => activities.slice((WEEKS - weeks) * 7), [activities, weeks])
+
+  const timing = useMemo(() => flapTimings(shown), [shown])
+  const total = useMemo(() => shown.reduce((n, a) => n + a.count, 0), [shown])
 
   // The flap keyframes step through fixed greens and land on the cell's real
   // colour, which has to be handed in per cell.
@@ -111,11 +151,12 @@ const GitHubContributions = () => {
           headline figure, where per-cell labels would only offer 147 tab stops
           and no shape. The hover tooltip stays a sighted-pointer nicety. */}
       <div
+        ref={fitRef}
         role="img"
         aria-busy={!loaded}
         aria-label={
           loaded
-            ? `${total} GitHub contributions over the last ${WEEKS} weeks`
+            ? `${total} GitHub contributions over the last ${weeks} weeks`
             : 'Loading GitHub contributions'
         }
         className="flex-1 flex items-center justify-center min-w-0"
@@ -130,10 +171,10 @@ const GitHubContributions = () => {
           // scratch cannot leave anything stale behind, and costs a remount on
           // a press nobody makes twice a minute.
           key={resolved}
-          data={activities}
+          data={shown}
           colorScheme={resolved}
-          blockSize={12}
-          blockMargin={3}
+          blockSize={BLOCK}
+          blockMargin={GAP}
           fontSize={12}
           maxLevel={4}
           showMonthLabels={false}
