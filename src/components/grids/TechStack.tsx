@@ -19,12 +19,41 @@ const VIEWS = [
  */
 const OPEN_ON_PHONE = { skills: 8, growth: 4 } as const
 
+/**
+ * The Skills heart, snapped down the middle. Two halves of the same path, each
+ * tipped outwards from the point, so it still reads as broken at 12px and does
+ * not depend on the card colour behind it the way a painted-on crack would.
+ */
+const BrokenHeart = () => (
+  <svg
+    className="w-3 h-3 shrink-0 text-red-500"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    role="img"
+    aria-label="Broken heart"
+  >
+    <g transform="translate(12 12) scale(0.92) translate(-12 -12)">
+      <path
+        transform="translate(-0.9 0.3) rotate(-6 12 21.35)"
+        d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09L10.6 9L12.9 12L10.9 15.4L12.4 18.4Z"
+      />
+      <path
+        transform="translate(0.9 0.3) rotate(6 12 21.35)"
+        d="M12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35L12.4 18.4L10.9 15.4L12.9 12L10.6 9Z"
+      />
+    </g>
+  </svg>
+)
+
 const growthCard = (g: GrowthItem) => (
   <div
     key={g.area}
     className="bg-surface-1 p-3 rounded-lg border border-gray-800 hover:border-accent-500/50 transition-colors"
   >
-    <span className="text-accent-300 text-sm">{g.area}</span>
+    <div className="flex items-center gap-2">
+      <span className="text-accent-300 text-sm">{g.area}</span>
+      {g.brokenHeart && <BrokenHeart />}
+    </div>
     <p className="text-gray-500 text-xs mt-1 leading-relaxed">{g.note}</p>
   </div>
 )
@@ -87,7 +116,7 @@ const TechStack = () => {
               </button>
             )}
             {tech.hasHeart && (
-              <svg className="w-3 h-3 text-red-500" viewBox="0 0 24 24" fill="currentColor">
+              <svg className="w-3 h-3 shrink-0 text-red-500" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
               </svg>
             )}

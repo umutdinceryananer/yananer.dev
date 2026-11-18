@@ -99,37 +99,61 @@
     {
       "name": "Python",
       "keywords": [
-        "Core Language"
+        "Backends, Data"
       ]
     },
     {
-      "name": "Machine Learning",
+      "name": "TypeScript",
       "keywords": [
-        "AI"
+        "Web, MCP Servers"
       ]
     },
     {
-      "name": "Data Science",
+      "name": "LLM Agents, RAG",
       "keywords": [
-        "Data"
+        "Generative AI"
       ]
     },
     {
-      "name": "Data Visualization",
+      "name": "MCP Servers",
       "keywords": [
-        "Data"
+        "Hands for Claude"
       ]
     },
     {
-      "name": "Java",
+      "name": "SAS Viya",
       "keywords": [
-        "OOP"
+        "Analytics Platform"
       ]
     },
     {
-      "name": "Javascript",
+      "name": "FastAPI, Flask",
       "keywords": [
-        "Web Dev"
+        "Python APIs"
+      ]
+    },
+    {
+      "name": "SQL, DuckDB",
+      "keywords": [
+        "Data Analysis"
+      ]
+    },
+    {
+      "name": "scikit-learn",
+      "keywords": [
+        "Machine Learning"
+      ]
+    },
+    {
+      "name": "SwiftUI",
+      "keywords": [
+        "iOS Apps"
+      ]
+    },
+    {
+      "name": "Cloudflare",
+      "keywords": [
+        "Pages, Workers, D1"
       ]
     },
     {
@@ -139,57 +163,9 @@
       ]
     },
     {
-      "name": "React",
-      "keywords": [
-        "UI Framework"
-      ]
-    },
-    {
-      "name": "Typescript",
-      "keywords": [
-        "Type Safety"
-      ]
-    },
-    {
-      "name": "Node.js",
-      "keywords": [
-        "Runtime Environment"
-      ]
-    },
-    {
-      "name": "Express",
-      "keywords": [
-        "Web Framework"
-      ]
-    },
-    {
-      "name": "Selenium",
-      "keywords": [
-        "Test Automation"
-      ]
-    },
-    {
       "name": "Docker",
       "keywords": [
         "Containerization"
-      ]
-    },
-    {
-      "name": "Arduino",
-      "keywords": [
-        "Embedded Systems"
-      ]
-    },
-    {
-      "name": "MongoDB",
-      "keywords": [
-        "NoSQL Database"
-      ]
-    },
-    {
-      "name": "MySQL",
-      "keywords": [
-        "SQL Database"
       ]
     },
     {
@@ -199,9 +175,39 @@
       ]
     },
     {
-      "name": "Spring",
+      "name": "Tableau",
       "keywords": [
-        "Java Framework"
+        "Data Visualization"
+      ]
+    },
+    {
+      "name": "React",
+      "keywords": [
+        "UI Framework"
+      ]
+    },
+    {
+      "name": "pytest",
+      "keywords": [
+        "Python Testing"
+      ]
+    },
+    {
+      "name": "GitHub Actions",
+      "keywords": [
+        "CI Pipelines"
+      ]
+    },
+    {
+      "name": "Node.js, Express",
+      "keywords": [
+        "JavaScript Backends"
+      ]
+    },
+    {
+      "name": "JavaScript",
+      "keywords": [
+        "Web Dev"
       ]
     },
     {
@@ -211,15 +217,15 @@
       ]
     },
     {
-      "name": "Tailwind",
-      "keywords": [
-        "CSS Framework"
-      ]
-    },
-    {
       "name": "Git",
       "keywords": [
         "Version Control"
+      ]
+    },
+    {
+      "name": "Arduino",
+      "keywords": [
+        "Embedded Systems"
       ]
     }
   ],
