@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useId, useRef } from 'react'
 import { profile } from '../../data/profile'
 import type { TechItem, GrowthItem } from '../../data/profile'
 import { useSwapTransition, swapClasses } from '../../lib/useSwapTransition'
@@ -19,12 +19,50 @@ const VIEWS = [
  */
 const OPEN_ON_PHONE = { skills: 8, growth: 4 } as const
 
+/** The Skills heart. One path, so the broken one below cannot drift from it. */
+const HEART =
+  'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'
+
+/**
+ * The same heart with a crack down the middle. Same path, size and flat fill,
+ * so it sits with the other markers as one family. The crack is cut out with a
+ * mask rather than painted on, so the card shows through it in either theme.
+ */
+const BrokenHeart = () => {
+  // useId keeps the mask id unique and identical between the prerender and
+  // the client. Its colons are dropped so the id is safe inside url(#...).
+  const id = `crack${useId().replace(/:/g, '')}`
+  return (
+    <svg
+      className="w-3 h-3 shrink-0 text-red-500"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      role="img"
+      aria-label="Broken heart"
+    >
+      <mask id={id} maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+        <rect width="24" height="24" fill="#fff" />
+        <path
+          d="M12 3.5L10.2 8.6L13.4 12.3L10.6 15.9L12.7 19L12 23"
+          fill="none"
+          stroke="#000"
+          strokeWidth="2.2"
+        />
+      </mask>
+      <path d={HEART} mask={`url(#${id})`} />
+    </svg>
+  )
+}
+
 const growthCard = (g: GrowthItem) => (
   <div
     key={g.area}
     className="bg-surface-1 p-3 rounded-lg border border-gray-800 hover:border-accent-500/50 transition-colors"
   >
-    <span className="text-accent-300 text-sm">{g.area}</span>
+    <div className="flex items-center gap-2">
+      <span className="text-accent-300 text-sm">{g.area}</span>
+      {g.brokenHeart && <BrokenHeart />}
+    </div>
     <p className="text-gray-500 text-xs mt-1 leading-relaxed">{g.note}</p>
   </div>
 )
@@ -87,8 +125,8 @@ const TechStack = () => {
               </button>
             )}
             {tech.hasHeart && (
-              <svg className="w-3 h-3 text-red-500" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+              <svg className="w-3 h-3 shrink-0 text-red-500" viewBox="0 0 24 24" fill="currentColor">
+                <path d={HEART} />
               </svg>
             )}
             {tech.certification && (

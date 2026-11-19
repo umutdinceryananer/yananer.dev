@@ -5,7 +5,7 @@ import type { Activity } from 'react-activity-calendar'
 //
 // Why this exists: that wrapper owns its own fetch, and while the request is in
 // flight it renders a skeleton built from generateEmptyData() -- a full calendar
-// year, ~53 columns. The card is nowhere near that wide, and the calendar's own
+// year, ~53 columns. The card is often narrower than that, and the calendar's own
 // scroll container is overflow-x:auto, so a horizontal scrollbar appeared on
 // every load and vanished again once the real (much narrower) data arrived.
 // Owning the request means the grid is only ever drawn at its real size.
@@ -16,22 +16,48 @@ import type { Activity } from 'react-activity-calendar'
 
 const API = 'https://github-contributions-api.jogruber.de/v4'
 
-/** Columns drawn. The card is sized for this; changing it changes the layout. */
+/**
+ * Week columns in the prerendered page, before the card has been measured.
+ * GitHubContributions then draws as many as the card's width holds.
+ */
 export const WEEKS = 21
+
+/** The most week columns ever drawn, about five years. Only a very wide card gets near it. */
+export const MAX_WEEKS = 260
 
 const cache = new Map<string, Activity[]>()
 const inflight = new Map<string, Promise<Activity[] | null>>()
+
+/**
+ * Levels 0 to 4 on one scale across every year fetched.
+ *
+ * The API reports GitHub's own level for each day, but GitHub scales each
+ * calendar year on its own, so a grid that crosses New Year could change
+ * brightness at 1 January for no reason in the data. This recomputes the
+ * levels the way GitHub does within a year, from the quartiles of the days
+ * with any contributions, over the whole history at once.
+ */
+function relevel(days: Activity[]): Activity[] {
+  const counts = days.map((d) => d.count).filter((c) => c > 0).sort((a, b) => a - b)
+  if (counts.length === 0) return days
+  const at = (p: number) => counts[Math.min(counts.length - 1, Math.floor(p * counts.length))]
+  const [q1, q2, q3] = [at(0.25), at(0.5), at(0.75)]
+  const level = (c: number) => (c === 0 ? 0 : c <= q1 ? 1 : c <= q2 ? 2 : c <= q3 ? 3 : 4)
+  return days.map((d) => ({ ...d, level: level(d.count) }))
+}
 
 function fetchContributions(username: string): Promise<Activity[] | null> {
   const existing = inflight.get(username)
   if (existing) return existing
 
-  const p = fetch(`${API}/${username}?y=last`)
+  // No `y` parameter, which the API documents as every year of the account.
+  // A wide card shows well over a year, so `y=last` is no longer enough.
+  const p = fetch(`${API}/${username}`)
     .then((r) => (r.ok ? r.json() : null))
     // Shape-check rather than trust: a payload with `contributions` as
     // anything but an array would sail through to render and throw there.
     .then((d: { contributions?: unknown } | null) =>
-      Array.isArray(d?.contributions) ? (d.contributions as Activity[]) : null,
+      Array.isArray(d?.contributions) ? relevel(d.contributions as Activity[]) : null,
     )
     .catch(() => null)
 
@@ -47,11 +73,11 @@ function isoDate(d: Date): string {
 }
 
 /**
- * Every date the grid covers: today back to the start of the week WEEKS-1 weeks
- * ago.
+ * Every date the grid can cover: today back to the start of the week MAX_WEEKS-1
+ * weeks ago. GitHubContributions shows the newest part of it that fits.
  *
- * Anchoring on a week boundary is what keeps the grid exactly WEEKS columns wide
- * every day of the week. Cutting at "today minus WEEKS*7 days" lands mid-week and
+ * Anchoring on a week boundary is what keeps the grid a whole number of columns
+ * every day of the week. Cutting at "today minus N*7 days" lands mid-week and
  * produces one extra partial column on six days out of seven, which is why the
  * card used to change width between reloads.
  */
@@ -60,7 +86,7 @@ function gridDates(): string[] {
   today.setHours(0, 0, 0, 0)
 
   const cursor = new Date(today)
-  cursor.setDate(cursor.getDate() - cursor.getDay() - (WEEKS - 1) * 7)
+  cursor.setDate(cursor.getDate() - cursor.getDay() - (MAX_WEEKS - 1) * 7)
 
   const dates: string[] = []
   while (cursor <= today) {

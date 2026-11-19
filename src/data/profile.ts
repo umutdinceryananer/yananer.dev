@@ -66,6 +66,9 @@ export interface GrowthItem {
   area: string
   /** One honest, forward-looking line about it. */
   note: string
+  /** Wanted badly, not going well. Red broken heart in the UI, the Not Yet twin of
+      `TechItem.hasHeart`. */
+  brokenHeart?: boolean
 }
 
 export interface NowItem {
@@ -330,27 +333,31 @@ export const profile: Profile = {
     },
   ],
   tech: [
-    { name: 'Python', description: 'Core Language', hasHeart: true },
-    { name: 'Machine Learning', description: 'AI', hasHeart: true },
-    { name: 'Data Science', description: 'Data', hasHeart: true },
-    { name: 'Data Visualization', description: 'Data', hasHeart: true },
-    { name: 'Java', description: 'OOP' },
-    { name: 'Javascript', description: 'Web Dev' },
+    // Order matters. A phone shows the first eight before "Show more".
+    // `description` is also the skill's keyword in resume.json, so it should
+    // usually name a field (what an ATS would search for), not a project.
+    { name: 'Python', description: 'Backends, Data', hasHeart: true },
+    { name: 'TypeScript', description: 'Web, MCP Servers', hasTooltip: true },
+    { name: 'LLM Agents, RAG', description: 'Generative AI' },
+    { name: 'MCP Servers', description: 'Hands for Claude' },
+    { name: 'SAS Viya', description: 'Analytics Platform' },
+    { name: 'FastAPI, Flask', description: 'Python APIs' },
+    { name: 'SQL, DuckDB', description: 'Data Analysis', hasHeart: true },
+    { name: 'scikit-learn', description: 'Machine Learning', hasHeart: true },
+    { name: 'SwiftUI', description: 'iOS Apps' },
+    { name: 'Cloudflare', description: 'Pages, Workers, D1', hasTooltip: true },
     { name: 'AWS', description: 'Cloud Services', hasHeart: true, certification: 'AWS Certified Cloud Practitioner' },
-    { name: 'React', description: 'UI Framework', hasTooltip: true },
-    { name: 'Typescript', description: 'Type Safety', hasTooltip: true },
-    { name: 'Node.js', description: 'Runtime Environment' },
-    { name: 'Express', description: 'Web Framework' },
-    { name: 'Selenium', description: 'Test Automation' },
     { name: 'Docker', description: 'Containerization' },
-    { name: 'Arduino', description: 'Embedded Systems', hasHeart: true },
-    { name: 'MongoDB', description: 'NoSQL Database' },
-    { name: 'MySQL', description: 'SQL Database' },
     { name: 'PostgreSQL', description: 'Relational DB', hasHeart: true },
-    { name: 'Spring', description: 'Java Framework' },
+    { name: 'Tableau', description: 'Data Visualization', hasHeart: true },
+    { name: 'React', description: 'UI Framework', hasTooltip: true },
+    { name: 'pytest', description: 'Python Testing' },
+    { name: 'GitHub Actions', description: 'CI Pipelines' },
+    { name: 'Node.js, Express', description: 'JavaScript Backends' },
+    { name: 'JavaScript', description: 'Web Dev' },
     { name: 'Vite', description: 'Build Tool', hasTooltip: true },
-    { name: 'Tailwind', description: 'CSS Framework', hasTooltip: true },
     { name: 'Git', description: 'Version Control', hasTooltip: true },
+    { name: 'Arduino', description: 'Embedded Systems', hasHeart: true },
   ],
   growth: [
     { area: 'CUDA / GPU programming', note: "Haven't trained on a GPU yet; zero hands-on so far, but genuinely keen to dive in." },
@@ -358,7 +365,7 @@ export const profile: Profile = {
     { area: 'Kubernetes', note: 'Deploy with Docker / Compose; no real k8s in production yet.' },
     { area: 'Advanced LLM internals', note: 'Shaky even on transformer internals; actively closing the gap.' },
     { area: 'Computer vision', note: 'Little hands-on vision work so far. Narrow interest in visual abstract reasoning (Bongard problems) and whether models fail at perception or at reasoning.' },
-    { area: 'Rust / systems programming', note: 'Shipped nightlightd, an X11 daemon, as my first real Rust project. Still early on ownership, unsafe boundaries and systems patterns.' },
+    { area: 'Rust / systems programming', note: 'Shipped nightlightd, an X11 daemon, as my first real Rust project. Still early on ownership, unsafe boundaries and systems patterns.', brokenHeart: true },
   ],
   now: [
     { title: 'Visual abstract reasoning', badge: 'Exploring', description: 'Literature and early experiments on Bongard problems; no research question fixed yet.' },

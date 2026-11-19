@@ -252,6 +252,15 @@ a, button, [role="button"], input[type="submit"] {
   .gh-flap rect { animation: none; }
 }
 
+/* The calendar library sets overflow-x:auto inline on its scroll container.
+   GitHubContributions sizes the grid to fit the card, so there is never
+   anything to scroll; this keeps a bar from showing even for a frame, such as
+   in the prerendered page before the grid has been measured. !important is
+   the only way past an inline style. */
+.react-activity-calendar__scroll-container {
+  overflow-x: hidden !important;
+}
+
 /* One focus ring for the whole site.
    
    Nothing outside the contact form had a designed focus style, so keyboard

@@ -1,8 +1,8 @@
 import { ActivityCalendar, type Activity } from 'react-activity-calendar'
-import { cloneElement, useEffect, useMemo, useState, useRef } from 'react'
+import { cloneElement, useEffect, useLayoutEffect, useMemo, useState, useRef } from 'react'
 import type { CSSProperties } from 'react'
 import { profile } from '../../data/profile'
-import { useContributions, WEEKS } from '../../lib/useContributions'
+import { useContributions, MAX_WEEKS, WEEKS } from '../../lib/useContributions'
 import { useTheme } from '../../lib/useTheme'
 
 // GitHub's own contribution greens — the calendar keeps its native colour while
@@ -18,6 +18,28 @@ const GH_SCALES = {
   light: ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'],
 } as const
 
+/** Cell size and gap, in px. The fit below and the calendar props read the same two. */
+const BLOCK = 12
+const GAP = 3
+
+/**
+ * How many week columns fill `width` px, between 1 and MAX_WEEKS.
+ *
+ * The grid follows its card both ways. Narrower, it drops the oldest weeks:
+ * the library wraps it in an overflow-x:auto container, so a grid even a few
+ * pixels too wide showed a horizontal scrollbar (a 1280px window was enough).
+ * Wider, it reaches further back, so a full-width card is filled with history
+ * rather than a small grid stranded in the middle.
+ */
+function weeksThatFit(width: number): number {
+  return Math.max(1, Math.min(MAX_WEEKS, Math.floor((width + GAP) / (BLOCK + GAP))))
+}
+
+// Measure before paint on the client, so a narrow card never shows the full
+// grid first. The prerender has no layout to measure, and useLayoutEffect
+// warns there, so it falls back to useEffect (which does not run there).
+const useIsomorphicLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect
+
 /**
  * Per-cell timing for the flap reveal.
  *
@@ -29,9 +51,13 @@ const GH_SCALES = {
  */
 function flapTimings(activities: Activity[]) {
   const byDate = new Map<string, { delay: number; duration: number }>()
+  // The sweep takes as long as it did across WEEKS columns however many are
+  // drawn, so a wide grid does not take seconds to settle.
+  const columns = Math.ceil(activities.length / 7)
+  const step = 16 * Math.min(1, WEEKS / columns)
   activities.forEach((a, i) => {
     byDate.set(a.date, {
-      delay: Math.floor(i / 7) * 16 + (i % 7) * 4,
+      delay: Math.round(Math.floor(i / 7) * step) + (i % 7) * 4,
       duration: 260 + (i % 3) * 80,
     })
   })
@@ -90,8 +116,46 @@ const GitHubContributions = () => {
     if (loaded) flapped.current = true
   }, [loaded])
 
-  const timing = useMemo(() => flapTimings(activities), [activities])
-  const total = useMemo(() => activities.reduce((n, a) => n + a.count, 0), [activities])
+  // Width-driven column count. Starts at WEEKS so the client's first render
+  // matches the prerender, then settles to what the card holds.
+  const fitRef = useRef<HTMLDivElement>(null)
+  const [weeks, setWeeks] = useState(WEEKS)
+  useIsomorphicLayoutEffect(() => {
+    const el = fitRef.current
+    if (!el) return
+    const fit = () => setWeeks(weeksThatFit(el.clientWidth))
+    fit()
+    const ro = new ResizeObserver(fit)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+
+  // Keeps the tooltip inside the window. It is centred over its cell, so on a
+  // phone a cell in the first or last columns pushed half of it off screen.
+  // Measured before paint, so it never shows in the wrong place first, and the
+  // shift only moves the box: the tooltip has no arrow to fall out of line.
+  const tipRef = useRef<HTMLDivElement>(null)
+  const [tipShift, setTipShift] = useState(0)
+  useIsomorphicLayoutEffect(() => {
+    const tip = tipRef.current
+    const box = containerRef.current
+    if (!tooltip || !tip || !box) return
+    const EDGE = 8
+    const half = tip.offsetWidth / 2
+    const centre = box.getBoundingClientRect().left + tooltip.x
+    const room = document.documentElement.clientWidth - EDGE
+    const left = centre - half
+    const right = centre + half
+    setTipShift(left < EDGE ? EDGE - left : right > room ? room - right : 0)
+  }, [tooltip])
+
+  // The data starts on a week boundary, so dropping whole weeks from the front
+  // keeps it there, and the flap timing below still reads column and row
+  // straight off the index.
+  const shown = useMemo(() => activities.slice((MAX_WEEKS - weeks) * 7), [activities, weeks])
+
+  const timing = useMemo(() => flapTimings(shown), [shown])
+  const total = useMemo(() => shown.reduce((n, a) => n + a.count, 0), [shown])
 
   // The flap keyframes step through fixed greens and land on the cell's real
   // colour, which has to be handed in per cell.
@@ -111,11 +175,12 @@ const GitHubContributions = () => {
           headline figure, where per-cell labels would only offer 147 tab stops
           and no shape. The hover tooltip stays a sighted-pointer nicety. */}
       <div
+        ref={fitRef}
         role="img"
         aria-busy={!loaded}
         aria-label={
           loaded
-            ? `${total} GitHub contributions over the last ${WEEKS} weeks`
+            ? `${total} GitHub contributions over the last ${weeks} weeks`
             : 'Loading GitHub contributions'
         }
         className="flex-1 flex items-center justify-center min-w-0"
@@ -130,10 +195,10 @@ const GitHubContributions = () => {
           // scratch cannot leave anything stale behind, and costs a remount on
           // a press nobody makes twice a minute.
           key={resolved}
-          data={activities}
+          data={shown}
           colorScheme={resolved}
-          blockSize={12}
-          blockMargin={3}
+          blockSize={BLOCK}
+          blockMargin={GAP}
           fontSize={12}
           maxLevel={4}
           showMonthLabels={false}
@@ -183,8 +248,9 @@ const GitHubContributions = () => {
       </div>
       {tooltip && (
         <div
+          ref={tipRef}
           className="absolute pointer-events-none z-50 whitespace-nowrap -translate-x-1/2 -translate-y-full"
-          style={{ left: tooltip.x, top: tooltip.y }}
+          style={{ left: tooltip.x + tipShift, top: tooltip.y }}
         >
           {/* Two lines, and the hierarchy is carried by weight and brightness
               rather than by shrinking the date out of legibility. */}
