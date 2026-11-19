@@ -130,6 +130,25 @@ const GitHubContributions = () => {
     return () => ro.disconnect()
   }, [])
 
+  // Keeps the tooltip inside the window. It is centred over its cell, so on a
+  // phone a cell in the first or last columns pushed half of it off screen.
+  // Measured before paint, so it never shows in the wrong place first, and the
+  // shift only moves the box: the tooltip has no arrow to fall out of line.
+  const tipRef = useRef<HTMLDivElement>(null)
+  const [tipShift, setTipShift] = useState(0)
+  useIsomorphicLayoutEffect(() => {
+    const tip = tipRef.current
+    const box = containerRef.current
+    if (!tooltip || !tip || !box) return
+    const EDGE = 8
+    const half = tip.offsetWidth / 2
+    const centre = box.getBoundingClientRect().left + tooltip.x
+    const room = document.documentElement.clientWidth - EDGE
+    const left = centre - half
+    const right = centre + half
+    setTipShift(left < EDGE ? EDGE - left : right > room ? room - right : 0)
+  }, [tooltip])
+
   // The data starts on a week boundary, so dropping whole weeks from the front
   // keeps it there, and the flap timing below still reads column and row
   // straight off the index.
@@ -229,8 +248,9 @@ const GitHubContributions = () => {
       </div>
       {tooltip && (
         <div
+          ref={tipRef}
           className="absolute pointer-events-none z-50 whitespace-nowrap -translate-x-1/2 -translate-y-full"
-          style={{ left: tooltip.x, top: tooltip.y }}
+          style={{ left: tooltip.x + tipShift, top: tooltip.y }}
         >
           {/* Two lines, and the hierarchy is carried by weight and brightness
               rather than by shrinking the date out of legibility. */}
