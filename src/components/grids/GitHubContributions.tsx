@@ -2,7 +2,7 @@ import { ActivityCalendar, type Activity } from 'react-activity-calendar'
 import { cloneElement, useEffect, useLayoutEffect, useMemo, useState, useRef } from 'react'
 import type { CSSProperties } from 'react'
 import { profile } from '../../data/profile'
-import { useContributions, WEEKS } from '../../lib/useContributions'
+import { useContributions, MAX_WEEKS, WEEKS } from '../../lib/useContributions'
 import { useTheme } from '../../lib/useTheme'
 
 // GitHub's own contribution greens — the calendar keeps its native colour while
@@ -23,15 +23,16 @@ const BLOCK = 12
 const GAP = 3
 
 /**
- * How many week columns fit in `width` px, between 1 and WEEKS.
+ * How many week columns fill `width` px, between 1 and MAX_WEEKS.
  *
- * The grid is never wider than its card. The library wraps it in an
- * overflow-x:auto container, so a grid even a few pixels too wide showed a
- * horizontal scrollbar under the heatmap (a 1280px window was enough). Dropping
- * the oldest weeks is better than a bar nobody wants to drag.
+ * The grid follows its card both ways. Narrower, it drops the oldest weeks:
+ * the library wraps it in an overflow-x:auto container, so a grid even a few
+ * pixels too wide showed a horizontal scrollbar (a 1280px window was enough).
+ * Wider, it reaches further back, so a full-width card is filled with history
+ * rather than a small grid stranded in the middle.
  */
 function weeksThatFit(width: number): number {
-  return Math.max(1, Math.min(WEEKS, Math.floor((width + GAP) / (BLOCK + GAP))))
+  return Math.max(1, Math.min(MAX_WEEKS, Math.floor((width + GAP) / (BLOCK + GAP))))
 }
 
 // Measure before paint on the client, so a narrow card never shows the full
@@ -50,9 +51,13 @@ const useIsomorphicLayoutEffect = typeof window === 'undefined' ? useEffect : us
  */
 function flapTimings(activities: Activity[]) {
   const byDate = new Map<string, { delay: number; duration: number }>()
+  // The sweep takes as long as it did across WEEKS columns however many are
+  // drawn, so a wide grid does not take seconds to settle.
+  const columns = Math.ceil(activities.length / 7)
+  const step = 16 * Math.min(1, WEEKS / columns)
   activities.forEach((a, i) => {
     byDate.set(a.date, {
-      delay: Math.floor(i / 7) * 16 + (i % 7) * 4,
+      delay: Math.round(Math.floor(i / 7) * step) + (i % 7) * 4,
       duration: 260 + (i % 3) * 80,
     })
   })
@@ -112,7 +117,7 @@ const GitHubContributions = () => {
   }, [loaded])
 
   // Width-driven column count. Starts at WEEKS so the client's first render
-  // matches the prerender, then settles to what the card can hold.
+  // matches the prerender, then settles to what the card holds.
   const fitRef = useRef<HTMLDivElement>(null)
   const [weeks, setWeeks] = useState(WEEKS)
   useIsomorphicLayoutEffect(() => {
@@ -128,7 +133,7 @@ const GitHubContributions = () => {
   // The data starts on a week boundary, so dropping whole weeks from the front
   // keeps it there, and the flap timing below still reads column and row
   // straight off the index.
-  const shown = useMemo(() => activities.slice((WEEKS - weeks) * 7), [activities, weeks])
+  const shown = useMemo(() => activities.slice((MAX_WEEKS - weeks) * 7), [activities, weeks])
 
   const timing = useMemo(() => flapTimings(shown), [shown])
   const total = useMemo(() => shown.reduce((n, a) => n + a.count, 0), [shown])
