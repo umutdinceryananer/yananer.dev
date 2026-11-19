@@ -2,7 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'><text y='14' font-size='15'>🛰️</text></svg>" />
+    <!-- The icon is the penguin emoji. favicon.svg draws it as text, so a tab
+         shows the visitor's own emoji font. favicon.ico is the same emoji
+         rendered from Noto Color Emoji at 16, 32 and 48 px, for Safari, for
+         pages without these tags, and for Google, which ignores a data: URI
+         icon and wants a real file in multiples of 48 px. -->
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Theme, resolved before the first paint.
