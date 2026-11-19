@@ -76,6 +76,9 @@ const TechStack = () => {
   // Which marker has been tapped open. Hover still works on its own; this is
   // the path for anyone without a pointer to hover with.
   const [openTip, setOpenTip] = useState<number | null>(null)
+  // Cards whose tooltip opens below them instead of above. Kept per card, so a
+  // tooltip fading out does not jump sides when the pointer moves on.
+  const [tipBelow, setTipBelow] = useState<ReadonlySet<number>>(() => new Set())
 
   // The pill answers the click straight away while the list underneath fades,
   // so `view` drives the toggle and `rendered` drives the content.
@@ -98,10 +101,13 @@ const TechStack = () => {
     )
     const tipOpen = openTip === index
     const toggleTip = () => setOpenTip((cur) => (cur === index ? null : index))
+    const below = tipBelow.has(index)
 
     return (
       <div
         key={tech.name}
+        onPointerEnter={tips.length > 0 ? (e) => placeTip(index, e.currentTarget) : undefined}
+        onFocus={tips.length > 0 ? (e) => placeTip(index, e.currentTarget) : undefined}
         className="bg-surface-1 p-3 rounded-lg flex items-center border border-gray-800 hover:border-accent-500/50 transition-colors relative group"
       >
         <div className="flex flex-col gap-1">
@@ -152,10 +158,12 @@ const TechStack = () => {
           // scroller, which clips sideways as well as down, so a one-line
           // tooltip wider than a left-column card lost its first few letters;
           // this one wraps instead, and a second line pushes up into the card
-          // above rather than down over the name it is explaining.
+          // above rather than down over the name it is explaining. Where there
+          // is no card above to grow into, it opens below (see placeTip).
           <div
             aria-hidden
-            className={`absolute bottom-[calc(100%-10px)] left-1/2 -translate-x-1/2 w-max max-w-full text-center bg-surface-2 text-xs text-gray-300 px-3 py-2 rounded-lg border border-gray-800 transition-opacity z-10 pointer-events-none ${
+            data-tip
+            className={`absolute ${below ? 'top-[calc(100%-10px)]' : 'bottom-[calc(100%-10px)]'} left-1/2 -translate-x-1/2 w-max max-w-full text-center bg-surface-2 text-xs text-gray-300 px-3 py-2 rounded-lg border border-gray-800 transition-opacity z-10 pointer-events-none ${
               tipOpen ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 group-has-[:focus-visible]:opacity-100'
             }`}
           >
@@ -172,6 +180,33 @@ const TechStack = () => {
   const topFadeRef = useRef<HTMLDivElement>(null)
   const bottomFadeRef = useRef<HTMLDivElement>(null)
   const fadeFrame = useRef<number | null>(null)
+
+  /**
+   * Picks the side a card's tooltip opens on, when the pointer arrives or
+   * focus lands, before it fades in.
+   *
+   * Above is the default, but a card at the top of the visible list has
+   * nothing above it to grow into. On wider screens the scroller's top edge
+   * cut the tooltip off (and once scrolled, the top fade covered it); on a
+   * phone it sat over the Skills / Not Yet toggle. There it opens below.
+   */
+  const placeTip = (index: number, card: HTMLElement) => {
+    const tip = card.querySelector<HTMLElement>('[data-tip]')
+    const list = scrollerRef.current
+    if (!tip || !list) return
+    const fade = topFadeRef.current
+    const fadeHeight = fade?.style.opacity === '1' ? fade.offsetHeight : 0
+    const room = card.getBoundingClientRect().top - (list.getBoundingClientRect().top + fadeHeight)
+    // The tooltip overlaps its own card by 10px, so it needs that much less.
+    const below = room < tip.offsetHeight - 10
+    setTipBelow((cur) => {
+      if (cur.has(index) === below) return cur
+      const next = new Set(cur)
+      if (below) next.add(index)
+      else next.delete(index)
+      return next
+    })
+  }
 
   /** Paint the scroll-fade overlays from where the list is sitting right now. */
   const syncFades = useCallback(() => {
